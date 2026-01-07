@@ -1,56 +1,65 @@
 ---
-title: "Demo Post 1"
-description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-pubDate: "Sep 10 2022"
-heroImage: "/post_img.webp"
-tags: ["tokio"]
+pubDate: "Jan 8 2026"
+title: "マイページを作りました"
+description: "Astrofyを使ってマイページを作りました。" 
+heroImage: ""
+badge: ["自己紹介"]
+tags: ["Astro", "Astrofy", "Cloudflare", "ドメイン"]
 ---
+## 自己紹介
+はじめまして、なすです。\
+電気通信大学の学域2年生で、情報数理工学プログラムに所属しています。\
+趣味は競技プログラミングとロシア語です。AtCoderではアルゴリズムが緑で、ヒューリスティックが灰です。ロシア語はロシア語能力検定試験3級を持っています。\
+主な使用言語はPythonで、これまでに<a href="https://github.com/Nasu726/RtoJ-anki-register" target="_blank">単語カード登録アプリ</a>を作成しました。
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer
-malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas
-pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse
-platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus et malesuada
-fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea
-dictumst quisque sagittis. Integer quis auctor elit sed vulputate mi. Dictumst
-quisque sagittis purus sit amet.
+## マイページを作ったきっかけ ～ できるまで
 
-Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum
-quisque non tellus. Habitasse platea dictumst quisque sagittis purus sit amet.
-Tellus molestie nunc non blandit massa. Cursus vitae congue mauris rhoncus.
-Accumsan tortor posuere ac ut. Fringilla urna porttitor rhoncus dolor. Elit
-ullamcorper dignissim cras tincidunt lobortis. In cursus turpis massa tincidunt
-dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus
-arcu felis bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed
-tempus urna et pharetra pharetra massa massa ultricies mi.
+部活の先輩の発言がきっかけでした。
 
-Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam
-sit amet nisl suscipit. Lacus viverra vitae congue eu consequat ac felis donec.
-Egestas integer eget aliquet nibh praesent tristique magna sit amet. Eget magna
-fermentum iaculis eu non diam. In vitae turpis massa sed elementum. Tristique et
-egestas quis ipsum suspendisse ultrices. Eget lorem dolor sed viverra ipsum. Vel
-turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat semper viverra
-nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim
-praesent elementum facilisis. Ultrices tincidunt arcu non sodales neque. Tempus
-egestas sed sed risus pretium quam vulputate. Viverra suspendisse potenti nullam
-ac tortor vitae purus faucibus ornare. Fringilla urna porttitor rhoncus dolor
-purus non. Amet dictum sit amet justo donec enim.
+「世の中のブログサービスよりも自分の方が長生きするんだから、自分のサイトを作ってそこでブログ書いた方が良くない？(意訳)」
 
-Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut
-consequat semper viverra. Tellus mauris a diam maecenas sed enim ut sem viverra.
-Venenatis urna cursus eget nunc scelerisque viverra mauris in. Arcu ac tortor
-dignissim convallis aenean et tortor at. Curabitur gravida arcu ac tortor
-dignissim convallis aenean et tortor. Egestas tellus rutrum tellus pellentesque
-eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices
-tincidunt arcu. Id cursus metus aliquam eleifend mi.
+これを見て僕はとても納得してしまい、「自分のサイトを作るしかない！！」と思いました。思い立ったが吉日、自分のサイトを作るなら自分のドメインを持ってた方が良いよな、と思い nasu.uk を Cloudflare で購入。もう引き返せません。
 
-Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus
-imperdiet. Id porta nibh venenatis cras sed felis eget velit. Ipsum a arcu
-cursus vitae. Facilisis magna etiam tempor orci eu lobortis elementum. Tincidunt
-dui ut ornare lectus sit. Quisque non tellus orci ac. Blandit libero volutpat
-sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida.
-Egestas integer eget aliquet nibh praesent tristique magna.
+ドメインを買ったらさあマイページを公開！と行きたいところでしたが、肝心のマイページが無かったので作ることにしました。Geminiと相談してAstroのテンプレからマイページを作ろうと決め、マイページ作りを始めました。
+
+使ったテンプレはAstrofyです。インストールしてビルドしてみると、もうそこには完成品が。テンプレってすごいですね(小並感)。ポートフォリオ用のテンプレなので、自分をアピールするために必要な要素が揃っていて最高です。仮置きのデータでいっぱいだったので、そこを自分用に置き換えていきました。
+
+少し古いようで、非推奨の書き方をされているところがありました。Astroを選んでおきながらフロントエンドの知識が皆無だったので、Geminiに相談して全て修正し、プロジェクトやブログの投稿方式をカスタマイズしました。丸写しするだけだと勉強にならないので、コードの意味を理解してから反映するようにしました。
+
+そうして完成したのがこのサイトです。時間がかかってしまったのですが、こうして無事にページを公開できて嬉しいです。
+
+## なぜ.uk?
+
+結論から言えば、Cloudflareで見つかる中で一番安かったからです。
+有名なドメイン(.jp, .com, .ioなど)が欲しかったんですが、nasu.XXは短い名前なので当然全て売り切れていました。
+
+.ukはご存じの通りイギリスのドメインなので、日本向けに発信することを考えるとSEOが弱くて良くないのですが、じっくり育てれば強くなるらしいと聞いたので真心を込めて育てようと決めました。
+
+## ブログについて
+
+元々このページを作るきっかけはブログサービス云々の話だったので、ブログ機能もあるテンプレートを選びました。
+
+このブログはMarkdownで書けるようになっているので、コードブロックも書けます。ありがたや。
+
+```python
+# Python
+print("Hello world!")
+```
+```cpp
+// C++
+int main(){
+    std::cout << "Hello world!" << endl;
+}
+```
+
+シンタックスハイライトが微妙な気がするので、近いうちに直したいですね。
+
+## 今後の目標
+
+今後の長期的な目標は
+
+- 脱テンプレページ
+- プロジェクトでいっぱいのページにする
+- ブログが多くの人の目に触れるようになる(SEO改善、質の良い内容)
+
+です。まだ経験も作品も少ないですが、これからどんどん ものづくり をしてこのページを豊かにしていきたいです。目標を全部達成できるように頑張ります。

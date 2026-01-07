@@ -1,5 +1,5 @@
 ---
-const { title, img, desc, url, badge, tags, target = "_blank" } = Astro.props;
+const { title, img, imgDark, desc, url, badge, tags, target = "_blank", format="webp" } = Astro.props;
 import { Image } from "astro:assets";
 const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
 ---
@@ -17,10 +17,20 @@ const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
             height={422}
             format="webp"
             alt={title}
-            class="max-w-full md:max-w-[13rem] rounded-lg"
+            class={`max-w-full md:max-w-[13rem] rounded-lg ${imgDark ? "block dark:hidden" : ""}`}
           />
         )
       }
+      {imgDark && (
+        <Image
+          src={imgDark}
+          width={750}
+          height={422}
+          format={format}
+          alt={title}
+          class="max-w-full md:max-w-[13rem] rounded-lg hidden dark:block"
+        />
+      )}
       <div class="grow w-full">
         <h1 class="text-xl font-bold">
           {title}

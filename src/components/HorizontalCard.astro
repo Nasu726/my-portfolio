@@ -2,7 +2,7 @@
 const { title, img, imgDark, desc, url, badge, tags, target = "_blank", format="webp" } = Astro.props;
 import { Image } from "astro:assets";
 const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
-const badges = Array.isArray(badge) ? badge : [badge];
+const badges = Array.isArray(badge) ? badge.flat() : [badge];
 ---
 
 <div
@@ -35,15 +35,17 @@ const badges = Array.isArray(badge) ? badge : [badge];
       <div class="grow w-full">
         <h1 class="text-xl font-bold">
           {title}
-          {badges.filter(Boolean).map((b) => (
-            <div class="badge badge-secondary mx-1">
-              {b}
-            </div>
-            ))
+          {
+            badges && 
+              badges.filter(Boolean).map((b) => (
+                <div class="badge badge-secondary mx-1">
+                  {b}
+                </div>
+              ))
           }
         </h1>
         <p class="py-1 text-1xl">{desc}</p>
-        <div class="card-actions justify-end">
+        <div class="card-actions justify-begin">
           {
             tags &&
               tags.map((tag) => (

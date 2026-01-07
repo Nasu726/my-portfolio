@@ -4,7 +4,8 @@ import HorizontalCard from "../../components/HorizontalCard.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { Page } from "astro";
-import createSlug from "../../lib/createSlug"
+import createSlug from "../../lib/createSlug";
+import { isNew } from "../../lib/utils";
 
 export async function getStaticPaths({ paginate }) {
   const posts = await getCollection("blog");
@@ -41,7 +42,10 @@ const { page } = Astro.props;
               // url={"/blog/" + createSlug(post.data.title, post.slug)}
               url={`/blog/${post.slug}`}
               target="_self"
-              badge={post.data.badge}
+              badge={[
+                isNew(post.data.pubDate) && "NEW",
+                post.data.badge
+              ]}
               tags={post.data.tags}
             />
             <div class="divider my-0" />

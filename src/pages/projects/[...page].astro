@@ -5,6 +5,7 @@ import { getCollection } from "astro:content";
 
 import type { Page } from "astro";
 import type { CollectionEntry } from "astro:content";
+import { isNew } from "../../lib/utils";
 
 // ページネーション用の設定
 export async function getStaticPaths({ paginate }) {
@@ -42,7 +43,10 @@ const { page } = Astro.props;
               img={project.data.heroImage}
               imgDark={project.data.heroImageDark}
               desc={project.data.description}
-              badge={project.data.badge}
+              badge={[
+                isNew(project.data.pubDate) && "NEW",
+                project.data.badge
+              ]}
               url={project.data.url}
             />
             <div class="divider my-0" />

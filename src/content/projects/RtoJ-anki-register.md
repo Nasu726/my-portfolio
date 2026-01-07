@@ -5,5 +5,5 @@
     heroImage: "/github-mark.png"
     heroImageDark: "/github-mark-white.png"
     url: "https://github.com/Nasu726/RtoJ-anki-register"
-    badge: "FOSS"
+    badge: ["FOSS", Python]
 ---

@@ -5,7 +5,7 @@ const blogSchema = z.object({
     pubDate: z.coerce.date(),
     updatedDate: z.string().optional(),
     heroImage: z.string().optional(),
-    badge: z.string().optional(),
+    badge: z.union([z.string(), z.array(z.string())]).optional(),
     tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
         message: 'tags must be unique',
     }).optional(),
@@ -19,7 +19,10 @@ const storeSchema = z.object({
     updatedDate: z.coerce.date(),
     pricing: z.string().optional(),
     oldPricing: z.string().optional(),
-    badge: z.string().optional(),
+    badge: z.union([z.string(), z.array(z.string())]).optional(),
+    tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
+        message: 'tags must be unique',
+    }).optional(),
     checkoutUrl: z.string().optional(),
     heroImage: z.string().optional(),
 });
@@ -30,7 +33,10 @@ const projectSchema = z.object({
     pubDate: z.coerce.date(),
     heroImage: z.string().optional(),
     heroImageDark: z.string().optional(), // ダークモード用画像
-    badge: z.string().optional(),
+    badge: z.union([z.string(), z.array(z.string())]).optional(),
+    tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
+        message: 'tags must be unique',
+    }).optional(),
     url: z.string().optional(), // GitHubやデモサイトへのリンク
 });
 

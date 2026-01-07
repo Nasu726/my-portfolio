@@ -4,7 +4,7 @@ const blogSchema = z.object({
     description: z.string(),
     pubDate: z.coerce.date(),
     updatedDate: z.string().optional(),
-    heroImage: z.string().optional(),
+    heroImage: z.string().optional().transform((str) => {return str || "/post_img.webp"}),
     badge: z.union([z.string(), z.array(z.string())]).optional(),
     tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
         message: 'tags must be unique',

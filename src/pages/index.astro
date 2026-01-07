@@ -48,6 +48,7 @@ const last_posts = posts.slice(0, 3);
             isNew(project.data.pubDate) && "NEW",
             project.data.badge
           ]}
+          tags={project.data.tags}
         />
         <div class="divider my-0" />
       </>
@@ -71,6 +72,7 @@ const last_posts = posts.slice(0, 3);
             isNew(post.data.pubDate) && "NEW",
             post.data.badge
           ]}
+          tags={post.data.tags}
         />
         <div class="divider my-0" />
       </>

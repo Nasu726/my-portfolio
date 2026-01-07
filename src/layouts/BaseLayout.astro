@@ -4,7 +4,6 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SideBar from "../components/SideBar.astro";
 import { ClientRouter } from "astro:transitions";
-
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
 
 const {
@@ -18,10 +17,17 @@ const {
 ---
 
 <!doctype html>
-<html lang="ja" data-theme="lofi">
+<html lang="ja" data-theme="light">
   <head>
-    <BaseHead title={title} description={description} image={image} , ogType={ogType} />
+    <BaseHead title={title} description={description} image={image} ogType={ogType} />
     {TRANSITION_API && <ClientRouter />}
+    
+    <script is:inline>
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      }
+    </script>
   </head>
   <body>
     <div class="bg-base-100 drawer lg:drawer-open">
@@ -37,5 +43,50 @@ const {
       </div>
       {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} />}
     </div>
+
+    <script is:inline>
+      // 1. テーマを設定・保存する関数
+      function setTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+      }
+
+      // 2. コントローラー（ボタン）の状態を同期する関数
+      function syncThemeController() {
+        const controller = document.querySelector(".theme-controller");
+        const currentTheme = localStorage.getItem("theme") || "lofi"; // デフォルトはlofi
+        
+        // HTMLタグにテーマを適用
+        document.documentElement.setAttribute("data-theme", currentTheme);
+
+        if (controller) {
+          // ボタンの見た目を同期（draculaならチェックを入れる）
+          controller.checked = currentTheme === "dracula";
+          
+          // ボタン操作時のイベントリスナー（重複防止のためonchangeプロパティを使用）
+          controller.onchange = (e) => {
+            const newTheme = e.target.checked ? "dracula" : "lofi";
+            setTheme(newTheme);
+          };
+        }
+      }
+
+      // --- イベント発火のタイミング ---
+
+      // A. 初回読み込み時
+      syncThemeController();
+
+      // B. Astroのページ遷移完了時（ボタンのイベント再登録など）
+      document.addEventListener("astro:page-load", syncThemeController);
+
+      // C. ★ここが最重要：ページ遷移でHTMLが入れ替わった直後
+      // これがないと、次のページに行くと一瞬 lofi に戻ってしまいます
+      document.addEventListener("astro:after-swap", () => {
+        const storedTheme = localStorage.getItem("theme");
+        if (storedTheme) {
+          document.documentElement.setAttribute("data-theme", storedTheme);
+        }
+      });
+    </script>
   </body>
 </html>

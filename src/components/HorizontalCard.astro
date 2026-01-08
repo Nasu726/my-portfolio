@@ -16,7 +16,7 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
             src={img}
             width={750}
             height={422}
-            format="webp"
+            format={format}
             alt={title}
             class={`max-w-full md:max-w-[13rem] rounded-lg ${imgDark ? "block dark:hidden" : ""}`}
           />

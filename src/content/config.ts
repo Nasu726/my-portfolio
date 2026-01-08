@@ -13,6 +13,7 @@ const blogSchema = z.object({
 
 const bookSchema = z.object({
     title: z.string(),
+    description: z.string(),
     authors: z.union([z.string(), z.array(z.string())]),
     translators: z.union([z.string(), z.array(z.string())]).optional(),
     publisher: z.string(),

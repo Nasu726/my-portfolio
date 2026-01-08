@@ -70,7 +70,7 @@ const projectCollection = defineCollection({ schema: projectSchema });
 
 export const collections = {
     'blog': blogCollection,
-    'book': bookCollection,
+    'books': bookCollection,
     'store': storeCollection,
     'projects': projectCollection,
 }

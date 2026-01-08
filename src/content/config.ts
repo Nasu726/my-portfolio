@@ -17,9 +17,12 @@ const bookSchema = z.object({
     translators: z.union([z.string(), z.array(z.string())]).optional(),
     publisher: z.string(),
     pubDate: z.coerce.date(),
-    regDate: z.coerce.date(),
     url: z.string().optional(),
     heroImage: z.string().optional().transform((str) => {return str || "/post_img.webp"}),
+    status: z.string(),
+    regDate: z.coerce.date(),
+    beginDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
     badge: z.union([z.string(), z.array(z.string())]).optional(),
     tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
         message: 'tags must be unique',

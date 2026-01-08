@@ -15,24 +15,24 @@ const last_posts = posts.slice(0, 3);
 ---
 
 <BaseLayout sideBarActiveItemID="home">
-  <div class="pb-12 mt-5">
-    <div class="text-xl py-1">マイページへようこそ!</div>
-    <div class="text-5xl font-bold">nasu</div>
-    <div class="text-3xl py-3 font-bold">面倒なことはコンピュータにやらせよう</div>
+  <div class="pb-6 mt-3">
+    <div class="text-base py-1">マイページへようこそ!</div>
+    <div class="text-4xl font-bold">nasu</div>
+    <div class="text-xl py-2 font-bold">面倒なことはコンピュータにやらせよう</div>
     <div class="py-2">
-      <text class="text-lg">
+      <text class="text-sm">
         電気通信大学で情報工学を学んでいます。<br>
-        キーワード：アルゴリズム、競技プログラミング、Python、ロシア語
+        キーワード：アルゴリズム / 競技プログラミング / Python / ロシア語
       </text>
     </div>
     <div class="mt-8">
-      <a class="btn btn-outline" target="_blank" onclick="return confirm('メールを起動しますか？')" href="mailto:contact@nasu.uk" target="_blank"> Contact </a>
-      <a href="my-career" target="" class="btn btn-outline ml-5">My Career</a>
+      <a class="btn btn-outline btn-sm" target="_blank" onclick="return confirm('メールを起動しますか？')" href="mailto:contact@nasu.uk" target="_blank"> Contact </a>
+      <a href="my-career" target="" class="btn btn-outline btn-sm ml-5">My Career</a>
     </div>
   </div>
 
   <div>
-    <div class="text-3xl w-full font-bold mb-2">My last projects {"</>"}</div>
+    <div class="text-xl w-full font-bold mb-2">My last projects {"</>"}</div>
   </div>
 
   {
@@ -57,7 +57,7 @@ const last_posts = posts.slice(0, 3);
   }
 
   <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
+    <div class="text-xl w-full font-bold mb-3 mt-6">Latest from blog</div>
   </div>
 
   {

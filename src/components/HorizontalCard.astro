@@ -11,7 +11,7 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
   class="rounded-lg bg-base-100 hover:shadow-xl transition ease-in-out hover:scale-[102%]"
 >
   <a href={url} target={target}>
-    <div class="hero-content flex-col md:flex-row">
+    <div class="flex flex-row item-start p-3 gap-4">
       {
         img && (
           <Image
@@ -20,7 +20,7 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
             height={422}
             format={format}
             alt={title}
-            class={`max-w-full md:max-w-[13rem] rounded-lg ${imgDark ? "block dark:hidden" : ""}`}
+            class={`w-[11rem] md:w-[10rem] rounded-lg ${imgDark ? "block dark:hidden" : ""}`}
           />
         )
       }
@@ -31,27 +31,27 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
           height={422}
           format={format}
           alt={title}
-          class="max-w-full md:max-w-[13rem] rounded-lg hidden dark:block"
+          class="w-[11rem] md:w-[10rem] rounded-lg hidden dark:block"
         />
       )}
       <div class="grow w-full">
-        <h1 class="text-xl font-bold">
+        <h1 class="text-lg font-bold">
           {title}
           {
             badges && 
               badges.filter(Boolean).map((b) => (
-                <div class="badge badge-secondary mx-1">
+                <div class="badge badge-secondary badge-sm mx-1">
                   {b}
                 </div>
               ))
           }
         </h1>
-        <p class="py-1 text-1xl">{desc}</p>
+        <p class="py-1 text-sm">{desc}</p>
         <div class="card-actions justify-begin">
           {
             tags &&
               tags.map((tag) => (
-                <a href={`${tag_url}/${tag}`} class="badge badge-outline">
+                <a href={`${tag_url}/${tag}`} class="badge badge-outline badge-sm">
                   {tag}
                 </a>
               ))

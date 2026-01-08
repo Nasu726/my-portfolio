@@ -4,11 +4,11 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 ---
 
 <BaseLayout title="Resume" sideBarActiveItemID="cv">
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Profile</div>
+  <div class="mb-3">
+    <div class="text-2xl w-full font-bold">Profile</div>
   </div>
 
-  <div class="mb-10 text-justify">
+  <div class="mb-6 text-justify text-sm">
     電気通信大学 I類 情報数理工学プログラムに所属しています。<br>
     主にアルゴリズムに興味があり、競技プログラミングを通して勉強しています。<a target="_blank" href="https://atcoder.jp/users/nasu726" class="underline">(AtCoderアカウント)</a><br>
     他にも、ハッカソンに参加したり個人開発をしたりして、幅広い知識・技術の習得を目指しています。<br>
@@ -16,43 +16,43 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     趣味でロシア語を勉強しています。大学院卒業までにCEFR B2～C1程度を目指しています。(現在A2～B1)
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Education</div>
+  <div class="mb-3">
+    <div class="text-2xl w-full font-bold">Education</div>
   </div>
 
-  <div class="time-line-container grid gap-4 mb-10">
+  <div class="time-line-container grid gap-2 mb-6">
     <TimeLineElement
       title="情報理工学域 I類 情報数理工学プログラム"
       subtitle="2025年 - 現在  電気通信大学, 東京",
     >
-      <p>2年後期より情報数理工学プログラムに配属。</p>
+      <p class="text-sm">2年後期より情報数理工学プログラムに配属。</p>
     </TimeLineElement>
     <TimeLineElement
       title="情報理工学域 I類"
       subtitle="2024年 - 現在  電気通信大学, 東京",
     >
-      <p>電気通信大学に入学。I類(情報系)所属。</p>
+      <p class="text-sm">電気通信大学に入学。I類(情報系)所属。</p>
     </TimeLineElement>
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Experience</div>
+  <div class="mb-3">
+    <div class="text-2xl w-full font-bold">Experience</div>
   </div>
 
-  <div class="time-line-container mb-10">
+  <div class="time-line-container mb-6">
     <TimeLineElement
       title="マイページを公開"
       subtitle="2026年1月8日 (個人開発)"
     >
-      <p>ドメイン取得をきっかけにマイページを作成。Astrofy Templateを元にカスタマイズした。デプロイにはCloudflare Pagesを利用。</p>
-      <p>ページのカスタマイズを続けながら、プロジェクトに関する報告やブログの更新をする予定。</p>
+      <p class="text-sm">ドメイン取得をきっかけにマイページを作成。Astrofy Templateを元にカスタマイズした。デプロイにはCloudflare Pagesを利用。</p>
+      <p class="text-sm">ページのカスタマイズを続けながら、プロジェクトに関する報告やブログの更新をする予定。</p>
       <br>
     </TimeLineElement>
     <TimeLineElement
       title="【技育CAMP】ハッカソン Vol.17に参加"
       subtitle="2025年12月26日 - 2026年1月11日 (チーム開発)"
     >
-      <p>MMA(所属サークル)の部員とチームを組んで参加。
+      <p class="text-sm">MMA(所属サークル)の部員とチームを組んで参加。
         <!-- ハッカソン自体は1月11日で終了したが、正式にリリースするため現在も開発を継続中。 -->
       </p>
       <br>
@@ -61,21 +61,21 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       title="ロシア語単語カード登録アプリを開発"
       subtitle="2025年6月 - 現在 (個人開発)"
     >
-      <p>単語カードアプリ『Anki』と連携した単語カード自動登録アプリ。Webスクレイピングの勉強のため、PythonのライブラリBeautifulSoupを用いた単語カード登録アプリを開発(7月に完成)。ロシア語の単語を入力すると、ネット辞書『コトバンク』からスクレイピングした内容を単語カード用に整形して、『Anki』のアドオン「AnkiConnect」を通じて自動で登録・更新する。手作業の30～90倍の速度で単語が登録できるようになった。</p>
-      <p>ターミナル上でしか使えず、ロシア語にしか対応していないため、GUIアプリ化、多言語対応を目指している。</p>
+      <p class="text-sm">単語カードアプリ『Anki』と連携した単語カード自動登録アプリ。Webスクレイピングの勉強のため、PythonのライブラリBeautifulSoupを用いた単語カード登録アプリを開発(7月に完成)。ロシア語の単語を入力すると、ネット辞書『コトバンク』からスクレイピングした内容を単語カード用に整形して、『Anki』のアドオン「AnkiConnect」を通じて自動で登録・更新する。手作業の30～90倍の速度で単語が登録できるようになった。</p>
+      <p class="text-sm">ターミナル上でしか使えず、ロシア語にしか対応していないため、GUIアプリ化、多言語対応を目指している。</p>
     </TimeLineElement>
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Activities</div>
+  <div class="mb-3">
+    <div class="text-2xl w-full font-bold">Activities</div>
   </div>
 
-  <div class="time-line-container grid gap-4 mb-10">
+  <div class="time-line-container grid gap-2 mb-6">
     <TimeLineElement
       title="【技育CAMP】ハッカソン Vol.17に参加"
       subtitle="2025年12月26日 - 2026年1月11日 (チーム開発)"
     >
-      <p>MMA の部員とチームを組んで参加。
+      <p class="text-sm">MMA の部員とチームを組んで参加。
         <!-- ハッカソン自体は1月11日で終了したが、正式にリリースするため現在も開発を継続中。 -->
       </p>
     </TimeLineElement>
@@ -83,47 +83,47 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       title="MMA 部誌『百萬石』2025秋号に寄稿。"
       subtitle="2025年10月",
     >
-      <p><a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Booklet?action=AttachFile&do=view&target=booklet2025b.pdf">『Ankiに露和カードを自動登録したい』</a>。</p>
+      <p class="text-sm"><a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Booklet?action=AttachFile&do=view&target=booklet2025b.pdf">『Ankiに露和カードを自動登録したい』</a>。</p>
     </TimeLineElement>
     <TimeLineElement
       title="MMA 部誌『百萬石』2025春号に寄稿。"
       subtitle="2025年4月",
     >
-      <p><a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Booklet?action=AttachFile&do=view&target=booklet2025a.pdf">『言語って面白い(とその他)』</a>。</p>
+      <p class="text-sm"><a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Booklet?action=AttachFile&do=view&target=booklet2025a.pdf">『言語って面白い(とその他)』</a>。</p>
     </TimeLineElement>
     <TimeLineElement
       title="MMA 2025煙火に就任"
       subtitle="2025年3月 - 現在",
     >
-      <p>部内での相談を受け承諾。同月「煙火消費保安手帳」取得。</p>
-      <p>煙火担当は、夏合宿で花火を打ち上げる際の監督者、および役所や消防署への事前の届け出をする。</p>
+      <p class="text-sm">部内での相談を受け承諾。同月「煙火消費保安手帳」取得。</p>
+      <p class="text-sm">煙火担当は、夏合宿で花火を打ち上げる際の監督者、および役所や消防署への事前の届け出をする。</p>
     </TimeLineElement>
     <TimeLineElement
       title="MMA 2025会計に就任"
       subtitle="2025年1月 - 現在",
     >
-      <p>部の総会にて決定。</p>
+      <p class="text-sm">部の総会にて決定。</p>
     </TimeLineElement>
     <TimeLineElement
       title="MMA 部誌『百萬石』2024年秋号に寄稿。"
       subtitle="2024年10月",
     >
-      <p><a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Booklet?action=AttachFile&do=view&target=booklet2024b.pdf">『ロシア語を学ぶ』</a>。</p>
+      <p class="text-sm"><a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Booklet?action=AttachFile&do=view&target=booklet2024b.pdf">『ロシア語を学ぶ』</a>。</p>
     </TimeLineElement>
     <TimeLineElement
       title="電気通信大学MMA に入部"
       subtitle="2024年4月 - 現在"
     >
-      <p>「パソコンを使った活動ならば何でもOK」という自由な活動内容と雰囲気に惹かれ、完全初心者での入部。</p>
-      <p>MMAは「Microcomputer Making Association」の頭字語。部の公式wikiは<a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Home">こちら</a>。</p>
+      <p class="text-sm">「パソコンを使った活動ならば何でもOK」という自由な活動内容と雰囲気に惹かれ、完全初心者での入部。</p>
+      <p class="text-sm">MMAは「Microcomputer Making Association」の頭字語。部の公式wikiは<a target="_blank" class="underline" href="https://wiki.mma.club.uec.ac.jp/Home">こちら</a>。</p>
     </TimeLineElement>
   </div>
 
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Certifications</div>
+  <div class="mb-3">
+    <div class="text-2xl w-full font-bold">Certifications</div>
   </div>
 
-  <ul class="list-disc mx-6 mb-10 grid gap-2">
+  <ul class="list-disc mx-6 mb-6 grid gap-2 text-sm">
     <li>
       <a href="https://www.ipa.go.jp/shiken/kubun/fe.html" target="_blank">基本情報技術者試験</a>
     </li>
@@ -133,10 +133,10 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </ul>
 
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Skills</div>
+    <div class="text-2xl w-full font-bold">Skills</div>
   </div>
 
-  <div class="mb-1 fond-bold text-2xl">Languages & Frameworks</div>
+  <div class="mb-1 fond-bold text-lg">Languages & Frameworks</div>
   <ul class="list-disc md:columns-5 columns-2 mx-6">
     <li>Python (メイン)</li>
     <li>C (講義で使用) </li>
@@ -148,13 +148,13 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     <li>(p)LaTeX</li>
   </ul>
 
-  <div class="mb-1 mt-2 text-2xl fond-bold">Tools</div>
+  <div class="mb-1 mt-2 text-lg fond-bold">Tools</div>
   <ul class="list-disc md:columns-5 columns-2 mx-6">
     <li>Git / GitHub</li>
     <li>VS Code</li>
   </ul>
 
-  <div class="mb-1 mt-2 text-2xl fond-bold">Others</div>
+  <div class="mb-1 mt-2 text-lg fond-bold">Others</div>
   <ul class="list-disc md:columns-5 columns-2 mx-6">
     <li>English (B1～B2)</li>
     <li>Русский (A2～B1)</li>

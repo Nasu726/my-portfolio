@@ -1,7 +1,9 @@
 ---
-const { title, img, imgDark, desc, url, badge, tags, target = "_blank", format="webp" } = Astro.props;
+const { title, img, imgDark, desc, url, badge, tags, target = "_blank", format="webp", custom_tags_url } = Astro.props;
 import { Image } from "astro:assets";
-const tag_url = url.split("/").slice(0, -1).join("/") + "/tag";
+const tag_url = custom_tags_url 
+  ? custom_tags_url 
+  : url.split("/").slice(0, -1).join("/") + "/tag";
 const badges = Array.isArray(badge) ? badge.flat() : [badge];
 ---
 

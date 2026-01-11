@@ -1,6 +1,6 @@
 ---
 pubDate: "2026-01-11"
-title: "Synce"
+title: "Syncle"
 description: "グループのタスク管理を助けるwebアプリです。タスク管理、リマインド、メンバー管理までこのアプリで一元管理できます。" # タイトルの下に出る概要
 url: "https://syncle-five.vercel.app/signin" # 必須
 heroImage: "/logo.png"  # 必須

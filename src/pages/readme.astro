@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TimeLineElement from "../components/cv/TimeLine.astro";
+---
+
+<BaseLayout title="Readme" sideBarActiveItemID="readme">
+  <div class="mb-3">
+    <div class="text-2xl w-full font-bold">About this site</div>
+  </div>
+
+  <div class="mb-3 text-justify text-sm">
+    <p>ここではマイページの概要についてまとめています。</p>
+  </div>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Home</div>
+    <p>ホームページです。</p>
+    <p>ページ上部には、簡単な自己紹介と興味関心のキーワードが書かれています。</p>
+    <p>「Readme」ボタンを押すとこのページに遷移します。</p>
+    <p>「My Career」ボタンを押すとプロフィールページに遷移します。</p>
+    <p>「Contact」ボタンを押すとメールが起動します(確認ダイアログが出ます)。</p>
+    <p>プロジェクトとブログを新しい方から3つずつピックアップして、カード形式で表示しています。上から新しい順に並んでいます。</p>
+    <p>カード上部にはバッジが付いていて、リリースから30日以内のプロジェクト/ブログには「New」バッジが付いています。</p>
+    <p>カード下部のタグをクリックすると、同じタグが付いたプロジェクト/ブログを絞り込んで検索できます。</p>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Readme</div>
+    <p>このページです。マイページの概要についてまとめています。</p>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Projects</div>
+    <p>今までに作成したプロジェクトをカードにしてまとめています。上から新しい順に並んでいます。</p>
+    <p>カードをクリックするとプロジェクト(またはGitHubリポジトリ)にジャンプします。</p>
+    <p>カード上部にはバッジが付いていて、リリースから30日以内のプロジェクトには「New」バッジが付いています。</p>
+    <p>カード下部のタグをクリックすると、同じタグが付いたプロジェクトを絞り込んで検索できます。</p>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Blog</div>
+    <p>今までに書いたブログをカードにしてまとめています。上から新しい順に並んでいます。</p>
+    <p>カードをクリックするとブログ本文を読めます。</p>
+    <p>カード上部にはバッジが付いていて、リリースから30日以内のブログには「New」バッジが付いています。</p>
+    <p>カード下部のタグをクリックすると、同じタグが付いたブログを絞り込んで検索できます。</p>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">My Career</div>
+    <p>プロフィール、経歴、スキルについてまとめています。</p>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Contact</div>
+    <p>公式の連絡先です。クリックでメールが起動します(確認ダイアログが出ます)。</p>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Others</div>
+    <dl class="grid grid-cols-[auto_1fr] gap-y-2 text-sm">
+      <dt class="font-bold">サイドバー下部のアイコン：</dt>
+      <dd class="pl-2">クリックすると各種外部サイトにアクセスできます。</dd>
+      <dt class="font-bold">ヘッダー：</dt>
+      <dd class="pl-2">
+        <p>右側の太陽/月アイコンをクリックするとテーマの切り替えができます。</p>
+        <p>中央の「nasu」をクリックするとホームページに遷移します。</p>
+        <p>左側の「≡」マーク(スマホ画面のみ)を押すとサイドバーが展開されます。</p>
+      </dd>
+    </dl>
+
+  <div class="divider my-3"/> <!-- 区切り線 -->
+
+  <div class="my-3 text-xl w-full font-bold">Todo</div>
+  <div class="text-md">
+    <ul class="list-disc pl-5">
+      <li>読書ページを作る</li>
+      <li>おすすめブログ/プロジェクトのピン止め機能追加</li>
+      <li>コードブロックのシンタックスハイライト調整</li>
+      <li>ハッカソンブログを書く</li>
+    </ul>
+  </div>
+
+</BaseLayout>

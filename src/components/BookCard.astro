@@ -21,14 +21,15 @@ const display_pubDate = dayjs(pubDate).format("YYYY/MM/DD")
 const getStatusClass = (text) => {
   if (text === "積読") return "badge-info"; // 青系
   if (text === "読書中") return "badge-warning"; // 黄色系
-  if (text === "読了") return "badge-success"; // 枠線のみ
+  if (text === "読了") return "badge-success"; // 緑系
+  if (text === "挫折") return "badge-error"; // 緑系
   return "badge-secondary"; // デフォルト（ピンク系）
 };
 
 const getBadgeClass = (text) => {
   if (text === "おすすめ") return "badge-info"; // 青系
   if (text === "難しい") return "badge-warning"; // 黄色系
-  if (text === "必読") return "badge-success"; // 枠線のみ
+  if (text === "必読") return "badge-success"; // 緑系
   return "badge-secondary"; // デフォルト（ピンク系）
 };
 

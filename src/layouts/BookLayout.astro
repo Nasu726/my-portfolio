@@ -3,29 +3,28 @@ import { type BookSchema } from "../content/config";
 import BaseLayout from "./BaseLayout.astro";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import { Image } from "astro:assets";
 
 export interface Props extends BookSchema {
   slug?: string;
 }
-import { Image } from "astro:assets";
-import { filterPreloads } from "astro/assets/fonts/runtime";
-import { map } from "astro:schema";
+
 const { 
-    title, 
-    description, 
-    authors, 
-    translators, 
-    publisher, 
-    pubDate, 
-    url, 
-    heroImage, 
-    status, 
-    regDate, 
-    beginDate, 
-    endDate, 
-    badge, 
-    tags = [],
-    slug,
+  title, 
+  description, 
+  authors, 
+  translators, 
+  publisher, 
+  pubDate, 
+  url, 
+  heroImage, 
+  status, 
+  regDate, 
+  beginDate, 
+  endDate, 
+  badge, 
+  tags = [],
+  slug,
 } = Astro.props;
 
 // 空文字列をundefinedとして解釈
@@ -34,89 +33,139 @@ const normalizedHeroImage = normalizeEmpty(heroImage);
 const normalizedBeginDate = normalizeEmpty(beginDate);
 const normalizedEndDate = normalizeEmpty(endDate);
 
+// 著者・翻訳者をフォーマットする関数
+// 配列の場合は "、" で結合する
+const formatPersonNames = (value: string | string[] | undefined) => {
+  if (!value) return null;
+  return Array.isArray(value) ? value.join("、") : value;
+};
+const displayAuthors = formatPersonNames(authors);
+const displayTranslators = formatPersonNames(translators);
+
 const badges = Array.isArray(badge) ? badge.flat() : [badge];
 dayjs.extend(localizedFormat);
 const displayPubDate = dayjs(pubDate).format("YYYY-MM-DD");
 
 // 読み始めと読み終わりの期間を表示するフォーマット
 const getDateRange = () => {
-  // beginDateがundefinedの場合は、endDateがあっても無視
   if (!normalizedBeginDate) return null;
-  if (!normalizedBeginDate && !normalizedEndDate) return null;
-  const begin = beginDate ? dayjs(beginDate).format("YYYY-MM-DD") : "";
+  // endがない場合は「読書中」とするか、beginのみ表示するかはお好みで調整
+  const begin = dayjs(normalizedBeginDate).format("YYYY-MM-DD");
   const end = normalizedEndDate ? dayjs(normalizedEndDate).format("YYYY-MM-DD") : "読書中";
-  return `${begin} - ${end}`;
+  return `${begin} ～ ${end}`;
 };
 
 // ステータス・バッジの内容によって色を変えるロジック
 const getStatusClass = (text) => {
-  if (text === "積読") return "badge-info"; // 青系
-  if (text === "読書中") return "badge-warning"; // 黄色系
-  if (text === "読了") return "badge-success"; // 枠線のみ
-  return "badge-secondary"; // デフォルト（ピンク系）
+  if (text === "積読") return "badge-info";
+  if (text === "読書中") return "badge-warning";
+  if (text === "読了") return "badge-success";
+  return "badge-secondary";
 };
 
 const getBadgeClass = (text) => {
-  if (text === "おすすめ") return "badge-info"; // 青系
-  if (text === "難しい") return "badge-warning"; // 黄色系
-  if (text === "必読") return "badge-success"; // 枠線のみ
-  return "badge-secondary"; // デフォルト（ピンク系）
+  if (text === "おすすめ") return "badge-info";
+  if (text === "難しい") return "badge-warning";
+  if (text === "必読") return "badge-success";
+  return "badge-secondary";
 };
 ---
 
-<BaseLayout title={title} description={description} image={normalizedHeroImage}, ogType="article">
-  <main class="md:flex md:justify-center">
-    <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
-      {normalizedHeroImage && <Image width={375} height={105} format="webp" src={normalizedHeroImage} alt={title} class="mb-6" />}
-      <h1 class="title my-2 text-4xl font-bold">{title}</h1>
-      <div class="flex flex-wrap gap-2 my-3">
-        {status && <div class={`badge ${getStatusClass(status)}`}>{status}</div>}
-        {badges && 
-          badges.filter(Boolean).map((b) => (
-            <div class={`badge ${getBadgeClass(b)}`}>
-              {b}
-            </div>
-          ))
-        }
-      </div>
-      <h2>{`${authors} 著`}</h2>
-      {pubDate && <time>{displayPubDate}</time>}
-      <br />
-      {publisher && <span class="font-semibold">{publisher}</span>}
-      <br />
-      {getDateRange() && <div class="text-sm text-base-content/70">読書期間: {getDateRange()}</div>}
-      <br />
-      <div class="flex flex-wrap gap-2 my-4">
-        {badges && 
-          badges.filter(Boolean).map((b) => (
-          <div class="badge badge-secondary my-1">
-            {b}
-          </div>
-          ))
-        }
-      </div>
-      {
-        tags &&
-          tags.map((tag) => (
-            <a href={`/books/tag/${tag}`} class="badge badge-outline ml-2 no-underline">
-              {tag}
-            </a>
-          ))
-      }
-      <div class="divider my-2"></div>
-      <div class="flex gap-2 mb-4">
-        {url && (
-          <a href={url} target="_blank" class="btn btn-primary btn-sm">
-            出版社
-          </a>
-        )}
-        <a href={`https://www.amazon.co.jp/s?k=${title}`} target="_blank" class="btn btn-accent btn-sm">
-          Amazon
-        </a>
-      </div>
-      <div class="divider my-2"></div>
-      <slot />
+<BaseLayout title={title} description={description} image={normalizedHeroImage} ogType="article">
+  <main class="md:flex md:justify-center px-4">
+    <article class="prose prose-lg w-full max-w-[900px]">
       
+      {/* --- ヘッダーエリア（画像と情報の横並び部分） --- */}
+      {/* not-prose を指定して、proseのデフォルトスタイル（マージン等）を無効化し、レイアウトを制御しやすくする */}
+      <div class="not-prose flex flex-col md:flex-row gap-8 items-start mb-8 border-b pb-8 border-base-300">
+        
+        {/* 左カラム：画像 */}
+        {normalizedHeroImage && (
+          <div class="w-full md:w-1/3 flex-shrink-0 flex justify-center md:justify-start">
+            <Image 
+              width={375} 
+              height={500} 
+              format="webp" 
+              src={normalizedHeroImage} 
+              alt={title} 
+              class="rounded-lg shadow-xl w-[200px] md:w-full object-cover aspect-[2/3]" 
+            />
+          </div>
+        )}
+
+        {/* 右カラム：書誌情報 */}
+        <div class="w-full md:w-2/3 flex flex-col gap-3">
+          
+          {/* タイトルとステータス */}
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              {status && <span class={`badge ${getStatusClass(status)}`}>{status}</span>}
+              {badges && 
+                badges.filter(Boolean).map((b) => (
+                  <span class={`badge ${getBadgeClass(b)}`}>{b}</span>
+                ))
+              }
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold leading-tight text-base-content">{title}</h1>
+          </div>
+
+          {/* 著者・翻訳者 */}
+          <div class="text-lg font-medium text-base-content/80 leading-relaxed">
+            {displayAuthors} <span class="text-sm opacity-70">著</span>
+            {displayTranslators && (
+              <>
+                <span class="mx-2 text-base-content/30">/</span>
+                {displayTranslators} <span class="text-sm opacity-70">訳</span>
+              </>
+            )}
+          </div>
+
+          {/* 出版社・出版日 */}
+          <div class="text-sm text-base-content/70">
+            {publisher && <span class="font-semibold">{publisher}</span>}
+            {publisher && pubDate && <span class="mx-2">|</span>}
+            {pubDate && <time>{displayPubDate}</time>}
+          </div>
+
+          {/* 読書期間 */}
+          {getDateRange() && (
+            <div class="text-sm bg-base-200/50 p-2 rounded-md inline-block self-start">
+            読書期間: {getDateRange()}
+            </div>
+          )}
+
+          {/* タグ */}
+          {tags && tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mt-1">
+              {tags.map((tag) => (
+                <a href={`/books/tag/${tag}`} class="badge badge-outline hover:bg-base-200 transition-colors no-underline">
+                  # {tag}
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* アクションボタン（Amazon等） */}
+          <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-base-200">
+            {url && (
+              <a href={url} target="_blank" class="btn btn-primary btn-sm">
+                出版社のページ
+              </a>
+            )}
+            <a href={`https://www.amazon.co.jp/s?k=${title}`} target="_blank" class="btn btn-accent btn-sm">
+              Amazonで探す
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      {/* --- 本文（感想）エリア --- */}
+      {/* ここからは prose が適用される */}
+      <div class="prose-img:rounded-xl prose-img:shadow-lg">
+        <slot />
+      </div>
+
     </article>
   </main>
 </BaseLayout>

@@ -1,0 +1,113 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BookCard from "../../components/BookCard.astro";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { Page } from "astro";
+import { NullTypes } from "@prisma/client/runtime/client";
+
+export async function getStaticPaths({ paginate }) {
+  // booksコレクションを取得
+  const posts = await getCollection("books");
+  // 登録した日付の新しい順にソート
+  posts.sort((a, b) => b.data.regDate.valueOf() - a.data.regDate.valueOf());
+  // 1ページ10件で分割
+  return paginate(posts, { pageSize: 5 });
+}
+
+interface Props {
+  page: Page<CollectionEntry<"books">>;
+}
+
+const { page } = Astro.props;
+
+// ★設定: R2のバケットURL（末尾にスラッシュなし）
+// 画像パスが "https~" で始まらない場合、このURLを付与します
+const R2_BASE_URL = "https://assets.yoursite.com";
+// 画像URLを生成するヘルパー関数
+const getCoverImage = (img: string | undefined) => {
+  if (!img) return "no_image.png"; // デフォルト画像があればここに設定
+  if (img.startsWith("http")) return img; // 既にフルパスならそのまま
+  return `${R2_BASE_URL}/${img}`; // ファイル名ならR2のURLを結合
+};
+---
+
+<BaseLayout title="books" sideBarActiveItemID="books">
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">books</div>
+  </div>
+
+  {
+    page.data.length === 0 ? (
+      <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
+        <p class="font-bold">本はまだありません</p>
+        <p>新しい本の追加をお待ちください</p>
+      </div>
+    ) : (
+      <ul>
+        {page.data.map((post) => (
+          <div id={post.slug} class="scroll-mt-24 transition-colors duration-500 target:bg-base-200/50 target:p-2 target:rounded-lg">
+            <BookCard
+              title={post.data.title}
+              desc={post.data.description}
+              authors={post.data.authors}
+              translators={post.data.translators} 
+              publisher={post.data.publisher} 
+              pubDate={post.data.pubDate}
+              url={post.data.url}
+              img={post.data.heroImage || "/no_image.webp"}
+              status={post.data.status}
+              regDate={post.data.regDate}
+              beginDate={post.data.beginDate} 
+              endDate={post.data.endDate} 
+              badge={post.data.badge}
+              tags={post.data.tags}
+              slug={post.slug}
+              custom_tags_url={"/books/tag"}
+            />
+            <div class="divider my-0" />
+          </div>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="flex justify-between">
+    {
+      page.url.prev ? (
+        <a href={page.url.prev} class="btn btn-ghost my-10 mx-5">
+          <svg
+            class="h-6 w-6 fill-current md:h-8 md:w-8"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+          </svg>{" "}
+          Recent books
+        </a>
+      ) : (
+        <div />
+      )
+    }
+    {
+      page.url.next ? (
+        <a href={page.url.next} class="btn btn-ghost my-10 mx-5">
+          Older books{" "}
+          <svg
+            class="h-6 w-6 fill-current md:h-8 md:w-8"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+          </svg>
+        </a>
+      ) : (
+        <div />
+      )
+    }
+  </div>
+</BaseLayout>

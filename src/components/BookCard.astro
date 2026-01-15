@@ -1,0 +1,98 @@
+---
+const { title, img, authors, translators, publisher, desc, url, pubDate, status, regDate, beginDate, endDate, badge, tags, target = "_blank", format="webp", custom_tags_url, slug} = Astro.props;
+import { Image } from "astro:assets";
+import { transformer } from "astro:schema";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+// 空文字列をundefinedとして解釈
+const normalizeEmpty = (value) => !value || value === "" ? undefined : value;
+const normalizedUrl = normalizeEmpty(url);
+const normalizedImg = normalizeEmpty(img);
+
+const tag_url = custom_tags_url 
+  ? custom_tags_url 
+  : normalizedUrl?.split("/").slice(0, -1).join("/") + "/tag";
+const badges = Array.isArray(badge) ? badge.flat() : [badge];
+dayjs.extend(localizedFormat);
+const display_pubDate = dayjs(pubDate).format("YYYY/MM/DD")
+
+// ステータス・バッジの内容によって色を変えるロジック
+const getStatusClass = (text) => {
+  if (text === "積読") return "badge-info"; // 青系
+  if (text === "読書中") return "badge-warning"; // 黄色系
+  if (text === "読了") return "badge-success"; // 枠線のみ
+  return "badge-secondary"; // デフォルト（ピンク系）
+};
+
+const getBadgeClass = (text) => {
+  if (text === "おすすめ") return "badge-info"; // 青系
+  if (text === "難しい") return "badge-warning"; // 黄色系
+  if (text === "必読") return "badge-success"; // 枠線のみ
+  return "badge-secondary"; // デフォルト（ピンク系）
+};
+
+---
+
+<div
+  class="rounded-lg bg-base-100 hover:shadow-xl transition ease-in-out hover:scale-[102%]"
+>
+  <a href={`/books/${slug}`} target="_self">
+    <div class="flex flex-col p-3 gap-3">
+      <div class="flex flex-row items-start gap-4">
+        {
+          img && (
+            <div class="flex-shrink-0">
+              <Image
+                src={img}
+                width={750}
+                height={422}
+                format={format}
+                alt={title}
+                class={`w-[11rem] md:w-[10rem] rounded-lg`}
+              />
+            </div>
+          )
+        }
+        <div class="grow w-full">
+          <h1 class="text-lg font-bold">
+            {title} <br>
+            <div class={`badge ${getStatusClass(status)} badge-sm mx-1`}>{status}</div>
+            {
+              badges && 
+                badges.filter(Boolean).map((b) => (
+                  <div class={`badge ${getBadgeClass(b)} badge-sm mx-1`}>
+                    {b}
+                  </div>
+                ))
+            }
+          </h1>
+          <p>{`${authors} 著 ${translators ? "/ "+translators+" 訳" : ""}`}
+          </p>
+          <p></p>{`${publisher}　${display_pubDate}`}
+          <p class="py-1 text-sm">{desc}</p>
+          <div class="card-actions justify-begin gap-1">
+            {
+              tags &&
+                tags.map((tag) => (
+                  <a href={`${tag_url}/${tag}`} class="badge badge-outline badge-sm">
+                    # {tag}
+                  </a>
+                ))
+            }
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        {normalizedUrl && (
+          <a href={normalizedUrl} target={target} class="btn btn-primary btn-xs">
+            出版社
+          </a>
+        )}
+        <a href={`https://www.amazon.co.jp/s?k=${title}`} target="_blank" class="btn btn-accent btn-xs">
+          Amazon
+        </a>
+      </div>
+    </div>
+  </a>
+</div>

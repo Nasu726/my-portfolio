@@ -1,0 +1,118 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import BookCard from "../../../../components/BookCard.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths({ paginate }) {
+  // 1. 全本取得
+  const all_posts = await getCollection("books");
+  
+  // 2. すべての本からタグを抽出し、フラットな配列にする
+  const all_tags = all_posts.flatMap((post) => {
+    return post.data.tags || [];
+  });
+
+  // 3. 重複を除去してユニークなタグのリストを作成
+  const unique_tags = [...new Set(all_tags)];
+
+  // 4. タグごとにページを生成
+  return unique_tags.flatMap((tag) => {
+    // そのタグを含む本のみ抽出
+    const filtered_posts = all_posts.filter((post) => {
+      return post.data.tags && post.data.tags?.includes(tag);
+    });
+
+    // 日付順にソート
+    filtered_posts.sort((a, b) => b.data.regDate.valueOf() - a.data.regDate.valueOf());
+
+    return paginate(filtered_posts, {
+      params: { tag },
+      pageSize: 5,
+    });
+  });
+}
+
+const { page } = Astro.props;
+const params = Astro.params;
+---
+
+<BaseLayout title={"books - " + params.tag} sideBarActiveItemID="books">
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">books - {params.tag}</div>
+    <a href="/books" class="btn btn-outline btn-sm mt-4">← All books</a>
+  </div>
+
+  {
+    page.data.length === 0 ? (
+      <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
+        <p class="font-bold">このタグの本はまだありません</p>
+        <p>新しい本の追加をお待ちください</p>
+      </div>
+    ) : (
+      <ul>
+        {page.data.map((post) => (
+          <>
+            <BookCard
+              title={post.data.title}
+              desc={post.data.description}
+              authors={post.data.authors}
+              translators={post.data.translators} 
+              publisher={post.data.publisher} 
+              pubDate={post.data.pubDate}
+              url={post.data.url}
+              img={post.data.heroImage || "/no_image.webp"}
+              status={post.data.status}
+              regDate={post.data.regDate}
+              beginDate={post.data.beginDate} 
+              endDate={post.data.endDate} 
+              badge={post.data.badge}
+              tags={post.data.tags}
+              custom_tags_url={"/books/tag"}
+              slug={post.slug}
+            />
+            <div class="divider my-0" />
+          </>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="flex justify-between">
+    {
+      page.url.prev ? (
+        <a href={page.url.prev} class="btn btn-ghost my-10 mx-5">
+          <svg
+            class="h-6 w-6 fill-current md:h-8 md:w-8"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+          </svg>{" "}
+          Recent books
+        </a>
+      ) : (
+        <div />
+      )
+    }
+    {
+      page.url.next ? (
+        <a href={page.url.next} class="btn btn-ghost my-10 mx-5">
+          Older books{" "}
+          <svg
+            class="h-6 w-6 fill-current md:h-8 md:w-8"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+          </svg>
+        </a>
+      ) : (
+        <div />
+      )
+    }
+  </div>
+</BaseLayout>

@@ -8,7 +8,7 @@ pubDate: "2023-04-10"
 url: "https://www.iwanami.co.jp/book/b623507.html"
 heroImage: "https://img.hanmoto.com/bd/img/9784007313080_600.jpg?lastupdated=2023-03-29T16%3A09%3A15%2B09%3A00"
 status: "読書中" # 積読、読書中、読了、挫折
-regDate: "2026-01-15"
+regDate: "2026-01-16"
 beginDate: "2025-12-25"
 endDate: ""
 badge: "" # おすすめ、難しい、必読

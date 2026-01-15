@@ -19,7 +19,7 @@ const bookSchema = z.object({
     publisher: z.string(),
     pubDate: z.coerce.date(),
     url: z.string().optional(),
-    heroImage: z.string().optional().transform((str) => {return str || "/post_img.webp"}),
+    heroImage: z.string().optional().transform((str) => {return str || "/no_image.webp"}),
     status: z.string(),
     regDate: z.coerce.date(),
     beginDate: z.coerce.date().optional(),

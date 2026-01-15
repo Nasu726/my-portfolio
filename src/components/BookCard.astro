@@ -10,12 +10,21 @@ const normalizeEmpty = (value) => !value || value === "" ? undefined : value;
 const normalizedUrl = normalizeEmpty(url);
 const normalizedImg = normalizeEmpty(img);
 
+// 著者・翻訳者をフォーマットする関数
+// 配列の場合は "、" で結合する
+const formatPersonNames = (value: string | string[] | undefined) => {
+  if (!value) return null;
+  return Array.isArray(value) ? value.join("、") : value;
+};
+const displayAuthors = formatPersonNames(authors);
+const displayTranslators = formatPersonNames(translators);
+
 const tag_url = custom_tags_url 
   ? custom_tags_url 
   : normalizedUrl?.split("/").slice(0, -1).join("/") + "/tag";
 const badges = Array.isArray(badge) ? badge.flat() : [badge];
 dayjs.extend(localizedFormat);
-const display_pubDate = dayjs(pubDate).format("YYYY/MM/DD")
+const displayPubDate = dayjs(pubDate).format("YYYY年MM月DD日")
 
 // ステータス・バッジの内容によって色を変えるロジック
 const getStatusClass = (text) => {
@@ -68,9 +77,26 @@ const getBadgeClass = (text) => {
                 ))
             }
           </h1>
-          <p>{`${authors} 著 ${translators ? "/ "+translators+" 訳" : ""}`}
-          </p>
-          <p></p>{`${publisher}　${display_pubDate}`}
+          <!-- <p>{`${displayAuthors} 著 ${displayTranslators &&  "/ "+displayTranslators+" 訳"}`}</p>
+          <p></p>{`${publisher}　${display_pubDate} 発行`} -->
+          {/* 著者・翻訳者 */}
+          <div class="text-lg font-medium text-base-content/80 leading-relaxed">
+            {displayAuthors} <span class="text-sm opacity-70">著</span>
+            {displayTranslators && (
+              <>
+                <span class="mx-1 text-base-content/70">/</span>
+                {displayTranslators} <span class="text-sm opacity-70"> 訳</span>
+              </>
+            )}
+          </div>
+
+          {/* 出版社・出版日 */}
+          <div class="text-sm text-base-content/70">
+            {publisher && <span class="font-semibold">{publisher}</span>}
+            {publisher && pubDate && <span class="mx-2">|</span>}
+            {pubDate && (<time>{displayPubDate}</time> <span>出版</span>)}
+          </div>
+
           <p class="py-1 text-sm">{desc}</p>
           <div class="card-actions justify-begin gap-1">
             {

@@ -52,7 +52,7 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
             tags &&
               tags.map((tag) => (
                 <a href={`${tag_url}/${tag}`} class="badge badge-outline badge-sm">
-                  {tag}
+                  # {tag}
                 </a>
               ))
           }

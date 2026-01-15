@@ -1,0 +1,122 @@
+---
+import { type BookSchema } from "../content/config";
+import BaseLayout from "./BaseLayout.astro";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+export interface Props extends BookSchema {
+  slug?: string;
+}
+import { Image } from "astro:assets";
+import { filterPreloads } from "astro/assets/fonts/runtime";
+import { map } from "astro:schema";
+const { 
+    title, 
+    description, 
+    authors, 
+    translators, 
+    publisher, 
+    pubDate, 
+    url, 
+    heroImage, 
+    status, 
+    regDate, 
+    beginDate, 
+    endDate, 
+    badge, 
+    tags = [],
+    slug,
+} = Astro.props;
+
+// 空文字列をundefinedとして解釈
+const normalizeEmpty = (value) => !value || value === "" ? undefined : value;
+const normalizedHeroImage = normalizeEmpty(heroImage);
+const normalizedBeginDate = normalizeEmpty(beginDate);
+const normalizedEndDate = normalizeEmpty(endDate);
+
+const badges = Array.isArray(badge) ? badge.flat() : [badge];
+dayjs.extend(localizedFormat);
+const displayPubDate = dayjs(pubDate).format("YYYY-MM-DD");
+
+// 読み始めと読み終わりの期間を表示するフォーマット
+const getDateRange = () => {
+  // beginDateがundefinedの場合は、endDateがあっても無視
+  if (!normalizedBeginDate) return null;
+  if (!normalizedBeginDate && !normalizedEndDate) return null;
+  const begin = beginDate ? dayjs(beginDate).format("YYYY-MM-DD") : "";
+  const end = normalizedEndDate ? dayjs(normalizedEndDate).format("YYYY-MM-DD") : "読書中";
+  return `${begin} - ${end}`;
+};
+
+// ステータス・バッジの内容によって色を変えるロジック
+const getStatusClass = (text) => {
+  if (text === "積読") return "badge-info"; // 青系
+  if (text === "読書中") return "badge-warning"; // 黄色系
+  if (text === "読了") return "badge-success"; // 枠線のみ
+  return "badge-secondary"; // デフォルト（ピンク系）
+};
+
+const getBadgeClass = (text) => {
+  if (text === "おすすめ") return "badge-info"; // 青系
+  if (text === "難しい") return "badge-warning"; // 黄色系
+  if (text === "必読") return "badge-success"; // 枠線のみ
+  return "badge-secondary"; // デフォルト（ピンク系）
+};
+---
+
+<BaseLayout title={title} description={description} image={normalizedHeroImage}, ogType="article">
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
+      {normalizedHeroImage && <Image width={375} height={105} format="webp" src={normalizedHeroImage} alt={title} class="mb-6" />}
+      <h1 class="title my-2 text-4xl font-bold">{title}</h1>
+      <div class="flex flex-wrap gap-2 my-3">
+        {status && <div class={`badge ${getStatusClass(status)}`}>{status}</div>}
+        {badges && 
+          badges.filter(Boolean).map((b) => (
+            <div class={`badge ${getBadgeClass(b)}`}>
+              {b}
+            </div>
+          ))
+        }
+      </div>
+      <h2>{`${authors} 著`}</h2>
+      {pubDate && <time>{displayPubDate}</time>}
+      <br />
+      {publisher && <span class="font-semibold">{publisher}</span>}
+      <br />
+      {getDateRange() && <div class="text-sm text-base-content/70">読書期間: {getDateRange()}</div>}
+      <br />
+      <div class="flex flex-wrap gap-2 my-4">
+        {badges && 
+          badges.filter(Boolean).map((b) => (
+          <div class="badge badge-secondary my-1">
+            {b}
+          </div>
+          ))
+        }
+      </div>
+      {
+        tags &&
+          tags.map((tag) => (
+            <a href={`/books/tag/${tag}`} class="badge badge-outline ml-2 no-underline">
+              {tag}
+            </a>
+          ))
+      }
+      <div class="divider my-2"></div>
+      <div class="flex gap-2 mb-4">
+        {url && (
+          <a href={url} target="_blank" class="btn btn-primary btn-sm">
+            出版社
+          </a>
+        )}
+        <a href={`https://www.amazon.co.jp/s?k=${title}`} target="_blank" class="btn btn-accent btn-sm">
+          Amazon
+        </a>
+      </div>
+      <div class="divider my-2"></div>
+      <slot />
+      
+    </article>
+  </main>
+</BaseLayout>

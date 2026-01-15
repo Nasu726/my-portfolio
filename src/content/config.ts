@@ -1,4 +1,10 @@
 import { z, defineCollection } from "astro:content";
+// 再利用しやすいようにヘルパー定数を作っておくと便利です
+const optionalDate = z.preprocess((val) => {
+    // 値が空文字なら undefined (未定義) に変換する
+    return val === "" ? undefined : val;
+}, z.coerce.date().optional());
+
 const blogSchema = z.object({
     title: z.string(),
     description: z.string(),
@@ -22,8 +28,8 @@ const bookSchema = z.object({
     heroImage: z.string().optional().transform((str) => {return str || "/no_image.webp"}),
     status: z.string(),
     regDate: z.coerce.date(),
-    beginDate: z.coerce.date().optional(),
-    endDate: z.coerce.date().optional(),
+    beginDate: optionalDate,
+    endDate: optionalDate,
     badge: z.union([z.string(), z.array(z.string())]).optional(),
     tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
         message: 'tags must be unique',

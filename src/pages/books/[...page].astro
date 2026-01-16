@@ -20,16 +20,6 @@ interface Props {
 }
 
 const { page } = Astro.props;
-
-// ★設定: R2のバケットURL（末尾にスラッシュなし）
-// 画像パスが "https~" で始まらない場合、このURLを付与します
-const R2_BASE_URL = "https://assets.yoursite.com";
-// 画像URLを生成するヘルパー関数
-const getCoverImage = (img: string | undefined) => {
-  if (!img) return "no_image.png"; // デフォルト画像があればここに設定
-  if (img.startsWith("http")) return img; // 既にフルパスならそのまま
-  return `${R2_BASE_URL}/${img}`; // ファイル名ならR2のURLを結合
-};
 ---
 
 <BaseLayout title="books" sideBarActiveItemID="books">

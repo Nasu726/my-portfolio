@@ -10,6 +10,16 @@ const normalizeEmpty = (value) => !value || value === "" ? undefined : value;
 const normalizedUrl = normalizeEmpty(url);
 const normalizedImg = normalizeEmpty(img);
 
+const R2_DOMAIN = "https://assets.mypage.nasu.uk";
+// 画像URLを正規化するロジック
+const getImageUrl = (path) => {
+  if (!path) return path;
+  if (path.startsWith("http")) return path;
+  // 先頭に / があるかないか吸収して結合
+  return `${R2_DOMAIN}/${path.replace(/^\//, '')}`;
+};
+const displayHeroImage = getImageUrl(normalizedImg);
+
 // 著者・翻訳者をフォーマットする関数
 // 配列の場合は "、" で結合する
 const formatPersonNames = (value: string | string[] | undefined) => {
@@ -60,7 +70,7 @@ const getBadgeClass = (text) => {
           img && (
             <div class="flex-shrink-0">
               <Image
-                src={img}
+                src={displayHeroImage}
                 width={750}
                 height={422}
                 format={format}

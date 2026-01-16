@@ -8,6 +8,6 @@ export default defineConfig({
   site: 'https://mypage.nasu.uk',
   integrations: [mdx(), sitemap(), tailwind()],
   image: {
-    domains: ["www.hanmoto.com"]
+    domains: ["www.hanmoto.com", "assets.mypage.nasu.uk"]
   },
 });

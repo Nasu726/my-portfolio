@@ -17,6 +17,7 @@ const {
   publisher, 
   pubDate, 
   url, 
+  asin,
   heroImage, 
   status, 
   regDate, 
@@ -54,6 +55,12 @@ const getDateRange = () => {
   const end = normalizedEndDate ? dayjs(normalizedEndDate).format("YYYY年MM月DD日") : "読書中";
   return `${begin} ～ ${end}`;
 };
+
+// ★Amazonリンク作成ロジック
+// asinがある場合は直リンク(/dp/ASIN)、ない場合はタイトル検索(/s?k=タイトル)
+const amazonUrl = asin
+  ? `https://www.amazon.co.jp/dp/${asin}` 
+  : `https://www.amazon.co.jp/s?k=${encodeURIComponent(title)}`;
 
 // ステータス・バッジの内容によって色を変えるロジック
 const getStatusClass = (text) => {
@@ -157,8 +164,8 @@ const getBadgeClass = (text) => {
                 出版社のページ
               </a>
             )}
-            <a href={`https://www.amazon.co.jp/s?k=${title}`} target="_blank" class="btn btn-accent btn-sm">
-              Amazonで探す
+            <a href={amazonUrl} target="_blank" class="btn btn-accent btn-sm">
+              Amazonで購入する
             </a>
           </div>
 

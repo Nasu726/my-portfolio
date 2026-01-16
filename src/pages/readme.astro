@@ -27,7 +27,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   <div class="divider my-3"/> <!-- 区切り線 -->
 
   <div class="my-3 text-xl w-full font-bold">Readme</div>
-    <p>このページです。マイページの概要についてまとめています。</p>
+    <p>このページです。マイページの概要や注意事項、サイトの更新予定などについてまとめています。</p>
 
   <div class="divider my-3"/> <!-- 区切り線 -->
 
@@ -36,7 +36,12 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     <p>カードをクリックするとプロジェクト(またはGitHubリポジトリ)にジャンプします。</p>
     <p>カード上部にはバッジが付いていて、リリースから30日以内のプロジェクトには「New」バッジが付いています。</p>
     <p>カード下部のタグをクリックすると、同じタグが付いたプロジェクトを絞り込んで検索できます。</p>
-
+    <br>
+    <p class="font-semibold">※注意</p>
+    <ul class="list-disc pl-5">
+      <li>利用時には各プロジェクトごとの注意書きやライセンス表記に従ってください。</li>
+      <li>ブログやSNSでの紹介のための引用は自由にしていただいて構いません。ただし、作者名やリンクなどが分かるように明記してください。</li>
+    </ul>
   <div class="divider my-3"/> <!-- 区切り線 -->
 
   <div class="my-3 text-xl w-full font-bold">Blog</div>
@@ -44,15 +49,32 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     <p>カードをクリックするとブログ本文を読めます。</p>
     <p>カード上部にはバッジが付いていて、リリースから30日以内のブログには「New」バッジが付いています。</p>
     <p>カード下部のタグをクリックすると、同じタグが付いたブログを絞り込んで検索できます。</p>
+    <br>
+    <p class="font-semibold">※注意</p>
+    <ul class="list-disc pl-5">
+      <li>ブログやSNSでの紹介のためおよび参考資料としての引用は自由にしていただいて構いません。ただし、引用箇所や参考文献欄などにブログリンクを明記してください。</li>
+    </ul>
 
   <div class="divider my-3"/> <!-- 区切り線 -->
 
   <div class="my-3 text-xl w-full font-bold">Books</div>
-    <p>購入した本をカードにしてまとめています。</p>
+    <p>購入した本(積読含む)をカードにしてまとめています。</p>
     <p>カードをクリックすると読書メモを読めます。</p>
     <p>書影下部または読書メモ上部のボタンから、出版社やAmazonのページにジャンプできます。</p>
     <p>カード上部にはステータスバッジが付いていて、読書の進行状況やおすすめ度が見られます。</p>
     <p>カード下部のタグをクリックすると、同じタグが付いた本を絞り込んで検索できます。</p>
+    <br>
+    <p class="font-semibold">※注意(著作権に関して)</p>
+    <ul class="list-disc pl-5">
+      <li>書影は以下のものを使用しています。</li>
+      <ol class="list-decimal pl-9">
+        <li>版元ドットコム<a href="https://www.hanmoto.com" class="underline" target="_blank">(https://www.hanmoto.com)</a>で【利用可】と書かれているもの。</li>
+        <li>1.にあてはまらず、自分で撮影したもの。</li>
+      </ol>
+      <li>読書メモが主体である本文にあたり、その本の紹介および一意性(出版社などの区別)の確保を目的として書影を載せています。</li>
+      <li>積読ページという性質上、未読や読みかけの本については本文が非常に短く、本文と引用部の主従関係が不明確な場合があります。「積読」ステータスなどの明記をしておりますので、意図的な主従関係の転倒でないことにご注意ください。</li>
+      <li>本棚形式のディスプレイはサイト内の検索性を向上させるためのものであり、むやみに書影を掲載してページを装飾するといった意図はありません。</li>
+    </ul>
 
   <div class="divider my-3"/> <!-- 区切り線 -->
 
@@ -68,7 +90,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="my-3 text-xl w-full font-bold">Others</div>
     <dl class="grid grid-cols-[auto_1fr] gap-y-2 text-sm">
-      <dt class="font-bold">サイドバー下部のアイコン：</dt>
+      <dt class="font-bold"><p>サイドバー</p><p>下部のアイコン：</p></dt>
       <dd class="pl-2">クリックすると各種外部サイトにアクセスできます。</dd>
       <dt class="font-bold">ヘッダー：</dt>
       <dd class="pl-2">

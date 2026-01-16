@@ -1,15 +1,16 @@
 ---
 title: "リーダブルコード　より良いコードを書くためのシンプルで実践的なテクニック"
-description: "可読性の高いコードを書くために意識するべき点やテクニックをまとめた本"
+description: ""
 authors: ["Dustin Boswell", "Trevor Foucher"]
 translators: ["角征典"]
 publisher: "O'REILLY"
 pubDate: "2012-06-22"
-url: ""
-heroImage: ""
+url: "https://www.oreilly.co.jp/books/9784873115658/"
+asin: "4873115655"
+heroImage: "readablecode.webp"
 status: "読書中" # 積読、読書中、読了、挫折
 regDate: "2026-01-16"
-beginDate: ""
+beginDate: "2025-06-01"
 endDate: ""
 badge: "" # おすすめ、難しい、必読
 tags: ["技術書", "プログラミング"]

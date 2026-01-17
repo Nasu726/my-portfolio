@@ -4,7 +4,6 @@ import BookCard from "../../components/BookCard.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { Page } from "astro";
-import { NullTypes } from "@prisma/client/runtime/client";
 import { Image } from "astro:assets";
 
 export async function getStaticPaths({ paginate }) {
@@ -34,49 +33,73 @@ const getImageUrl = (path) => {
 
 <BaseLayout title="books" sideBarActiveItemID="books">
 
-  <div class="mb-5">
+  <div class="relative z-0 pl-2">
     <div class="text-3xl w-full font-bold">Books</div>
   </div>
 
   {/* ========================================== */}
-  {/* ★ここに追加: ページ上部の「ミニ本棚」エリア */}
+  {/* ミニ本棚エリア */}
   {/* ========================================== */}
   {page.data.length > 0 && (
-    <div class="w-full bg-base-200/50 rounded-xl p-6 mb-10 shadow-inner overflow-hidden">
-      {/* 棚の板（flex-wrapなし＝1行に収める） */}
-      <div class="flex items-end overflow-x-auto justify-center gap-2 md:gap-6 border-b-8 border-[#8B4513]/40 pb-0 px-4 h-[150px] md:h-[180px] scrollbar-hide">
-        {page.data.map((book) => {
-          const coverSrc = getImageUrl(book.data.heroImage);
-          return (
-            <a 
-              href={`#${book.slug}`} 
-              class="flex-shrink-0 tooltip tooltip-bottom relative group transition-transform hover:-translate-y-2 duration-300 ease-out origin-bottom"
-              data-tip={book.data.title}
-            >
-              <div class="w-[5rem] md:w-[5rem] aspect-[2/3] rounded-sm shadow-md overflow-hidden bg-base-100 relative">
-                {coverSrc ? (
-                  <Image 
-                    src={coverSrc} 
-                    width={100} 
-                    height={150} 
-                    format="webp" 
-                    alt={book.data.title}
-                    class="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div class="w-full h-full flex items-center justify-center bg-base-300 text-[10px] text-base-content/50 p-1 text-center">
-                    No Image
-                  </div>
-                )}
-              </div>
-            </a>
-          );
-        })}
-        {/* スクロール時の右端の余白調整用ダミー要素 */}
-        <div class="w-1 flex-shrink-0 md:hidden"></div>
+    /* 外枠 */
+    <div class="relative w-full -mt-12 z-20">
+      
+      {/* 背景レイヤー（見た目の箱） */}
+      <div class="absolute bottom-0 left-0 right-0 h-[170px] bg-base-200/50 rounded-xl shadow-inner z-0"></div>
+
+      {/* スクロールレイヤー（機能の箱） */}
+      <div id="shelf-scroll-area" class="relative z-10 overflow-x-auto overflow-y-hidden touch-pan-x pt-16 h-[230px] scrollbar-hide">
+        
+        <div class="flex items-end min-w-full w-fit mx-auto justify-center gap-4 md:gap-6 px-4 pb-2 h-full relative">
+          
+          {/* 棚板のライン 
+              bottom-0: 一番下に配置
+              w-full: 親要素（min-w-full w-fit）に合わせて線を引く
+          */}
+          <div class="absolute bottom-0 left-0 right-0 border-b-8 border-[#8B4513]/40 w-full z-0"></div>
+
+          {page.data.map((book) => {
+            const coverSrc = getImageUrl(book.data.heroImage);
+            return (
+              <a 
+                href={`#${book.slug}`} 
+                class="flex-shrink-0 relative group transition-transform hover:-translate-y-2 duration-300 ease-out origin-bottom z-10"
+              >
+                {/* 自作ツールチップ */}
+                <div class="absolute bottom-[115%] left-1/2 -translate-x-1/2 w-[110px] md:w-[130px] p-2 bg-neutral text-neutral-content text-[10px] md:text-xs text-center rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg leading-tight break-words z-30">
+                  {book.data.title}
+                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral"></div>
+                </div>
+
+                {/* 本の画像 */}
+                <div class="w-[70px] md:w-[90px] aspect-[2/3] rounded-sm shadow-md overflow-hidden bg-base-100 relative">
+                  {coverSrc ? (
+                    <Image 
+                      src={coverSrc} 
+                      width={100} 
+                      height={150} 
+                      format="webp" 
+                      alt={book.data.title}
+                      class="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center bg-base-300 text-[10px] text-base-content/50 p-1 text-center">
+                      No Image
+                    </div>
+                  )}
+                  
+                </div>
+              </a>
+            );
+          })}
+        </div>
       </div>
-      <p class="text-center text-xs mt-2 opacity-50 md:hidden">← スクロールできます →</p>
-      <p class="text-center text-xs mt-2 opacity-50">クリックで詳細へジャンプ</p>
+      
+      {/* 案内テキスト */}
+      <div class="relative z-10">
+        <p id="scroll-hint" class="text-center text-xs mt-[-2px] pb-2 opacity-50 md:hidden">← スクロールできます →</p>
+        <p class="md:block text-center text-xs mt-[-2px] pb-2 opacity-50">クリックで詳細へジャンプ</p>
+      </div>
     </div>
   )}
   {/* ========================================== */}
@@ -195,3 +218,35 @@ const getImageUrl = (path) => {
     }
   </div>
 </BaseLayout>
+
+<style is:global>
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
+
+<script>
+  function checkScroll() {
+    const scrollArea = document.getElementById('shelf-scroll-area');
+    const hint = document.getElementById('scroll-hint');
+
+    if (!scrollArea || !hint) return;
+
+    // scrollWidth（中身の本当の幅） > clientWidth（見えている幅） なら、はみ出している
+    const isOverflowing = scrollArea.scrollWidth > scrollArea.clientWidth;
+
+    if (isOverflowing) {
+      // はみ出しているなら表示
+      hint.classList.remove('opacity-0');
+    } else {
+      // 収まっているなら隠す
+      hint.classList.add('opacity-0');
+    }
+  }
+
+  // ページ読み込み時と、画面サイズ変更時にチェックを実行
+  window.addEventListener('load', checkScroll);
+  window.addEventListener('resize', checkScroll);
+  // Astroのページ遷移に対応（View Transitionsを使っている場合用）
+  document.addEventListener('astro:page-load', checkScroll);
+</script>

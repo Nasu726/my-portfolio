@@ -2,12 +2,19 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import HorizontalShopItem from "../../components/HorizontalShopItem.astro";
 import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { Page } from "astro";
 
 export async function getStaticPaths({ paginate }) {
   const items = await getCollection("store");
   items.sort((a, b) => b.data.updatedDate.valueOf() - a.data.updatedDate.valueOf());
   return paginate(items, { pageSize: 10 });
 }
+
+interface Props {
+  page: Page<CollectionEntry<"store">>;
+}
+
 const { page } = Astro.props;
 ---
 
@@ -24,7 +31,6 @@ const { page } = Astro.props;
             oldPricing={item.data.oldPricing}
             checkoutUrl={item.data.checkoutUrl}
             badge={item.data.badge}
-            details={item.data.details}
             tags={item.data.tags}
             url={"/store/" + item.slug}
             custom_link={item.data.custom_link}

@@ -5,7 +5,7 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://mypage.nasu.uk',
+  site: 'https://nasu.uk',
   integrations: [mdx(), sitemap(), tailwind()],
   image: {
     domains: ["www.hanmoto.com", "assets.nasu.uk"]

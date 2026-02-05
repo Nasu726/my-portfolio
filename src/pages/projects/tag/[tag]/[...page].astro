@@ -38,8 +38,8 @@ const params = Astro.params;
 
 <BaseLayout title={"Projects - " + params.tag} sideBarActiveItemID="projects">
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Projects - {params.tag}</div>
-    <a href="/projects" class="btn btn-outline btn-sm mt-4">← All Projects</a>
+    <div class="text-3xl w-full font-bold">Works - {params.tag}</div>
+    <a href="/projects" class="btn btn-outline btn-sm mt-4">← All Works</a>
   </div>
 
   {
@@ -83,7 +83,7 @@ const params = Astro.params;
           >
             <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
           </svg>{" "}
-          Recent projects
+          Recent Works
         </a>
       ) : (
         <div />
@@ -92,7 +92,7 @@ const params = Astro.params;
     {
       page.url.next ? (
         <a href={page.url.next} class="btn btn-ghost my-10 mx-5">
-          Older Projects{" "}
+          Older Works{" "}
           <svg
             class="h-6 w-6 fill-current md:h-8 md:w-8"
             xmlns="http://www.w3.org/2000/svg"

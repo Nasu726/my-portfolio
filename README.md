@@ -1,4 +1,4 @@
-https://mypage.nasu.uk
+https://nasu.uk
 
 ## About this site
 ここではマイページの概要についてまとめています。

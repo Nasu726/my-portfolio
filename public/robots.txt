@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mypage.nasu.uk/sitemap-index.xml
+Sitemap: https://nasu.uk/sitemap-index.xml

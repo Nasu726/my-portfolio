@@ -11,13 +11,8 @@ tags: ["Release", "Visualizer", "Brainfuck", "React", "C++"]  # キーワード
 
 C++の勉強を兼ねて、Brainfuckのビジュアライザを作成・公開しました。
 
-<<<<<<< HEAD
 - ビジュアライザのページは<a href="https://algoviz.nasu.uk" target="_blank"><b>こちら</b></a> 。
 - ビジュアライザのGitHubリポジトリは<a href="https://github.com/Nasu726/AlgoViz" target="_blank"><b>こちら</b></a> 。
-=======
-- ビジュアライザのページは<a href="https://algoviz.nasu.uk" target="_blank"><b>こちら</b></a>
-- ビジュアライザのGitHubリポジトリは<a href="https://github.com/Nasu726/Algoviz" target="_blank"><b>こちら</b></a>
->>>>>>> 3d76155c5f30f1ad279c0bd92b7a28a2c69ea001
 
 Brainfuckは難解プログラミング言語(esolang)の一つとして知られています。esolangのうちでは有名ですが、書いたことがある人はあまり多くないでしょう。命令が非常に単純であるがゆえに書きづらいことが挑戦への壁になっているうえ、それを乗り越えてもなお高級言語同様のプログラムを書くことは非常に困難です。そこで、Brainfuckの**実行時の動作を可視化**し、**変数宣言の機能を追加**してアドレスを追いやすくすることで快適なBrainfuckコーディングが体験できるようなビジュアライザを作成しました。書いたコードは純粋なBrainfuckと同様に動作し、**気に入ったコードは保存**することもできます。このビジュアライザでBrainfuckに入門し、自分が思った通りの動作をBrainfuckで実現してみませんか？
 

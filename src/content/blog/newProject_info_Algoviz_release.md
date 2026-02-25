@@ -1,7 +1,7 @@
 ---
 pubDate: "Feb 22 2026"
 title: "Brainfuckビジュアライザを公開"
-description: "Brainfuckの動作を可視化するビジュアライザを公開。様々なアルゴリズムやデータ構造、機械の動作を可視化するビジュアライザアプリAlgovizの第1弾。" # タイトルの下に出る概要
+description: "Brainfuckの動作を可視化するビジュアライザを公開。様々なアルゴリズムやデータ構造、機械の動作を可視化するビジュアライザアプリAlgoVizの第1弾。" # タイトルの下に出る概要
 heroImage: "/vite.webp"  # 空文字列でデフォルト画像 
 badge: ["WORK", "v1.0"] # 短いアピール(Update, v1.0, FOSS, Premium, Recommended)
 tags: ["Release", "Visualizer", "Brainfuck", "React", "C++"]  # キーワード
@@ -12,13 +12,13 @@ tags: ["Release", "Visualizer", "Brainfuck", "React", "C++"]  # キーワード
 C++の勉強を兼ねて、Brainfuckのビジュアライザを作成・公開しました。
 
 - ビジュアライザのページは<a href="https://algoviz.nasu.uk" target="_blank"><b>こちら</b></a> 。
-- ビジュアライザのGitHubリポジトリは<a href="https://github.com/Nasu726/Algoviz" target="_blank"><b>こちら</b></a> 。
+- ビジュアライザのGitHubリポジトリは<a href="https://github.com/Nasu726/AlgoViz" target="_blank"><b>こちら</b></a> 。
 
 Brainfuckは難解プログラミング言語(esolang)の一つとして知られています。esolangのうちでは有名ですが、書いたことがある人はあまり多くないでしょう。命令が非常に単純であるがゆえに書きづらいことが挑戦への壁になっているうえ、それを乗り越えてもなお高級言語同様のプログラムを書くことは非常に困難です。そこで、Brainfuckの**実行時の動作を可視化**し、**変数宣言の機能を追加**してアドレスを追いやすくすることで快適なBrainfuckコーディングが体験できるようなビジュアライザを作成しました。書いたコードは純粋なBrainfuckと同様に動作し、**気に入ったコードは保存**することもできます。このビジュアライザでBrainfuckに入門し、自分が思った通りの動作をBrainfuckで実現してみませんか？
 
 
-## Algovizの紹介
-Algovizは様々なアルゴリズムやデータ構造、機械の動作を可視化するビジュアライザを統合したWebアプリケーションとなることを目指しています。VisuAlgoの完全日本語版+αを一つの目標として、これからもビジュアライザを追加する予定です。
+## AlgoVizの紹介
+AlgoVizは様々なアルゴリズムやデータ構造、機械の動作を可視化するビジュアライザを統合したWebアプリケーションとなることを目指しています。VisuAlgoの完全日本語版+αを一つの目標として、これからもビジュアライザを追加する予定です。
 
 ### 構成
 - React (Vite)

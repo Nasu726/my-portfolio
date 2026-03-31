@@ -20,7 +20,7 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
             height={422}
             format={format}
             alt={title}
-            class={`w-[11rem] md:w-[10rem] rounded-lg ${imgDark ? "block dark:hidden" : ""}`}
+            class={`w-[11rem] md:w-[10rem] max-h-20 max-w-28 object-contain bg-slate-100 rounded-lg [&[src$='.svg']]:p-2 ${imgDark ? "block dark:hidden" : ""}`}
           />
         )
       }
@@ -31,7 +31,7 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
           height={422}
           format={format}
           alt={title}
-          class="w-[11rem] md:w-[10rem] rounded-lg hidden dark:block"
+          class="w-[11rem] md:w-[10rem] max-h-20 max-w-28 object-contain rounded-lg p-2 hidden dark:block"
         />
       )}
       <div class="grow w-full">

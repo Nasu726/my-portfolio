@@ -2,7 +2,7 @@
 pubDate: "Feb 22 2026"
 title: "Brainfuckビジュアライザを公開"
 description: "Brainfuckの動作を可視化するビジュアライザを公開。様々なアルゴリズムやデータ構造、機械の動作を可視化するビジュアライザアプリAlgoVizの第1弾。" # タイトルの下に出る概要
-heroImage: "/vite.webp"  # 空文字列でデフォルト画像 
+heroImage: "/vite.svg"  # 空文字列でデフォルト画像 
 badge: ["WORK", "v1.0"] # 短いアピール(Update, v1.0, FOSS, Premium, Recommended)
 tags: ["Release", "Visualizer", "Brainfuck", "React", "C++"]  # キーワード
 ---

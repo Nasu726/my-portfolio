@@ -18,7 +18,7 @@ import { map } from "astro:schema";
 <BaseLayout title={title} description={description} image={heroImage}, ogType="article">
   <main class="md:flex md:justify-center">
     <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
-      {heroImage && <Image width={750} height={422} format="webp" src={heroImage} alt={title} class="w-full mb-6" />}
+      {heroImage && <Image width={400} height={200} format="webp" src={heroImage} alt={title} class="w-full bg-slate-100 max-h-[300px] object-contain p-8 md:p-16 mb-6 items-center justify-center" />}
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
       {pubDate && <time>{displayDate}</time>}
       <br />
@@ -50,3 +50,67 @@ import { map } from "astro:schema";
     </article>
   </main>
 </BaseLayout>
+
+<script>
+  const codeBlocks = document.querySelectorAll('pre');
+
+  codeBlocks.forEach((block) => {
+    if (!block.parentNode) return;
+
+    // 【変更点1】 preタグを包み込むための新しいdiv（ラッパー）を作る
+    const wrapper = document.createElement('div');
+    wrapper.className = 'relative group mb-4'; // mb-4などで下の余白を少し持たせると綺麗です
+
+    // 【変更点2】 HTMLの構造を書き換えて、preタグをラッパーの中に入れる
+    block.parentNode.insertBefore(wrapper, block);
+    wrapper.appendChild(block);
+
+    // 1. コピーボタン本体を作成
+    const copyButton = document.createElement('button');
+    copyButton.className = `
+      absolute top-2 right-2 px-2 py-1 
+      bg-slate-700/80 hover:bg-slate-600 text-white text-sm rounded 
+      opacity-100 duration-200
+      z-10 /* ボタンがコードの文字の下に潜らないようにする保険 */
+    `;
+    
+    // 2. 「Copy」という文字の要素を作成
+    const textSpan = document.createElement('span');
+    textSpan.innerText = 'Copy';
+    copyButton.appendChild(textSpan);
+
+    // 3. ツールチップ（Copied!）の要素を作成
+    const tooltip = document.createElement('span');
+    tooltip.className = `
+      absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 
+      bg-green-600/90 text-white text-xs rounded 
+      opacity-0 transition-opacity duration-200 pointer-events-none whitespace-nowrap
+    `;
+    tooltip.innerText = 'Copied!';
+    copyButton.appendChild(tooltip);
+
+    // クリックイベント
+    copyButton.addEventListener('click', async () => {
+      const code = block.querySelector('code')?.innerText || '';
+      
+      try {
+        await navigator.clipboard.writeText(code);
+        
+        // ツールチップを表示
+        tooltip.classList.remove('opacity-0');
+        tooltip.classList.add('opacity-100');
+        
+        // 2秒後に再び透明に戻す
+        setTimeout(() => {
+          tooltip.classList.remove('opacity-100');
+          tooltip.classList.add('opacity-0');
+        }, 1250);
+      } catch (err) {
+        console.error('コピーに失敗しました', err);
+      }
+    });
+
+    // 【変更点3】 ボタンは pre の中ではなく、ラッパー(外側)に追加する！
+    wrapper.appendChild(copyButton);
+  });
+</script>

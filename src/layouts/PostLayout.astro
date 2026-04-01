@@ -11,8 +11,8 @@ const badges = Array.isArray(badge) ? badge.flat() : [badge];
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(pubDate).format("ll")
 import { Image } from "astro:assets";
-import { filterPreloads } from "astro/assets/fonts/runtime";
-import { map } from "astro:schema";
+// import { filterPreloads } from "astro/assets/fonts/runtime";
+// import { map } from "astro:schema";
 ---
 
 <BaseLayout title={title} description={description} image={heroImage}, ogType="article">

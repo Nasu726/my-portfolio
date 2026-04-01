@@ -23,6 +23,10 @@ interface Props {
 const { entry } = Astro.props;
 const post = entry.data;
 const { Content, headings } = await entry.render();
+
+const cleanText = entry.body.replace(/[\s\n#*`_\[\]()\-]/g, "");
+const charCount = cleanText.length;
+const readingTime = Math.ceil(charCount / 500); // 1分あたり500文字として換算
 ---
 
 <PostLayout
@@ -33,6 +37,7 @@ const { Content, headings } = await entry.render();
   updatedDate={post.updatedDate}
   badge={post.badge}
   tags={post.tags}
+  readingTime={readingTime}
 >
   <TableOfContents headings={headings} />
   <Content />

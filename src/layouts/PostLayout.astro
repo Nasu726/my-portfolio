@@ -17,7 +17,7 @@ import { map } from "astro:schema";
 
 <BaseLayout title={title} description={description} image={heroImage}, ogType="article">
   <main class="md:flex md:justify-center">
-    <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
+    <article class="prose max-w-[750px] prose-img:mx-auto text-base">
       {heroImage && <Image width={400} height={200} format="webp" src={heroImage} alt={title} class="w-full max-h-[300px] object-contain [&[src$='.svg']]:bg-slate-100 p-8 md:p-16 mb-6 items-center justify-center" />}
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
       {pubDate && <time>{displayDate}</time>}
@@ -51,11 +51,16 @@ import { map } from "astro:schema";
   </main>
 </BaseLayout>
 
+
 <script>
   const codeBlocks = document.querySelectorAll('pre');
 
   codeBlocks.forEach((block) => {
     if (!block.parentNode) return;
+
+    if (block.getAttribute('data-language') === 'mermaid' || block.classList.contains('mermaid')) {
+      return;
+    }
 
     // 【変更点1】 preタグを包み込むための新しいdiv（ラッパー）を作る
     const wrapper = document.createElement('div');

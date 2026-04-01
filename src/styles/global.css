@@ -10,3 +10,19 @@
 .scrollbar-hide {
     scrollbar-width: none;
 }
+
+mjx-container svg {
+  display: inline-block !important;
+}
+
+/* 🌟 ダークモードの時だけMermaidの色を反転させる魔法 */
+html.dark .mermaid,
+html[data-theme="dark"] .mermaid,
+html[data-theme="dracula"] .mermaid, /* Astrofyでよく使われるダークテーマ名 */
+html[data-theme="night"] .mermaid,
+html[data-theme="business"] .mermaid {
+  /* 白黒を反転させつつ、元の色味(青や赤)は維持する */
+  filter: invert(0.95) hue-rotate(180deg);
+  /* ふわっと切り替わるアニメーション */
+  transition: filter 0.3s ease; 
+}

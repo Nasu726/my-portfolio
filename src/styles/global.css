@@ -15,6 +15,22 @@ mjx-container svg {
   display: inline-block !important;
 }
 
+/* 1. スルスルっと滑らかにスクロールさせる魔法 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 2. アンカーリンクで飛んだ際、上部に「見えない余白」を作る */
+/* これで固定ヘッダーの下に文字が潜り込むのを防ぎます */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  scroll-margin-top: 100px; /* 👈 ヘッダーの高さに合わせて数字(80px~120px等)を微調整してください */
+}
+
 /* 🌟 ダークモードの時だけMermaidの色を反転させる魔法 */
 html.dark .mermaid,
 html[data-theme="dark"] .mermaid,

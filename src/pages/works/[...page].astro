@@ -6,8 +6,8 @@ import type { CollectionEntry } from "astro:content";
 import type { Page } from "astro";
 
 export async function getStaticPaths({ paginate }) {
-  // projectsコレクションを取得
-  const posts = await getCollection("projects");
+  // worksコレクションを取得
+  const posts = await getCollection("works");
   // 日付の新しい順にソート
   posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   // 1ページ10件で分割
@@ -15,7 +15,7 @@ export async function getStaticPaths({ paginate }) {
 }
 
 interface Props {
-  page: Page<CollectionEntry<"projects">>;
+  page: Page<CollectionEntry<"works">>;
 }
 
 const { page } = Astro.props;
@@ -45,7 +45,7 @@ const { page } = Astro.props;
               target="_blank"
               badge={post.data.badge}
               tags={post.data.tags}
-              custom_tags_url={"/projects/tag"}
+              custom_tags_url={"/works/tag"}
             />
             <div class="divider my-0" />
           </>

@@ -6,8 +6,8 @@ import createSlug from "../lib/createSlug";
 import { isNew } from "../lib/utils";
 
 // 最近のプロジェクトを取得
-const projects = (await getCollection("projects")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const last_projects = projects.slice(0, 3);
+const works = (await getCollection("works")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const last_works = works.slice(0, 3);
 
 // 最近のブログを取得
 const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -38,20 +38,20 @@ const last_posts = posts.slice(0, 3);
   </div>
 
   {
-    last_projects.map((project) => (
+    last_works.map((work) => (
       <>
         <HorizontalCard
-          title={project.data.title}
-          img={project.data.heroImage}
-          imgDark={project.data.heroImageDark} // ダークモード画像対応
-          desc={project.data.description}
-          url={project.data.url}
+          title={work.data.title}
+          img={work.data.heroImage}
+          imgDark={work.data.heroImageDark} // ダークモード画像対応
+          desc={work.data.description}
+          url={work.data.url}
           badge={[
-            isNew(project.data.pubDate) && "NEW",
-            project.data.badge
+            isNew(work.data.pubDate) && "NEW",
+            work.data.badge
           ]}
-          tags={project.data.tags}
-          custom_tags_url="/projects/tag"
+          tags={work.data.tags}
+          custom_tags_url="/works/tag"
         />
         <div class="divider my-0" />
       </>

@@ -5,7 +5,7 @@ import { getCollection } from "astro:content";
 
 export async function getStaticPaths({ paginate }) {
   // 1. 全プロジェクト取得
-  const all_posts = await getCollection("projects");
+  const all_posts = await getCollection("works");
   
   // 2. すべてのプロジェクトからタグを抽出し、フラットな配列にする
   const all_tags = all_posts.flatMap((post) => {
@@ -36,10 +36,10 @@ const { page } = Astro.props;
 const params = Astro.params;
 ---
 
-<BaseLayout title={"Projects - " + params.tag} sideBarActiveItemID="projects">
+<BaseLayout title={"works - " + params.tag} sideBarActiveItemID="works">
   <div class="mb-5">
     <div class="text-3xl w-full font-bold">Works - {params.tag}</div>
-    <a href="/projects" class="btn btn-outline btn-sm mt-4">← All Works</a>
+    <a href="/works" class="btn btn-outline btn-sm mt-4">← All Works</a>
   </div>
 
   {
@@ -61,7 +61,7 @@ const params = Astro.params;
               target="_blank"
               badge={post.data.badge}
               tags={post.data.tags}
-              custom_tags_url={"/projects/tag"}
+              custom_tags_url={"/works/tag"}
             />
             <div class="divider my-0" />
           </>

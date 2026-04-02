@@ -54,7 +54,7 @@ const storeSchema = z.object({
     heroImage: z.string().optional(),
 });
 
-const projectSchema = z.object({
+const workSchema = z.object({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
@@ -70,16 +70,16 @@ const projectSchema = z.object({
 export type BlogSchema = z.infer<typeof blogSchema>;
 export type BookSchema = z.infer<typeof bookSchema>;
 export type StoreSchema = z.infer<typeof storeSchema>;
-export type ProjectSchema = z.infer<typeof projectSchema>;
+export type WorkSchema = z.infer<typeof workSchema>;
 
 const blogCollection = defineCollection({ schema: blogSchema });
 const bookCollection = defineCollection({ schema: bookSchema });
 const storeCollection = defineCollection({ schema: storeSchema });
-const projectCollection = defineCollection({ schema: projectSchema });
+const workCollection = defineCollection({ schema: workSchema });
 
 export const collections = {
     'blog': blogCollection,
     'books': bookCollection,
     'store': storeCollection,
-    'projects': projectCollection,
+    'works': workCollection,
 }

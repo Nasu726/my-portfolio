@@ -26,8 +26,6 @@ const { page } = Astro.props;
     <div class="text-3xl w-full font-bold">Blog</div>
   </div>
 
-  <TagSearch />
-
   {
     page.data.length === 0 ? (
       <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
@@ -36,13 +34,8 @@ const { page } = Astro.props;
       </div>
     ) : (
       <ul>
-        {page.data.map((post) => {
-          const rawTag = post.data.tags;
-          const tags = Array.isArray(rawTag) ? rawTag : (rawTag ? [rawTag] : []);
-          const tagsString = tags.map(b => b.toLowerCase()).join(",");
-
-          return (
-            <li class="post-item transition-all duration-300" data-badges={tagsString}>
+        {page.data.map((post) => (
+          <>
               <HorizontalCard
                 title={post.data.title}
                 img={post.data.heroImage}
@@ -56,8 +49,8 @@ const { page } = Astro.props;
                 tags={post.data.tags}
               />
               <div class="divider my-0" />
-            </li>
-          )}
+            </>
+          )
         )}
       </ul>
     )

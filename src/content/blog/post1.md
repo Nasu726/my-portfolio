@@ -4,7 +4,7 @@ title: "マイページを作りました"
 description: "Astrofyを使ってマイページを作りました。" 
 heroImage: ""
 badge: ["自己紹介"]
-tags: ["Astro", "Astrofy", "Cloudflare", "ドメイン"]
+tags: ["Astro", "Astrofy", "Cloudflare", "Domain"]
 ---
 ## 自己紹介
 はじめまして、なすです。\

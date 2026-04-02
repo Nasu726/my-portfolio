@@ -4,7 +4,7 @@ title: "heapqが使いづらいのでpriority_queueを自作した話"
 description: "pythonの標準ライブラリheapqが使いづらすぎたので、PyPy環境でheapqよりも高速に動くライブラリを自作しました" # タイトルの下に出る概要
 heroImage: "/python-logo-only.svg"  # 空文字列でデフォルト画像 
 badge: [""] # 短いアピール(Update, v1.0, FOSS, Premium, Recommended)
-tags: ["Python", "自作ライブラリ"]  # キーワード
+tags: ["Python", "Library"]  # キーワード
 ---
 
 ## priority_queueのライブラリを自作しました

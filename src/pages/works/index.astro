@@ -1,13 +1,12 @@
 ---
-// src/pages/blog/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import HorizontalCard from "../../components/HorizontalCard.astro";
-import TagSearch from "../../components/TagSearch.astro";
+import TagSearch from "@components/TagSearch.astro";
 import { getCollection } from "astro:content";
-import { isNew } from "../../lib/utils";
+// import type { CollectionEntry } from "astro:content";
+// import type { Page, PaginateFunction } from "astro";
 
-// Astroのpaginateは使わず、全記事を取得する
-const posts = await getCollection("blog");
+const posts = await getCollection("works");
 posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const allTags = [...new Set(posts.flatMap(post => {
@@ -16,12 +15,12 @@ const allTags = [...new Set(posts.flatMap(post => {
 }))].filter(Boolean).toSorted();
 ---
 
-<BaseLayout title="Blog" sideBarActiveItemID="blog">
+<BaseLayout title="Works" sideBarActiveItemID="works">
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Blog</div>
+    <div class="text-3xl w-full font-bold">Works</div>
   </div>
 
-  <TagSearch tags={allTags}/>
+    <TagSearch tags={allTags}/>
 
   {/* ===== 上部のページネーション ===== */}
   <div class="grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center mb-2 w-full">
@@ -30,13 +29,13 @@ const allTags = [...new Set(posts.flatMap(post => {
       <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
       </svg>
-      Recent Posts
+      Recent Works
     </button>
     </div>
     <div id="search-count-display" class="justify-self-center text-center text-sm font-bold text-gray-400 min-w-0 break-all leading-tight line-clamp-2 px-5"></div>
     <div class="justify-self-end -ml-5">
     <button class="btn btn-ghost hidden next-btn flex-nowrap whitespace-nowrap">
-      Older Posts
+      Older Works
       <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
       </svg>
@@ -49,8 +48,8 @@ const allTags = [...new Set(posts.flatMap(post => {
   {
     posts.length === 0 ? (
       <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
-        <p class="font-bold">ブログはまだありません</p>
-        <p>新しいブログが出るのをお待ちください</p>
+        <p class="font-bold">プロジェクトはまだありません</p>
+        <p>新しいプロジェクトの発表をお待ちください</p>
       </div>
     ) : (
       <ul id="post-list">
@@ -61,19 +60,18 @@ const allTags = [...new Set(posts.flatMap(post => {
 
           return (
             <li class="post-item transition-all duration-300 hidden" data-tags={tagsString}>
-              <HorizontalCard
+                <HorizontalCard
                 title={post.data.title}
                 img={post.data.heroImage}
+                imgDark={post.data.heroImageDark} /* プロジェクト固有: ダークモード画像 */
                 desc={post.data.description}
-                url={`/blog/${post.slug}`}
-                target="_self"
-                badge={[
-                  isNew(post.data.pubDate) && "NEW",
-                  post.data.badge
-                ]}
+                url={post.data.url}
+                target="_blank"
+                badge={post.data.badge}
                 tags={post.data.tags}
-              />
-              <div class="divider my-0" />
+                custom_tags_url={"/works/tag"}
+                />
+                <div class="divider my-0" />
             </li>
           );
         })}
@@ -87,10 +85,10 @@ const allTags = [...new Set(posts.flatMap(post => {
       <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
       </svg>
-      Recent Posts
+      Recent Works
     </button>
     <button class="btn btn-ghost ml-auto hidden next-btn">
-      Older Posts
+      Older Works
       <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
       </svg>
@@ -99,7 +97,7 @@ const allTags = [...new Set(posts.flatMap(post => {
 
   <script is:inline>
     document.addEventListener('astro:page-load', () => {
-      // まず「ブログ記事」がこの画面に存在するかチェック。無ければ即終了。
+      // まず「作品」がこの画面に存在するかチェック。無ければ即終了。
       const allItems = Array.from(document.querySelectorAll('.post-item'));
       if (allItems.length === 0) return;
 

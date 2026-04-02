@@ -6,7 +6,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 
 export interface Props extends BlogSchema {}
 
-const { title, description, pubDate, updatedDate, heroImage, badge, tags = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, badge, tags = [], readingTime } = Astro.props;
 const badges = Array.isArray(badge) ? badge.flat() : [badge];
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(pubDate).format("ll")
@@ -14,13 +14,20 @@ import { Image } from "astro:assets";
 // import { filterPreloads } from "astro/assets/fonts/runtime";
 // import { map } from "astro:schema";
 ---
-
-<BaseLayout title={title} description={description} image={heroImage}, ogType="article">
+<BaseLayout title={title} description={description} image={heroImage} ogType="article">
   <main class="md:flex md:justify-center">
     <article class="prose max-w-[750px] prose-img:mx-auto text-base">
       {heroImage && <Image width={400} height={200} format="webp" src={heroImage} alt={title} class="w-full max-h-[300px] object-contain [&[src$='.svg']]:bg-slate-100 p-8 md:p-16 mb-6 items-center justify-center" />}
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
       {pubDate && <time>{displayDate}</time>}
+      {readingTime && (
+        <span class="flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          約 {readingTime} 分で読めます
+        </span>
+      )}
       <br />
       {badges && 
         badges.filter(Boolean).map((b) => (

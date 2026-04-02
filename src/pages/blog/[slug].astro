@@ -4,8 +4,9 @@ import type { CollectionEntry } from "astro:content";
 // import { CollectionEntry } from "../../content/config";
 // import { BlogSchema } from "../../content/config";
 import PostLayout from "../../layouts/PostLayout.astro";
-import createSlug from "../../lib/createSlug"
+// import createSlug from "../../lib/createSlug";
 import TableOfContents from "../../components/TableOfContents.astro";
+import { text } from "mermaid/dist/rendering-util/rendering-elements/shapes/text.js";
 
 export async function getStaticPaths() {
   const postEntries = await getCollection("blog");
@@ -24,9 +25,11 @@ const { entry } = Astro.props;
 const post = entry.data;
 const { Content, headings } = await entry.render();
 
-const cleanText = entry.body.replace(/[\s\n#*`_\[\]()\-]/g, "");
+const textWithoutCode = entry.body.replace(/```[\s\S]*?```/g, "");
+const cleanText = textWithoutCode.replace(/[\s\n#*`_\[\]()\-]/g, "");
 const charCount = cleanText.length;
-const readingTime = Math.ceil(charCount / 500); // 1分あたり500文字として換算
+console.log(charCount);
+const readingTime = Math.ceil(charCount / 500);
 ---
 
 <PostLayout

@@ -29,14 +29,14 @@ const {
 } = Astro.props;
 
 // 空文字列をundefinedとして解釈
-const normalizeEmpty = (value: any) => !value || value === "" ? undefined : value;
+const normalizeEmpty = <T,>(value: T): T | undefined => (!value || String(value) === "") ? undefined : value;
 const normalizedHeroImage = normalizeEmpty(heroImage);
 const normalizedBeginDate = normalizeEmpty(beginDate);
 const normalizedEndDate = normalizeEmpty(endDate);
 
 const R2_DOMAIN = "https://assets.nasu.uk";
 // 画像URLを正規化するロジック
-const getImageUrl = (path: any) => {
+const getImageUrl = (path: string | undefined) => {
   if (!path) return path;
   if (path.startsWith("http")) return path;
   // 先頭に / があるかないか吸収して結合
@@ -73,7 +73,7 @@ const amazonUrl = asin
   : `https://www.amazon.co.jp/s?k=${encodeURIComponent(title)}`;
 
 // ステータス・バッジの内容によって色を変えるロジック
-const getStatusClass = (text: any) => {
+const getStatusClass = (text: string) => {
   if (text === "積読") return "badge-info";
   if (text === "読書中") return "badge-warning";
   if (text === "読了") return "badge-success";
@@ -81,7 +81,7 @@ const getStatusClass = (text: any) => {
   return "badge-secondary";
 };
 
-const getBadgeClass = (text: any) => {
+const getBadgeClass = (text: string) => {
   if (text === "おすすめ") return "badge-info";
   if (text === "難しい") return "badge-warning";
   if (text === "必読") return "badge-success";
@@ -98,7 +98,7 @@ const getBadgeClass = (text: any) => {
       <div class="not-prose flex flex-col md:flex-row gap-8 items-start mb-8 border-b pb-8 border-base-300">
         
         {/* 左カラム：画像 */}
-        {normalizedHeroImage && (
+        {displayHeroImage && (
           <div class="w-full md:w-1/3 flex-shrink-0 flex justify-center md:justify-start">
             <Image 
               width={500} 
@@ -119,7 +119,7 @@ const getBadgeClass = (text: any) => {
             <div class="flex flex-wrap items-center gap-2 mb-2">
               {status && <span class={`badge ${getStatusClass(status)}`}>{status}</span>}
               {badges && 
-                badges.filter(Boolean).map((b) => (
+                badges.filter((b): b is string => !!b).map((b) => (
                   <span class={`badge ${getBadgeClass(b)}`}>{b}</span>
                 ))
               }

@@ -1,9 +1,14 @@
 ---
 // src/components/TableOfContents.astro
-const { headings } = Astro.props;
+import type { MarkdownHeading } from "astro";
 
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
 // 目次に表示する見出しの深さを指定（ここでは h2 と h3 のみ抽出）
-const filteredHeadings = headings.filter((heading: any) => heading.depth > 1 && heading.depth <= 3);
+const filteredHeadings = headings.filter((heading) => heading.depth > 1 && heading.depth <= 3);
 ---
 
 {filteredHeadings.length > 0 && (
@@ -13,7 +18,7 @@ const filteredHeadings = headings.filter((heading: any) => heading.depth > 1 && 
     </summary>
     <div class="collapse-content">
       <ul class="menu menu-sm w-full">
-        {filteredHeadings.map((heading: any) => (
+        {filteredHeadings.map((heading) => (
           <li>
             <a 
               href={`#${heading.slug}`} 

@@ -1,0 +1,45 @@
+---
+// src/components/TagSearch.astro
+---
+
+<div class="mb-8 bg-base-200 p-4 border rounded-box shadow-sm">
+  <div class="form-control w-full">
+    <label class="label">
+      <span class="label-text text-lg font-medium">🏷️ バッジ・タグで検索</span>
+    </label>
+    <input 
+      type="text" 
+      id="tag-search-input" 
+      placeholder="例: Astro, 日記, Python..." 
+      class="input input-bordered w-full max-w-md bg-base-100" 
+    />
+  </div>
+</div>
+
+<script is:inline>
+  // ページが読み込まれたら実行
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('tag-search-input');
+    // .post-item というクラスを持つ要素（記事のカード）をすべて探す
+    const postItems = document.querySelectorAll('.post-item');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        // 入力された文字を小文字に変換（Astro と astro の表記ゆれを吸収）
+        const searchTerm = e.target.value.toLowerCase();
+
+        postItems.forEach(item => {
+          // 記事側に仕込んでおく data-badges の中身を取得
+          const badges = item.getAttribute('data-badges') || "";
+          
+          // 入力が空っぽ、またはバッジの文字列に入力文字が含まれていれば表示
+          if (searchTerm === "" || badges.includes(searchTerm)) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
+</script>

@@ -1,17 +1,17 @@
 ---
 const { sideBarActiveItemID } = Astro.props;
-const activeClass = "bg-base-300"; // For primary color replace with `active` class
+const activeClass = "bg-base-content/15";
 ---
 
 <ul class="menu grow shrink menu-md overflow-y-auto">
-    <li><a class="py-2 text-base" id="home" href="/">Home</a></li>
-    <li><a class="py-2 text-base" id="readme" href="/readme">Readme</a></li>
-    <li><a class="py-2 text-base" id="works" href="/works">Works</a></li>
-    <!-- <li><a class="py-3 text-base" id="services" href="/services">Services</a></li> -->
-    <!-- <li><a class="py-3 text-base" id="store" href="/store">Store</a></li> -->
-    <li><a class="py-2 text-base" id="blog" href="/blog/">Blog</a></li>
-    <li><a class="py-3 text-base" id="books" href="/books">Books</a></li>
-    <li><a class="py-2 text-base" id="cv" href="/my-career">My Career</a></li>
+    <li><a class=`py-2 text-base ${sideBarActiveItemID === 'home' ? activeClass : ''}` id="home" href="/">Home</a></li>
+    <li><a class=`py-2 text-base ${sideBarActiveItemID === 'readme' ? activeClass : ''}` id="readme" href="/readme">Readme</a></li>
+    <li><a class=`py-2 text-base ${sideBarActiveItemID === 'works' ? activeClass : ''}` id="works" href="/works">Works</a></li>
+    <!-- <li><a class=`py-2 text-base ${sideBarActiveItemID === 'services' ? activeClass : ''}` id="services" href="/services">Services</a></li> -->
+    <!-- <li><a class=`py-2 text-base ${sideBarActiveItemID === 'store' ? activeClass : ''}` id="store" href="/store">Store</a></li> -->
+    <li><a class=`py-2 text-base ${sideBarActiveItemID === 'blog' ? activeClass : ''}` id="blog" href="/blog/">Blog</a></li>
+    <li><a class=`py-2 text-base ${sideBarActiveItemID === 'books' ? activeClass : ''}` id="books" href="/books">Books</a></li>
+    <li><a class=`py-2 text-base ${sideBarActiveItemID === 'cv' ? activeClass : ''}` id="cv" href="/my-career">My Career</a></li>
     <li>
         <a
             class="py-2 text-base"
@@ -23,7 +23,7 @@ const activeClass = "bg-base-300"; // For primary color replace with `active` cl
     </li>
 </ul>
 
-<script define:vars={{ sideBarActiveItemID: sideBarActiveItemID, activeClass: activeClass }}>
-const activeItemElem = document.getElementById(sideBarActiveItemID);
-activeItemElem && activeItemElem.classList.add(activeClass);
-</script>
+<!-- <script define:vars={{ sideBarActiveItemID: sideBarActiveItemID, activeClass: activeClass }}>
+    const activeItemElem = document.getElementById(sideBarActiveItemID);
+    activeItemElem && activeItemElem.classList.add(activeClass);
+</script> -->

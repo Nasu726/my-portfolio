@@ -1,0 +1,183 @@
+---
+// src/pages/blog/index.astro
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HorizontalCard from "../../components/HorizontalCard.astro";
+import TagSearch from "../../components/TagSearch.astro";
+import { getCollection } from "astro:content";
+import { isNew } from "../../lib/utils";
+
+// Astroのpaginateは使わず、全記事を取得する
+const posts = await getCollection("blog");
+posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const allTags = [...new Set(posts.flatMap(post => {
+  const tags = post.data.tags;
+  return Array.isArray(tags) ? tags : (tags ? [tags] : []);
+}))].filter(Boolean).toSorted();
+---
+
+<BaseLayout title="Blog" sideBarActiveItemID="blog">
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Blog</div>
+  </div>
+
+  <TagSearch tags={allTags}/>
+
+  {/* ===== 上部のページネーション ===== */}
+  <div class="flex mt-4 mb-8 w-full">
+    <button class="btn btn-ghost mr-auto hidden prev-btn">
+      <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+      </svg>
+      Recent posts
+    </button>
+    <button class="btn btn-ghost ml-auto hidden next-btn">
+      Older Posts
+      <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+      </svg>
+    </button>
+  </div>
+
+  {
+    posts.length === 0 ? (
+      <div class="bg-base-200 border-l-4 border-secondary w-full p-4 min-w-full">
+        <p class="font-bold">ブログはまだありません</p>
+        <p>新しいブログが出るのをお待ちください</p>
+      </div>
+    ) : (
+      <ul id="post-list">
+        {posts.map((post) => {
+          const rawTag = post.data.tags;
+          const tags = Array.isArray(rawTag) ? rawTag : (rawTag ? [rawTag] : []);
+          const tagsString = tags.map(b => b.toLowerCase()).join(",");
+
+          return (
+            <li class="post-item transition-all duration-300 hidden" data-tags={tagsString}>
+              <HorizontalCard
+                title={post.data.title}
+                img={post.data.heroImage}
+                desc={post.data.description}
+                url={`/blog/${post.slug}`}
+                target="_self"
+                badge={[
+                  isNew(post.data.pubDate) && "NEW",
+                  post.data.badge
+                ]}
+                tags={post.data.tags}
+              />
+              <div class="divider my-0" />
+            </li>
+          );
+        })}
+      </ul>
+    )
+  }
+
+  {/* ===== 下部のページネーション ===== */}
+  <div class="flex my-10 w-full">
+    <button class="btn btn-ghost mr-auto hidden prev-btn">
+      <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+      </svg>
+      Recent posts
+    </button>
+    <button class="btn btn-ghost ml-auto hidden next-btn">
+      Older Posts
+      <svg class="h-6 w-6 fill-current md:h-8 md:w-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+      </svg>
+    </button>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('astro:page-load', () => {
+      // まず「ブログ記事」がこの画面に存在するかチェック。無ければ即終了。
+      const allItems = Array.from(document.querySelectorAll('.post-item'));
+      if (allItems.length === 0) return;
+
+      const itemsPerPage = 10;
+      let currentPage = 1;
+      let filteredItems = [];
+      
+      const searchInput = document.getElementById('tag-search-input');
+      const prevBtns = document.querySelectorAll('.prev-btn');
+      const nextBtns = document.querySelectorAll('.next-btn');
+
+      function render() {
+        // itemが確実に存在するか確認しながら処理
+        allItems.forEach(item => {
+          if (!item) return;
+          item.style.display = 'none';
+          item.classList.add('hidden');
+        });
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        
+        filteredItems.slice(startIndex, endIndex).forEach(item => {
+          if (!item) return;
+          item.style.display = 'block';
+          item.classList.remove('hidden');
+        });
+
+        // ゼロ除算対策（万が一0件だった時のために || 1 を設定）
+        const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
+        
+        prevBtns.forEach(btn => {
+          if (btn) btn.style.display = currentPage > 1 ? 'inline-flex' : 'none';
+        });
+        nextBtns.forEach(btn => {
+          if (btn) btn.style.display = currentPage < totalPages ? 'inline-flex' : 'none';
+        });
+      }
+
+      function filterItems(searchTerm) {
+        // searchTermが文字列じゃない（undefined等）場合は強制的に空文字にする
+        const safeSearchTerm = (typeof searchTerm === 'string') ? searchTerm : "";
+        
+        filteredItems = allItems.filter(item => {
+          if (!item) return false;
+          // data-tagsが無くてもエラーにせず空文字として扱う
+          const tags = item.getAttribute('data-tags') || "";
+          return safeSearchTerm === "" || tags.includes(safeSearchTerm);
+        });
+        currentPage = 1;
+        render();
+      }
+
+      const initialTerm = searchInput ? (searchInput.value || "").toLowerCase() : "";
+      filterItems(initialTerm);
+
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          // イベントやターゲットが存在しない瞬間のエラーを防ぐ
+          if (!e || !e.target) return;
+          const val = e.target.value || "";
+          filterItems(val.toLowerCase());
+        });
+      }
+
+      prevBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (currentPage > 1) {
+            currentPage--;
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
+
+      nextBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
+          if (currentPage < totalPages) {
+            currentPage++;
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
+    });
+  </script>
+</BaseLayout>

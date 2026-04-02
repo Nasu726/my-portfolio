@@ -1,17 +1,98 @@
 ---
 // src/components/TagSearch.astro
+interface Props {
+  tags?: string[]
+}
+const { tags = [] } = Astro.props;
 ---
 
 <div class="mb-8 bg-base-200 p-4 border rounded-box shadow-sm">
-  <div class="form-control w-full">
-    <label class="label">
-      <span class="label-text text-lg font-medium">🏷️ バッジ・タグで検索</span>
-    </label>
+  <div class="flex gap-2 w-full mx-auto">
+    
     <input 
       type="text" 
       id="tag-search-input" 
-      placeholder="例: Astro, Python, Info..." 
-      class="input input-bordered w-full max-w-md bg-base-100" 
+      placeholder="# タグで検索" 
+      class="input input-bordered flex-1 bg-base-100" 
     />
+
+    <div class="dropdown dropdown-end group">
+      <div tabindex="0" role="button" id="tag-dropdown-btn" class="btn btn-outline bg-base-100">
+        タグ一覧
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-200 group-focus-within:rotate-180"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 max-h-60 overflow-y-auto mt-2 flex-nowrap">
+        {tags.length === 0 ? (
+          <li><span class="text-gray-500">タグがありません</span></li>
+        ) : (
+          tags.map((tag) => (
+            <li>
+              <button type="button" class="tag-select-btn" data-tag={tag}>
+                {tag}
+              </button>
+            </li>
+          ))
+        )}
+      </ul>
+    </div>
+
   </div>
 </div>
+
+<style>
+  .dropdown .dropdown-content {
+    transform-origin: top;
+    transform: scaleY(0);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out, visibility 0s linear 0.2s;
+  }
+
+  .dropdown:focus-within .dropdown-content {
+    transform: scaleY(1);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out, visibility 0s linear 0s;
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    const searchInput = document.getElementById('tag-search-input');
+    const tagBtns = document.querySelectorAll('.tag-select-btn');
+
+    const dropdownBtn = document.getElementById('tag-dropdown-btn');
+    if (dropdownBtn) {
+      dropdownBtn.addEventListener('mousedown', (e) => {
+        if (document.activeElement === dropdownBtn) {
+          e.preventDefault();
+          dropdownBtn.blur();
+        }
+      });
+    }
+
+    // このページにタグボタンが無いなら、ここで処理を完全終了する
+    if (!tagBtns.length) return;
+
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // e.target ではなく e.currentTarget にすることで、絶対にボタン自体を取得する
+        const btnElement = e.currentTarget;
+        const selectedTag = btnElement.getAttribute('data-tag');
+        
+        // 万が一タグが取得できなかったら、エラーを出さずに処理を止める
+        if (!selectedTag) return; 
+
+        if (searchInput) {
+          searchInput.value = selectedTag;
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+          
+          // activeElementが存在する時だけフォーカスを外す
+          if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+          }
+        }
+      });
+    });
+  });
+</script>

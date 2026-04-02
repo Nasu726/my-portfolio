@@ -3,9 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import HorizontalShopItem from "../../components/HorizontalShopItem.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import type { Page } from "astro";
+import type { Page, PaginateFunction } from "astro";
 
-export async function getStaticPaths({ paginate }) {
+export async function getStaticPaths({ paginate }: { paginate: PaginateFunction }) {
   const items = await getCollection("store");
   items.sort((a, b) => b.data.updatedDate.valueOf() - a.data.updatedDate.valueOf());
   return paginate(items, { pageSize: 10 });

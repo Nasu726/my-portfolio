@@ -4,11 +4,11 @@ import HorizontalCard from "../../components/HorizontalCard.astro";
 import TagSearch from "../../components/TagSearch.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import type { Page } from "astro";
+import type { Page, PaginateFunction } from "astro";
 import createSlug from "../../lib/createSlug";
 import { isNew } from "../../lib/utils";
 
-export async function getStaticPaths({ paginate }) {
+export async function getStaticPaths({ paginate }: { paginate: PaginateFunction }) {
   const posts = await getCollection("blog");
   posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   return paginate(posts, { pageSize: 10 }); // 1ページ10記事

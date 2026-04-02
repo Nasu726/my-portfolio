@@ -3,10 +3,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BookCard from "../../components/BookCard.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import type { Page } from "astro";
+import type { Page, PaginateFunction } from "astro";
 import { Image } from "astro:assets";
 
-export async function getStaticPaths({ paginate }) {
+export async function getStaticPaths({ paginate }: { paginate: PaginateFunction }) {
   // booksコレクションを取得
   const posts = await getCollection("books");
   // 登録した日付の新しい順にソート
@@ -23,7 +23,7 @@ const { page } = Astro.props;
 
 const R2_DOMAIN = "https://assets.nasu.uk";
 // 画像URLを正規化するロジック
-const getImageUrl = (path: any) => {
+const getImageUrl = (path: string | undefined) => {
   if (!path) return path;
   if (path.startsWith("http")) return path;
   // 先頭に / があるかないか吸収して結合

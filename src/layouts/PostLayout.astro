@@ -14,7 +14,7 @@ import { Image } from "astro:assets";
 // import { filterPreloads } from "astro/assets/fonts/runtime";
 // import { map } from "astro:schema";
 ---
-<BaseLayout title={title} description={description} image={heroImage} ogType="article">
+<BaseLayout title={title} description={description} image={heroImage} sideBarActiveItemID="blog" ogType="article">
   <main class="md:flex md:justify-center">
     <article class="prose max-w-[750px] prose-img:mx-auto text-base">
       {heroImage && <Image width={400} height={200} format="webp" src={heroImage} alt={title} class="w-full max-h-[300px] object-contain [&[src$='.svg']]:bg-slate-100 p-8 md:p-16 mb-6 items-center justify-center" />}

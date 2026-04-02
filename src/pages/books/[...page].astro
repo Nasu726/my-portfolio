@@ -23,7 +23,7 @@ const { page } = Astro.props;
 
 const R2_DOMAIN = "https://assets.nasu.uk";
 // 画像URLを正規化するロジック
-const getImageUrl = (path) => {
+const getImageUrl = (path: any) => {
   if (!path) return path;
   if (path.startsWith("http")) return path;
   // 先頭に / があるかないか吸収して結合

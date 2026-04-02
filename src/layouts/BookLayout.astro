@@ -29,14 +29,14 @@ const {
 } = Astro.props;
 
 // 空文字列をundefinedとして解釈
-const normalizeEmpty = (value) => !value || value === "" ? undefined : value;
+const normalizeEmpty = (value: any) => !value || value === "" ? undefined : value;
 const normalizedHeroImage = normalizeEmpty(heroImage);
 const normalizedBeginDate = normalizeEmpty(beginDate);
 const normalizedEndDate = normalizeEmpty(endDate);
 
 const R2_DOMAIN = "https://assets.nasu.uk";
 // 画像URLを正規化するロジック
-const getImageUrl = (path) => {
+const getImageUrl = (path: any) => {
   if (!path) return path;
   if (path.startsWith("http")) return path;
   // 先頭に / があるかないか吸収して結合
@@ -73,7 +73,7 @@ const amazonUrl = asin
   : `https://www.amazon.co.jp/s?k=${encodeURIComponent(title)}`;
 
 // ステータス・バッジの内容によって色を変えるロジック
-const getStatusClass = (text) => {
+const getStatusClass = (text: any) => {
   if (text === "積読") return "badge-info";
   if (text === "読書中") return "badge-warning";
   if (text === "読了") return "badge-success";
@@ -81,7 +81,7 @@ const getStatusClass = (text) => {
   return "badge-secondary";
 };
 
-const getBadgeClass = (text) => {
+const getBadgeClass = (text: any) => {
   if (text === "おすすめ") return "badge-info";
   if (text === "難しい") return "badge-warning";
   if (text === "必読") return "badge-success";

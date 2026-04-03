@@ -263,7 +263,7 @@ class priority_queue():
 
 先ほど見つかった改善ポイントは「タプル操作を高速化する」ということでした。
 
-ここで行うのが **「優先度とデータの分離」** です。タプルをタプルのまま扱うから遅いのであって、バラバラにしてしまえば良いという考えです。ほとんどの場合は第一要素の「優先度」の部分だけが重要で、第二要素以降は順序がどうなっていても実用上問題ありません。ですから、優先度の比較だけをして、データは優先度のデータの移動に連動するだけにすれば、タプルの展開や比較を省略することができるというわけです。
+ここで行うのが **「優先度とデータの分離」** です。タプルをタプルのまま扱うから遅いのであって、バラバラにしてしまえば良いという考えです。ほとんどの場合は第一要素の「優先度」の部分だけが重要で、第二要素以降は順序がどうなっていても実用上問題ありません。ですから、優先度の比較だけをして、データは優先度配列の要素の移動に連動するだけにすれば、タプルの展開や比較を省略することができるというわけです。
 
 この考えを適用して改善したものが以下です。`heap`は`priority`に改名しました。
 
@@ -486,7 +486,7 @@ self.priority[idx], self.priority[best] = self.priority[best], self.priority[idx
         values[idx] = target_v
 ```
 
-だいぶキレイになってきましたが、まだ速くできます。`append`は$O(1)$ですが、たまにメモリ領域の拡張が行われるので実際には**平均で**$O(1)$です。これを本当の$O(1)$にするため、必要なメモリ領域を事前に確保するようにします。領域が足りなくなっても良いように自動拡張機能も付けておきます。これによって、正確に配列サイズを見積もらなくても、大体このくらいあれば良さそうという雑な初期化をしても`RE`にならないようにしてくれます。
+だいぶキレイになってきましたが、まだ速くできます。`append`は$O(1)$ですが、たまにメモリ領域の拡張が行われるので実際には**平均で**$O(1)$です。これを本当の$O(1)$にするため、必要なメモリ領域を事前に確保するようにします。領域が足りなくなっても良いように自動拡張機能も付けておきます。これによって、雑な初期化をしても`RE`にならないようにしてくれます。
 
 この変更により`append`と`pop`はすべて消え、要素の追加/削除が単なる代入と足し算/引き算になります。
 
@@ -739,6 +739,8 @@ N=2000000 heapq: 1.2919s, 自作:  0.1202s
 
 2. 関数の引数や返り値は基本的に全て統一されています。`values`配列が必要になるような複数値を扱う場合に限り、`push`系関数の引数は`(優先度, その他の値)`の2つが、`pop`系関数の返り値は`(優先度, その他の値)`のタプルが返ることに注意してください。
 
+3. 競プロで使うなら`capacity = N`や`capacity = N + M`のような設定で使うのがオススメです。
+
 ```python
 import heapq
 class base_heap_queue():
@@ -816,7 +818,7 @@ class max_heap_queue(base_heap_queue):
         return self._invert(heapq.heapreplace(self.heap, self._invert(x)))
 
 class Base_PQ():
-    __slots__ = ["priority", "values"]
+    __slots__ = ['priority', 'values']
 
     def __getitem__(self, idx):
         return (self.priority[idx], self.values[idx])
@@ -829,16 +831,16 @@ class Base_PQ():
             return (self.priority[0], self.values[0])
         return None
 
-    def print_subtree(self, idx, end="\n") -> None:
+    def print_subtree(self, idx, end='\n') -> None:
         if idx >= len(self):
-            print(".", end="")
+            print('.', end='')
             return
-        print(self[idx], end="")
-        print("(", end="")
-        self.print_subtree((idx<<1)+1, "")
-        print(",", end="")
-        self.print_subtree((idx<<1)+2, "")
-        print(")", end=end)
+        print(self[idx], end='')
+        print('(', end='')
+        self.print_subtree((idx<<1)+1, '')
+        print(',', end='')
+        self.print_subtree((idx<<1)+2, '')
+        print(')', end=end)
 
     def print_tree(self) -> None:
         self.print_subtree(0)
@@ -861,10 +863,10 @@ class Base_DPQ(Base_PQ):
     __slots__ = ()
 
     def __init__(self, iterable=None):
-        """
+        '''
         iterable: listやsetなどを与えるとヒープ配列に変換される
         is_pair : ペア型を使う。第一要素がヒープの比較対象、第二要素が比較対象外の値として扱われる
-        """        
+        '''        
         self.priority = []
         self.values = []
         if iterable is not None:
@@ -911,7 +913,7 @@ class Base_DPQ(Base_PQ):
         return val
 
     def replace(self, priority_elm, value_elm):
-        """トップを取り出して新しい要素を入れ、ヒープを再構築する"""
+        '''トップを取り出して新しい要素を入れ、ヒープを再構築する'''
         priority = self.priority
         values = self.values
         if len(priority) == 0:
@@ -925,13 +927,13 @@ class Base_DPQ(Base_PQ):
         return res
 
 class Base_FPQ(Base_PQ):
-    __slots__ = ["size","capacity"]
+    __slots__ = ['size','capacity']
     def __init__(self, iterable=None, capacity=8192):
-        """
+        '''
         iterable: listやsetなどを与えるとヒープ配列に変換される
         is_pair : ペア型を使う。第一要素がヒープの比較対象、第二要素が比較対象外の値として扱われる
         capacity: 初期化時に確保するメモリ領域の大きさ
-        """
+        '''
         self.priority = [-1] * capacity
         self.values = [None] * capacity
         self.size = 0
@@ -995,7 +997,7 @@ class Base_FPQ(Base_PQ):
         return val
 
     def replace(self, priority_elm, value_elm):
-        """トップを取り出して新しい要素を入れ、ヒープを再構築する"""
+        '''トップを取り出して新しい要素を入れ、ヒープを再構築する'''
         priority = self.priority
         values = self.values
         if self.size == 0:
@@ -1010,10 +1012,10 @@ class Base_FPQ(Base_PQ):
         return res
 
 class Max_Dynamic_Priority_Queue(Base_DPQ):
-    """
+    '''
     優先度付きキュー
     必要に応じて動的にメモリを確保する
-    """
+    '''
     __slots__ = ()
 
     def _sift_up(self, idx) -> None:
@@ -1060,7 +1062,7 @@ class Max_Dynamic_Priority_Queue(Base_DPQ):
         values[idx] = target_v
 
     def pushpop(self, priority_elm, value_elm):
-        """新しい要素を入れてから、トップを取り出す"""
+        '''新しい要素を入れてから、トップを取り出す'''
         priority = self.priority
         values = self.values
         if len(priority) > 0 and priority[0] > priority_elm:
@@ -1069,10 +1071,10 @@ class Max_Dynamic_Priority_Queue(Base_DPQ):
         return (priority_elm, value_elm)
 
 class Min_Dynamic_Priority_Queue(Base_DPQ):
-    """
+    '''
     優先度付きキュー
     必要に応じて動的にメモリを確保する
-    """
+    '''
     __slots__ = ()
 
     def _sift_up(self, idx) -> None:
@@ -1119,7 +1121,7 @@ class Min_Dynamic_Priority_Queue(Base_DPQ):
         values[idx] = target_v
 
     def pushpop(self, priority_elm, value_elm):
-        """新しい要素を入れてから、トップを取り出す"""
+        '''新しい要素を入れてから、トップを取り出す'''
         priority = self.priority
         values = self.values
         if len(priority) > 0 and priority[0] < priority_elm:
@@ -1128,11 +1130,11 @@ class Min_Dynamic_Priority_Queue(Base_DPQ):
         return (priority_elm, value_elm)
 
 class Max_Fixed_Priority_Queue(Base_FPQ):
-    """
+    '''
     固定長の優先度付きキュー(最大ヒープ)
     初期化時にcapacityの分だけ静的にメモリを確保し、その中で操作を行う
     メモリ領域が足りなくなったら自動で拡張する
-    """
+    '''
     __slots__ = ()
     
     def _sift_up(self, idx) -> None:
@@ -1179,7 +1181,7 @@ class Max_Fixed_Priority_Queue(Base_FPQ):
         values[idx] = target_v
 
     def pushpop(self, priority_elm, value_elm):
-        """新しい要素を入れてから、トップを取り出す"""
+        '''新しい要素を入れてから、トップを取り出す'''
         priority = self.priority
         values = self.values
         if self.size > 0 and priority[0] > priority_elm:
@@ -1188,11 +1190,11 @@ class Max_Fixed_Priority_Queue(Base_FPQ):
         return (priority_elm, value_elm)
 
 class Min_Fixed_Priority_Queue(Base_FPQ):
-    """
+    '''
     固定長の優先度付きキュー(最小ヒープ)
     初期化時にcapacityの分だけ静的にメモリを確保し、その中で操作を行う
     メモリ領域が足りなくなったら自動で拡張する
-    """
+    '''
 
     __slots__ = ()
     
@@ -1240,7 +1242,7 @@ class Min_Fixed_Priority_Queue(Base_FPQ):
         values[idx] = target_v
 
     def pushpop(self, priority_elm, value_elm):
-        """新しい要素を入れてから、トップを取り出す"""
+        '''新しい要素を入れてから、トップを取り出す'''
         priority = self.priority
         values = self.values
         if self.size > 0 and priority[0] < priority_elm:
@@ -1254,14 +1256,14 @@ def priority_queue(
         is_pair: bool = False,
         capacity: int = None
         ) -> Max_Fixed_Priority_Queue | Min_Fixed_Priority_Queue | Max_Dynamic_Priority_Queue | Min_Dynamic_Priority_Queue | max_heap_queue | min_heap_queue:
-    """
+    '''
     priority queueを取得するファクトリ関数
 
     iterable: 初期要素のコンテナ
     max_heap: True = 最大ヒープ | False = 最小ヒープ
     is_pair : True = 第一要素のみをヒープに入れて、第二要素を専用配列に分ける | False = ヒープに全てのデータを入れる
     capacity: 指定するとFixed Priority Queueを、指定しないとDynamic Priority Queueを得る
-    """
+    '''
     if is_pair:
         if capacity is None:
             if max_heap:
@@ -1279,7 +1281,7 @@ def priority_queue(
     else:
         return min_heap_queue(iterable=iterable)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     primes = [31, 29, 23, 19, 17, 13, 11, 7, 5, 3, 2]
     pq = priority_queue(
         iterable=primes,

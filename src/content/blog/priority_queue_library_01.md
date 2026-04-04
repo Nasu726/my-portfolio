@@ -822,9 +822,6 @@ class Base_PQ():
 
     def __getitem__(self, idx):
         return (self.priority[idx], self.values[idx])
-
-    def __setitem__(self, key, value):
-        self
         
     def top(self):
         if len(self) > 0:

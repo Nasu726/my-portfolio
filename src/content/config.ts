@@ -18,26 +18,6 @@ const blogSchema = z.object({
     readingTime: z.number().optional(),
 });
 
-const bookSchema = z.object({
-    title: z.string(),
-    description: z.string(),
-    authors: z.union([z.string(), z.array(z.string())]),
-    translators: z.union([z.string(), z.array(z.string())]).optional(),
-    publisher: z.string(),
-    pubDate: z.coerce.date(),
-    url: z.string().optional(),
-    asin: z.string().optional(),
-    heroImage: z.string().optional().transform((str) => {return str || "/no_image.webp"}),
-    status: z.string(),
-    regDate: z.coerce.date(),
-    beginDate: optionalDate,
-    endDate: optionalDate,
-    badge: z.union([z.string(), z.array(z.string())]).optional(),
-    tags: z.array(z.string()).refine(items => new Set(items).size === items.length, {
-        message: 'tags must be unique',
-    }).optional(),
-});
-
 const storeSchema = z.object({
     title: z.string(),
     description: z.string(),
@@ -68,18 +48,15 @@ const workSchema = z.object({
 });
 
 export type BlogSchema = z.infer<typeof blogSchema>;
-export type BookSchema = z.infer<typeof bookSchema>;
 export type StoreSchema = z.infer<typeof storeSchema>;
 export type WorkSchema = z.infer<typeof workSchema>;
 
 const blogCollection = defineCollection({ schema: blogSchema });
-const bookCollection = defineCollection({ schema: bookSchema });
 const storeCollection = defineCollection({ schema: storeSchema });
 const workCollection = defineCollection({ schema: workSchema });
 
 export const collections = {
     'blog': blogCollection,
-    'books': bookCollection,
     'store': storeCollection,
     'works': workCollection,
 }

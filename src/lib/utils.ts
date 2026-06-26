@@ -1,12 +1,68 @@
-export function isNew(date: Date, days: number = 30): boolean {
-  const today = new Date();
-  const targetDate = new Date(date);
-  
-  // ミリ秒単位の差分を計算
-  const diffTime = Math.abs(today.getTime() - targetDate.getTime());
-  // 日数に変換
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+/**
+ * サイト全体で使う汎用ユーティリティ関数です。
+ *
+ * 使い方：
+ *   import { formatDate, isNew, stripMarkdown, collectTags } from '../lib/utils';
+ */
 
-  // 指定した日数（デフォルト30日）以内ならtrue
-  return diffDays <= days;
+import dayjs from 'dayjs';
+import { BADGE } from '../config';
+
+// ─────────────────────────────────────────────────────
+// 日付フォーマット
+// ─────────────────────────────────────────────────────
+
+/**
+ * Date オブジェクトを "2026年1月8日" 形式の文字列に変換します。
+ */
+export function formatDate(date: Date): string {
+  return dayjs(date).format('YYYY年M月D日');
+}
+
+// ─────────────────────────────────────────────────────
+// "New" バッジ判定
+// ─────────────────────────────────────────────────────
+
+/**
+ * 指定した日付が BADGE.newDays 以内なら true を返します。
+ * BlogCard、WorkCard、ExternalArticleCard で使います。
+ */
+export function isNew(date: Date): boolean {
+  const now = dayjs();
+  const pub = dayjs(date);
+  return now.diff(pub, 'day') <= BADGE.newDays;
+}
+
+// ─────────────────────────────────────────────────────
+// Markdown 除去
+// ─────────────────────────────────────────────────────
+
+/**
+ * 外部記事の本文に含まれる Markdown 記法を除去して、
+ * プレーンテキストの先頭部分を返します。
+ * ExternalArticle の description 生成に使います。
+ */
+export function stripMarkdown(text: string, maxLength = 120): string {
+  return text
+    .replace(/```[\s\S]*?```/g, '')        // コードブロック除去
+    .replace(/`[^`]*`/g, '')               // インラインコード除去
+    .replace(/!\[.*?\]\(.*?\)/g, '')       // 画像除去
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1') // リンクのテキストを残す
+    .replace(/#{1,6}\s/g, '')              // 見出し記号除去
+    .replace(/[*_~>]/g, '')               // 装飾記号除去
+    .replace(/\n+/g, ' ')                 // 改行をスペースに
+    .trim()
+    .slice(0, maxLength);
+}
+
+// ─────────────────────────────────────────────────────
+// タグ一覧生成
+// ─────────────────────────────────────────────────────
+
+/**
+ * 複数のタグ配列を受け取って、重複なし・ソート済みの配列を返します。
+ * blog/index.astro などでタグ一覧を作るのに使います。
+ */
+export function collectTags(tagArrays: string[][]): string[] {
+  return [...new Set(tagArrays.flat())].filter(Boolean).sort();
 }

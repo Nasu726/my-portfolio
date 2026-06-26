@@ -1,44 +1,44 @@
-.time-line-container>div:last-child .education__time>.education__line {
-    display: none;
-}
+/* ─────────────────────────────────────────────────────
+   グローバルスタイル
+   Tailwind / DaisyUI では対応しにくい細かいスタイルをここに書きます
+   ───────────────────────────────────────────────────── */
 
-/* Chrome, Safari, Edge */
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-/* Firefox */
-.scrollbar-hide {
-    scrollbar-width: none;
-}
-
-mjx-container svg {
-  display: inline-block !important;
-}
-
-/* 1. スルスルっと滑らかにスクロールさせる魔法 */
+/* スムーズスクロール */
 html {
   scroll-behavior: smooth;
 }
 
-/* 2. アンカーリンクで飛んだ際、上部に「見えない余白」を作る */
-/* これで固定ヘッダーの下に文字が潜り込むのを防ぎます */
+/* アンカーリンクで飛んだとき、固定ヘッダーの下に文字が潜らないよう余白を確保する */
 .prose h1,
 .prose h2,
 .prose h3,
 .prose h4,
 .prose h5,
 .prose h6 {
-  scroll-margin-top: 100px; /* 👈 ヘッダーの高さに合わせて数字(80px~120px等)を微調整してください */
+  scroll-margin-top: 80px;
 }
 
-/* 🌟 ダークモードの時だけMermaidの色を反転させる魔法 */
-html.dark .mermaid,
-html[data-theme="dark"] .mermaid,
-html[data-theme="dracula"] .mermaid, /* Astrofyでよく使われるダークテーマ名 */
-html[data-theme="night"] .mermaid,
-html[data-theme="business"] .mermaid {
-  /* 白黒を反転させつつ、元の色味(青や赤)は維持する */
+/* Chrome, Safari, Edge でスクロールバーを非表示にするユーティリティ */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+/* Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+/* KaTeX の数式をインライン表示にする（改行抑制） */
+mjx-container svg {
+  display: inline-block !important;
+}
+
+/* タイムラインコンポーネント: 最後の要素の縦線を非表示にする */
+.time-line-container > div:last-child .education__time > .education__line {
+  display: none;
+}
+
+/* ダークテーマ時に Mermaid 図を白黒反転させる */
+html[data-theme='dark'] .mermaid {
   filter: invert(0.95) hue-rotate(180deg);
-  /* ふわっと切り替わるアニメーション */
-  transition: filter 0.3s ease; 
+  transition: filter 0.3s ease;
 }

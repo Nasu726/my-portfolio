@@ -1,23 +1,93 @@
 ---
-import SideBarFooter from "./SideBarFooter.astro";
-import { Image } from "astro:assets";
-import SideBarMenu from "./SideBarMenu.astro";
-const { sideBarActiveItemID } = Astro.props;
+/**
+ * サイドバーコンポーネントです。
+ * ナビゲーション、ソーシャルリンク、テーマ切り替えボタンを含みます。
+ *
+ * ナビ項目の追加/変更 → src/config.ts の NAV_ITEMS を編集
+ * ソーシャルリンクの追加/変更 → src/config.ts の SOCIAL_LINKS を編集
+ */
+import { NAV_ITEMS, SOCIAL_LINKS, SITE } from '../config';
+
+// 現在のページのパスを取得してアクティブリンクを判定する
+const currentPath = Astro.url.pathname;
+
+/**
+ * href が現在のパスに前方一致するかチェックします。
+ * ホーム（/）のみ完全一致にして、他のページが誤ってアクティブにならないようにします。
+ */
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
 ---
 
 <div class="drawer-side z-40">
-  <label for="my-drawer" class="drawer-overlay"></label>
-  <aside class="px-2 pt-2 h-auto min-h-full w-[16rem] bg-base-200 text-base-content flex flex-col">
-    <div class="w-fit mx-auto mt-3 mb-3">
-      <a href="/">
-        <div class="avatar transition ease-in-out hover:scale-[102%] block m-auto">
-          <div class="w-[6rem]">
-            <Image class="mask mask-circle" format="png" width={300} height={300} src="/nasucat.webp" alt="Profile image" />
-          </div>
-        </div>
-      </a>
+  {/* drawer を閉じるためのオーバーレイ（モバイルのみ機能） */}
+  <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+
+  <aside class="bg-base-200 w-64 min-h-screen flex flex-col p-4">
+    {/* サイト名 */}
+    <a href="/" class="text-xl font-bold text-base-content px-2 py-4 hover:text-primary transition-colors">
+      {SITE.title}
+    </a>
+
+    {/* ナビゲーション */}
+    <nav class="flex-1 mt-2">
+      <ul class="menu menu-md gap-1 px-0">
+        {NAV_ITEMS.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noopener noreferrer' : undefined}
+              class:list={[
+                'rounded-lg font-medium',
+                isActive(item.href) ? 'active' : '',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    {/* ソーシャルリンクアイコン */}
+    <div class="flex flex-wrap gap-2 px-2 py-4 border-t border-base-300">
+      {SOCIAL_LINKS.map((link) => (
+        <a
+          href={link.url}
+          target={link.url.startsWith('http') ? '_blank' : undefined}
+          rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+          aria-label={link.ariaLabel}
+          class="btn btn-ghost btn-sm btn-square hover:text-primary"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-5 h-5"
+          >
+            <path d={link.icon} />
+          </svg>
+        </a>
+      ))}
     </div>
-    <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
-    <SideBarFooter />
+
+    {/* テーマ切り替えボタン */}
+    <div class="flex items-center gap-2 px-2 py-3 border-t border-base-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+      <input
+        type="checkbox"
+        value="dark"
+        class="theme-controller toggle toggle-sm"
+        aria-label="ダークモードに切り替え"
+      />
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+    </div>
   </aside>
 </div>

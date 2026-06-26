@@ -1,0 +1,82 @@
+---
+/**
+ * Qiita・Zenn などの外部記事カードコンポーネントです。
+ * カードクリックで外部 URL へ遷移（target="_blank"）します。
+ *
+ * 新しいサービスを追加する場合は SOURCE_BADGE に追加してください。
+ *
+ * Props: article: ExternalArticle（src/lib/externalArticles.ts で定義）
+ */
+import type { ExternalArticle } from '../lib/externalArticles';
+import type { ExternalBlogService } from '../config';
+import { formatDate, isNew } from '../lib/utils';
+
+interface Props {
+  article: ExternalArticle;
+}
+
+const { article } = Astro.props;
+const { title, description, pubDate, url, tags, source, heroImage } = article;
+const showNew = isNew(pubDate);
+
+// 新しいサービスを追加したらここにも追加してください
+const SOURCE_BADGE: Record<ExternalBlogService, { label: string; className: string }> = {
+  qiita: { label: 'Qiita', className: 'badge-success' },
+  zenn:  { label: 'Zenn',  className: 'badge-info'    },
+};
+
+const badge = SOURCE_BADGE[source];
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="card card-side bg-base-100 border border-base-300 hover:border-accent hover:shadow-md transition-all duration-200 group"
+>
+  {/* サムネイル画像（あれば） */}
+  {heroImage && (
+    <figure class="w-32 shrink-0">
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+    </figure>
+  )}
+
+  <div class="card-body py-4 px-5">
+    {/* タイトル行 + New バッジ + ソースバッジ */}
+    <div class="flex items-start gap-2 flex-wrap">
+      {showNew && (
+        <span class="badge badge-primary badge-sm shrink-0 mt-1">New</span>
+      )}
+      <span class={`badge badge-sm shrink-0 mt-1 ${badge.className}`}>{badge.label}</span>
+      <h2 class="card-title text-base font-bold leading-snug group-hover:text-accent transition-colors line-clamp-2">
+        {title}
+        {/* 外部リンクアイコン */}
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-40 group-hover:opacity-70 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      </h2>
+    </div>
+
+    {/* 概要 */}
+    <p class="text-sm text-base-content/70 line-clamp-2">{description}</p>
+
+    {/* 日付 + タグ */}
+    <div class="flex flex-wrap items-center gap-2 mt-1">
+      <time class="text-xs text-base-content/50">{formatDate(pubDate)}</time>
+      {tags.map((tag) => (
+        <a
+          href={`/blog/tag/${tag}`}
+          class="badge badge-outline badge-sm hover:badge-accent transition-colors"
+          onclick="event.stopPropagation()"
+        >
+          #{tag}
+        </a>
+      ))}
+    </div>
+  </div>
+</a>

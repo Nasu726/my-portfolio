@@ -1,0 +1,55 @@
+---
+/**
+ * タグ別作品一覧ページです（例: /works/tag/Python）。
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works', ({ data }) => !data.draft);
+
+  // 全タグを収集（重複除去）
+  const allTags = [...new Set(works.flatMap((w) => w.data.tags))].filter(Boolean);
+
+  // 各タグごとに、そのタグを持つ作品を収集してパスを生成
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      works: works
+        .filter((w) => w.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+interface Props {
+  tag:   string;
+  works: Awaited<ReturnType<typeof getCollection<'works'>>>;
+}
+
+const { tag, works } = Astro.props;
+---
+
+<BaseLayout title={`#${tag} の作品`} description={`タグ「${tag}」の作品一覧`}>
+  <div class="mb-6">
+    <a href="/works" class="text-sm text-base-content/50 hover:text-secondary transition-colors mb-2 block">
+      ← Works に戻る
+    </a>
+    <h1 class="text-3xl font-bold">
+      <span class="text-secondary">#</span>{tag}
+    </h1>
+    <p class="text-base-content/60 text-sm mt-1">{works.length} 件の作品</p>
+  </div>
+
+  {works.length === 0 ? (
+    <div class="alert">
+      <p>このタグの作品はまだありません。</p>
+    </div>
+  ) : (
+    <div class="flex flex-col gap-3">
+      {works.map((work) => <WorkCard {work} />)}
+    </div>
+  )}
+</BaseLayout>

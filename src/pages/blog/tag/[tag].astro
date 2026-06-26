@@ -1,0 +1,77 @@
+---
+/**
+ * タグ別ブログ一覧ページです（例: /blog/tag/Python）。
+ * ローカル記事と外部記事を横断してタグでフィルタリングします。
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import ExternalArticleCard from '../../../components/ExternalArticleCard.astro';
+import { getCollection } from 'astro:content';
+import { fetchAllExternalArticles } from '../../../lib/externalArticles';
+
+export async function getStaticPaths() {
+  // ローカル記事と外部記事の両方からタグを集める
+  const localPosts   = await getCollection('blog', ({ data }) => !data.draft);
+  const externalArticles = await fetchAllExternalArticles();
+
+  // 全タグを収集（重複除去）
+  const allTags = [...new Set([
+    ...localPosts.flatMap((p) => p.data.tags),
+    ...externalArticles.flatMap((a) => a.tags),
+  ])].filter(Boolean);
+
+  // 各タグごとに、そのタグを持つローカル記事と外部記事を収集してパスを生成
+  return allTags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      localPosts:   localPosts.filter((p) => p.data.tags.includes(tag)),
+      externalArticles: externalArticles.filter((a) => a.tags.includes(tag)),
+    },
+  }));
+}
+
+interface Props {
+  tag:              string;
+  localPosts:       Awaited<ReturnType<typeof getCollection<'blog'>>>;
+  externalArticles: Awaited<ReturnType<typeof import('../../../lib/externalArticles').fetchAllExternalArticles>>;
+}
+
+const { tag, localPosts, externalArticles } = Astro.props;
+
+// ローカルと外部を日付の新しい順にマージ
+type AnyPost =
+  | { kind: 'local';    post:    (typeof localPosts)[number];       date: Date }
+  | { kind: 'external'; article: (typeof externalArticles)[number]; date: Date };
+
+const merged: AnyPost[] = [
+  ...localPosts.map((p): AnyPost => ({ kind: 'local',    post: p,    date: p.data.pubDate })),
+  ...externalArticles.map((a): AnyPost => ({ kind: 'external', article: a, date: a.pubDate })),
+].sort((a, b) => b.date.valueOf() - a.date.valueOf());
+---
+
+<BaseLayout title={`#${tag} の記事`} description={`タグ「${tag}」の記事一覧`}>
+  <div class="mb-6">
+    <a href="/blog" class="text-sm text-base-content/50 hover:text-primary transition-colors mb-2 block">
+      ← Blog に戻る
+    </a>
+    <h1 class="text-3xl font-bold">
+      <span class="text-primary">#</span>{tag}
+    </h1>
+    <p class="text-base-content/60 text-sm mt-1">{merged.length} 件の記事</p>
+  </div>
+
+  {merged.length === 0 ? (
+    <div class="alert">
+      <p>このタグの記事はまだありません。</p>
+    </div>
+  ) : (
+    <div class="flex flex-col gap-3">
+      {merged.map((item) =>
+        item.kind === 'local'
+          ? <BlogCard post={item.post} />
+          : <ExternalArticleCard article={item.article} />
+      )}
+    </div>
+  )}
+</BaseLayout>

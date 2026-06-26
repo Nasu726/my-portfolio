@@ -1,128 +1,100 @@
 ---
-import { type BlogSchema } from "../content/config";
-import BaseLayout from "./BaseLayout.astro";
-import dayjs from "dayjs";
-import localizedFormat from "dayjs/plugin/localizedFormat";
+/**
+ * ブログ記事個別ページのレイアウトです。
+ * BaseLayout を内包し、記事タイトル・日付・タグなどのメタ情報を表示します。
+ *
+ * Props:
+ *   frontmatter   - 記事のメタ情報（title, description, pubDate, heroImage?, tags?）
+ *   ogImageOverride? - 動的 OGP 画像の URL（/og/blog/[slug].png）。
+ *                      指定があればそれを使い、なければ heroImage、それもなければデフォルト画像を使う。
+ */
+import BaseLayout from './BaseLayout.astro';
+import { formatDate } from '../lib/utils';
+import { SITE } from '../config';
 
-export interface Props extends BlogSchema {}
+interface Props {
+  frontmatter: {
+    title:       string;
+    description: string;
+    pubDate:     Date;
+    heroImage?:  string;
+    tags?:       string[];
+  };
+  ogImageOverride?: string;
+}
 
-const { title, description, pubDate, updatedDate, heroImage, badge, tags = [], readingTime } = Astro.props;
-const badges = Array.isArray(badge) ? badge.flat() : [badge];
-dayjs.extend(localizedFormat);
-const displayDate = dayjs(pubDate).format("ll")
-import { Image } from "astro:assets";
-// import { filterPreloads } from "astro/assets/fonts/runtime";
-// import { map } from "astro:schema";
+const { frontmatter, ogImageOverride } = Astro.props;
+const { title, description, pubDate, heroImage, tags = [] } = frontmatter;
+
+// OGP 画像の優先順位: ogImageOverride > heroImage > defaultOgImage
+const ogImage = ogImageOverride || (heroImage && heroImage.trim() ? heroImage : SITE.defaultOgImage);
 ---
-<BaseLayout title={title} description={description} image={heroImage} sideBarActiveItemID="blog" ogType="article">
-  <main class="md:flex md:justify-center">
-    <article class="prose max-w-[750px] prose-img:mx-auto text-base">
-      {heroImage && <Image width={400} height={200} format="webp" src={heroImage} alt={title} class="w-full max-h-[300px] object-contain [&[src$='.svg']]:bg-slate-100 p-8 md:p-16 mb-6 items-center justify-center" />}
-      <h1 class="title my-2 text-4xl font-bold">{title}</h1>
-      {pubDate && <time>{displayDate}</time>}
-      {readingTime && (
-        <span class="flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          約 {readingTime} 分で読めます
-        </span>
-      )}
-      <br />
-      {badges && 
-        badges.filter(Boolean).map((b) => (
-        <div class="badge badge-secondary my-1">
-          {b}
-        </div>
-        ))
-      }
-      {
-        tags &&
-          tags.map((tag) => (
-            <a href={`/blog/tag/${tag}`} class="badge badge-outline ml-2 no-underline">
-              # {tag}
-            </a>
-          ))
-      }
-      {
-        updatedDate && (
-          <div>
-            {" "}
-            Last updated on <time>{updatedDate}</time>{" "}
-          </div>
-        )
-      }
-      <div class="divider my-2"></div>
-      <slot />
-    </article>
-  </main>
-</BaseLayout>
 
+<BaseLayout {title} {description} {ogImage}>
+  <article class="prose prose-base max-w-none prose-img:mx-auto prose-a:text-primary">
+    {/* ヒーロー画像（あれば） */}
+    {heroImage && heroImage.trim() && (
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full max-h-64 object-contain rounded-lg mb-6 not-prose"
+        loading="eager"
+      />
+    )}
 
-<script>
-  const codeBlocks = document.querySelectorAll('pre');
+    {/* タイトル */}
+    <h1 class="text-3xl font-bold mb-2 not-prose">{title}</h1>
 
-  codeBlocks.forEach((block) => {
-    if (!block.parentNode) return;
+    {/* 日付 */}
+    <time class="text-sm text-base-content/50 not-prose block mb-3">
+      {formatDate(pubDate)}
+    </time>
 
-    if (block.getAttribute('data-language') === 'mermaid' || block.classList.contains('mermaid')) {
-      return;
-    }
+    {/* タグバッジ */}
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-6 not-prose">
+        {tags.map((tag) => (
+          <a href={`/blog/tag/${tag}`} class="badge badge-outline hover:badge-primary transition-colors">
+            #{tag}
+          </a>
+        ))}
+      </div>
+    )}
 
-    // 【変更点1】 preタグを包み込むための新しいdiv（ラッパー）を作る
-    const wrapper = document.createElement('div');
-    wrapper.className = 'relative group mb-4'; // mb-4などで下の余白を少し持たせると綺麗です
+    <div class="divider not-prose my-4"></div>
 
-    // 【変更点2】 HTMLの構造を書き換えて、preタグをラッパーの中に入れる
-    block.parentNode.insertBefore(wrapper, block);
-    wrapper.appendChild(block);
+    {/* 記事本文（MDX からレンダリングされたコンテンツ） */}
+    <slot />
+  </article>
 
-    // 1. コピーボタン本体を作成
-    const copyButton = document.createElement('button');
-    copyButton.className = `
-      absolute top-2 right-2 px-2 py-1 
-      bg-slate-700/80 hover:bg-slate-600 text-white text-sm rounded 
-      opacity-100 duration-200
-      z-10 /* ボタンがコードの文字の下に潜らないようにする保険 */
-    `;
-    
-    // 2. 「Copy」という文字の要素を作成
-    const textSpan = document.createElement('span');
-    textSpan.innerText = 'Copy';
-    copyButton.appendChild(textSpan);
+  {/* コードブロックにコピーボタンを追加するスクリプト */}
+  <script>
+    document.querySelectorAll('pre').forEach((block) => {
+      if (!block.parentNode) return;
+      // Mermaid ブロックはスキップ
+      if (block.getAttribute('data-language') === 'mermaid' || block.classList.contains('mermaid')) return;
 
-    // 3. ツールチップ（Copied!）の要素を作成
-    const tooltip = document.createElement('span');
-    tooltip.className = `
-      absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 
-      bg-green-600/90 text-white text-xs rounded 
-      opacity-0 transition-opacity duration-200 pointer-events-none whitespace-nowrap
-    `;
-    tooltip.innerText = 'Copied!';
-    copyButton.appendChild(tooltip);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'relative group mb-4';
+      block.parentNode.insertBefore(wrapper, block);
+      wrapper.appendChild(block);
 
-    // クリックイベント
-    copyButton.addEventListener('click', async () => {
-      const code = block.querySelector('code')?.innerText || '';
-      
-      try {
-        await navigator.clipboard.writeText(code);
-        
-        // ツールチップを表示
-        tooltip.classList.remove('opacity-0');
-        tooltip.classList.add('opacity-100');
-        
-        // 2秒後に再び透明に戻す
-        setTimeout(() => {
-          tooltip.classList.remove('opacity-100');
-          tooltip.classList.add('opacity-0');
-        }, 1250);
-      } catch (err) {
-        console.error('コピーに失敗しました', err);
-      }
+      const btn = document.createElement('button');
+      btn.className = 'absolute top-2 right-2 px-2 py-1 bg-slate-700/80 hover:bg-slate-600 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-10';
+      btn.textContent = 'Copy';
+
+      btn.addEventListener('click', async () => {
+        const code = block.querySelector('code')?.innerText || '';
+        try {
+          await navigator.clipboard.writeText(code);
+          btn.textContent = 'Copied!';
+          setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+        } catch {
+          btn.textContent = 'Error';
+        }
+      });
+
+      wrapper.appendChild(btn);
     });
-
-    // 【変更点3】 ボタンは pre の中ではなく、ラッパー(外側)に追加する！
-    wrapper.appendChild(copyButton);
-  });
-</script>
+  </script>
+</BaseLayout>

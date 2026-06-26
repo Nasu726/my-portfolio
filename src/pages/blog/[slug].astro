@@ -1,51 +1,32 @@
 ---
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-// import { CollectionEntry } from "../../content/config";
-// import { BlogSchema } from "../../content/config";
-import PostLayout from "../../layouts/PostLayout.astro";
-// import createSlug from "../../lib/createSlug";
-import TableOfContents from "../../components/TableOfContents.astro";
-import { text } from "mermaid/dist/rendering-util/rendering-elements/shapes/text.js";
-import { bigint } from "astro:schema";
+/**
+ * ブログ記事の個別ページです。
+ * src/content/blog/ の各 .md / .mdx ファイルに対応するページを生成します。
+ */
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
 
 export async function getStaticPaths() {
-  const postEntries = await getCollection("blog");
-  return postEntries.map((entry) => ({
-    // params: { slug: createSlug(entry.data.title, entry.slug) },
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((entry) => ({
     params: { slug: entry.slug },
-    props: { entry },
+    props:  { entry },
   }));
 }
 
-interface Props {
-  entry: CollectionEntry<"blog">;
-}
-
 const { entry } = Astro.props;
-const post = entry.data;
-const { Content, headings } = await entry.render();
+const { title, description, pubDate, heroImage, tags } = entry.data;
 
-const getReadingTime = (body: string | undefined): number => {
-  if (!body) return 1;
-  const textWithoutCode = body.replace(/```[\s\S]*?```/g, "");
-  const cleanText = textWithoutCode.replace(/[\s\n#*`_\[\]()\-]/g, "");
-  const charCount = cleanText.length;
-  return Math.ceil(charCount / 500);
-};
-const readingTime = getReadingTime(entry.body);
+// 動的 OGP 画像の URL（このスラッグ専用の画像）
+const ogImageOverride = `/og/blog/${entry.slug}.png`;
+
+// MDX / Markdown をレンダリング
+const { Content, headings } = await render(entry);
 ---
 
 <PostLayout
-  title={post.title}
-  description={post.description}
-  pubDate={post.pubDate}
-  heroImage={post.heroImage}
-  updatedDate={post.updatedDate}
-  badge={post.badge}
-  tags={post.tags}
-  readingTime={readingTime}
+  frontmatter={{ title, description, pubDate, heroImage, tags }}
+  {ogImageOverride}
 >
-  <TableOfContents headings={headings} />
   <Content />
 </PostLayout>

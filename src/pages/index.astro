@@ -1,84 +1,62 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/HorizontalCard.astro";
-import { getCollection } from "astro:content";
-import createSlug from "../lib/createSlug";
-import { isNew } from "../lib/utils";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WorkCard from '../components/WorkCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { HOME } from '../config';
 
-// 最近のプロジェクトを取得
-const works = (await getCollection("works")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const last_works = works.slice(0, 3);
+// 最新の Works を取得（draft 除外、日付降順）
+const allWorks = (await getCollection('works', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const latestWorks = allWorks.slice(0, HOME.latestWorksCount);
 
-// 最近のブログを取得
-const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const last_posts = posts.slice(0, 3);
+// 最新の Blog を取得（draft 除外、日付降順）
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const latestPosts = allPosts.slice(0, HOME.latestBlogCount);
 ---
 
-<BaseLayout sideBarActiveItemID="home">
-  <div class="pb-6 mt-3">
-    <div class="text-base py-1">マイページへようこそ!</div>
-    <div class="text-4xl font-bold">nasu</div>
-    <div class="text-xl py-2 font-bold">面倒なことはコンピュータにやらせよう</div>
-    <div class="py-2">
-      <text class="text-sm">
-        電気通信大学で情報工学を学んでいます。<br>
-        キーワード：アルゴリズム / 競技プログラミング / Python / C++ / ゲーム / ロシア語
-      </text>
+<BaseLayout>
+  {/* ヒーローセクション */}
+  <section class="pb-8 pt-2">
+    <p class="text-base-content/60 text-sm mb-1">マイページへようこそ！</p>
+    <h1 class="text-4xl font-bold mb-2">nasu</h1>
+    <p class="text-xl font-semibold text-primary mb-4">面倒なことはコンピュータにやらせよう</p>
+    <p class="text-sm text-base-content/70 leading-relaxed mb-6">
+      電気通信大学で情報工学を学んでいます。<br />
+      キーワード：アルゴリズム / 競技プログラミング / Python / C++ / ロシア語
+    </p>
+    <div class="flex gap-3">
+      <a href="/my-career" class="btn btn-outline btn-sm">My Career</a>
+      <a
+        href="mailto:contact@nasu.uk"
+        class="btn btn-outline btn-sm"
+        onclick="return confirm('メールクライアントを開きますか？')"
+      >
+        Contact
+      </a>
     </div>
-    <div class="mt-8">
-      <a href="my-career" target="" class="btn btn-outline btn-sm">My Career</a>
-      <a class="btn btn-outline btn-sm ml-3" target="_blank" onclick="return confirm('メールを起動しますか？')" href="mailto:contact@nasu.uk" target="_blank"> Contact </a>
+  </section>
+
+  {/* Latest Works */}
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold">Latest Works</h2>
+      <a href="/works" class="btn btn-ghost btn-sm">全て見る →</a>
     </div>
-  </div>
+    <div class="flex flex-col gap-3">
+      {latestWorks.map((work) => <WorkCard {work} />)}
+    </div>
+  </section>
 
-  <div class="flex items-center gap-4">
-    <div class="text-xl font-bold mb-3 mt-6">Latest from Works</div>
-    <a href="/works" class="btn btn-outline btn-sm mt-4">View all works →</a>
-  </div>
-
-  {
-    last_works.map((work) => (
-      <>
-        <HorizontalCard
-          title={work.data.title}
-          img={work.data.heroImage}
-          imgDark={work.data.heroImageDark} // ダークモード画像対応
-          desc={work.data.description}
-          url={work.data.url}
-          badge={[
-            isNew(work.data.pubDate) && "NEW",
-            work.data.badge
-          ]}
-          tags={work.data.tags}
-          custom_tags_url="/works/tag"
-        />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
-
-  <div class="flex items-center gap-4">
-    <div class="text-xl font-bold mb-3 mt-6">Latest from Blog</div>
-    <a href="/blog" class="btn btn-outline btn-sm mt-4">View all posts →</a>
-  </div>
-
-  {
-    last_posts.map((post) => (
-      <>
-        <HorizontalCard
-          title={post.data.title}
-          img={post.data.heroImage}
-          desc={post.data.description}
-          url={`/blog/${post.slug}`}
-          target="_self"
-          badge={[
-            isNew(post.data.pubDate) && "NEW",
-            post.data.badge
-          ]}
-          tags={post.data.tags}
-        />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
+  {/* Latest Blog */}
+  <section class="mb-10">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold">Latest Blog</h2>
+      <a href="/blog" class="btn btn-ghost btn-sm">全て見る →</a>
+    </div>
+    <div class="flex flex-col gap-3">
+      {latestPosts.map((post) => <BlogCard {post} />)}
+    </div>
+  </section>
 </BaseLayout>

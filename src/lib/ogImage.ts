@@ -15,8 +15,7 @@
 import satori from 'satori';
 import sharp from 'sharp';
 import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 
 // ─────────────────────────────────────────────────────
 // テーマカラー（tailwind.config.cjs と揃えること）
@@ -38,9 +37,8 @@ const OG_HEIGHT = 630;
 // フォントキャッシュ（ビルド全体で1回だけ読み込む）
 // ─────────────────────────────────────────────────────
 
-// src/lib/ から 2 階層上がるとプロジェクトルートになる
-const __dirname_og = dirname(fileURLToPath(import.meta.url));
-const FONT_DIR = join(__dirname_og, '..', '..', 'node_modules', '@fontsource', 'noto-sans-jp', 'files');
+// process.cwd() はビルド実行時のプロジェクトルート（SSG プリレンダリングでも正しいパスを指す）
+const FONT_DIR = join(process.cwd(), 'node_modules', '@fontsource', 'noto-sans-jp', 'files');
 
 let fontCache: {
   latinRegular: Buffer;

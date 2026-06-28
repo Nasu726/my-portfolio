@@ -12,7 +12,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const works = await getCollection('works', ({ data }) => !data.draft);
 
   return works.map((work) => ({
-    params: { slug: work.slug },
+    params: { slug: work.id },
     props:  { title: work.data.title, tags: work.data.tags ?? [] },
   }));
 };

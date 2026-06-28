@@ -1,33 +1,17 @@
-/**
- * サイト全体の設定を一元管理するファイルです。
- * ナビゲーション、ソーシャルリンク、外部ブログの設定など、
- * よく変更する設定をここに書くことで、一箇所の変更でサイト全体に反映されます。
- *
- * 使い方：
- *   import { SITE, NAV_ITEMS, SOCIAL_LINKS } from '../config';
- */
-
-// ─────────────────────────────────────────────────────
-// 型定義
-// ─────────────────────────────────────────────────────
-
 export type NavItem = {
   label: string;
   href: string;
-  external?: boolean; // true のとき target="_blank" で開く
 };
 
 export type SocialLink = {
   service: string;
   url: string;
   ariaLabel: string;
-  icon: string;      // SVG path d 属性（viewBox="0 0 24 24"）
-  iconSrc?: string;  // 設定した場合、SVG path の代わりに <img src> として使う
+  icon: string;
+  iconSrc?: string;
 };
 
-// 新しいブログサービスを追加する場合は、まずこの型にサービス名を追加してください
-// 例: export type ExternalBlogService = 'qiita' | 'zenn' | 'note';
-export type ExternalBlogService = 'qiita' | 'zenn';
+export type ExternalBlogService = 'qiita' | 'hatenablog';
 
 export type ExternalBlogSource = {
   service: ExternalBlogService;
@@ -35,26 +19,14 @@ export type ExternalBlogSource = {
   apiUrl: string;
 };
 
-// ─────────────────────────────────────────────────────
-// サイト基本情報
-// ここを変更するとヘッダー・OGP・フッターなどに反映されます
-// ─────────────────────────────────────────────────────
-
 export const SITE = {
   title: 'なす | マイページ',
-  description:
-    'なすのマイページです。プロフィール、今までに作成したプロジェクトとブログ、本棚を公開しています。',
+  description: 'なすのマイページです。プロフィール、作成したプロジェクトとブログを公開しています。',
   url: 'https://nasu.uk',
   author: 'nasu',
-  twitterHandle: 'ueCube24_1', // @ なし
+  twitterHandle: 'ueCube24_1',
   defaultOgImage: '/og/site.png',
 } as const;
-
-// ─────────────────────────────────────────────────────
-// ナビゲーション項目
-// 新しいページを追加する場合は、この配列にオブジェクトを追加するだけです
-// （BaseLayout の Sidebar が自動的に反映します）
-// ─────────────────────────────────────────────────────
 
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Home',      href: '/'          },
@@ -62,12 +34,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Blog',      href: '/blog'      },
   { label: 'My Career', href: '/my-career' },
 ];
-
-// ─────────────────────────────────────────────────────
-// ソーシャルリンク
-// 新しいサービスを追加する場合は、この配列にオブジェクトを追加してください
-// icon には SVG の path d 属性の値を入れてください（viewBox="0 0 24 24" を想定）
-// ─────────────────────────────────────────────────────
 
 export const SOCIAL_LINKS: SocialLink[] = [
   {
@@ -90,10 +56,11 @@ export const SOCIAL_LINKS: SocialLink[] = [
     iconSrc: 'https://cdn.simpleicons.org/qiita',
   },
   {
-    service: 'Zenn',
-    url: 'https://zenn.dev/nasu726',
-    ariaLabel: 'Zenn',
-    icon: 'M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.72c.234-.001.41-.118.645-.353z',
+    service: 'はてなブログ',
+    url: 'https://nasu726.hatenablog.com',
+    ariaLabel: 'はてなブログ',
+    icon: '',
+    iconSrc: 'https://cdn.simpleicons.org/hatenabookmark',
   },
   {
     service: 'note',
@@ -110,47 +77,25 @@ export const SOCIAL_LINKS: SocialLink[] = [
   },
 ];
 
-// ─────────────────────────────────────────────────────
-// 外部ブログソース
-// 特定のサービスを無効化したい場合は、その行をコメントアウトしてください
-//
-// 新しいサービスを追加する手順:
-//   1. 上の ExternalBlogService 型に新しいサービス名を追加する
-//   2. src/lib/externalArticles.ts に fetcher 関数を追加する
-//   3. externalArticles.ts の FETCHER_MAP にエントリを追加する
-//   4. src/components/ExternalArticleCard.astro の SOURCE_BADGE にバッジ情報を追加する
-//   5. この配列にエントリを追加する（ここを編集するだけで有効になる）
-// ─────────────────────────────────────────────────────
-
 export const EXTERNAL_BLOG_SOURCES: ExternalBlogSource[] = [
   {
     service: 'qiita',
     userId: 'nasu726',
-    // 認証なし: 60 req/時間（IP 単位）。認証ありにするには環境変数 QIITA_TOKEN を設定。
     apiUrl: 'https://qiita.com/api/v2/users/nasu726/items?per_page=30',
   },
   {
-    service: 'zenn',
+    service: 'hatenablog',
     userId: 'nasu726',
-    // Zenn の非公式 API。安定しているが公式サポートなし。
-    apiUrl: 'https://zenn.dev/api/articles?username=nasu726&order=latest',
+    // はてなブログのRSSフィードURL。ブログURLに合わせて変更してください。
+    apiUrl: 'https://nasu726.hatenablog.com/rss',
   },
 ];
 
-// ─────────────────────────────────────────────────────
-// "New" バッジの設定
-// この日数以内に公開された記事・作品に "New" バッジが表示されます
-// ─────────────────────────────────────────────────────
-
 export const BADGE = {
-  newDays: 30, // 30日以内なら "New" バッジを表示
+  newDays: 30,
 } as const;
 
-// ─────────────────────────────────────────────────────
-// ホームページの表示件数
-// ─────────────────────────────────────────────────────
-
 export const HOME = {
-  latestWorksCount: 3, // ホームに表示する最新 Works の件数
-  latestBlogCount: 3,  // ホームに表示する最新 Blog の件数
+  latestWorksCount: 3,
+  latestBlogCount: 3,
 } as const;

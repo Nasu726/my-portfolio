@@ -20,86 +20,75 @@ interface Props {
 const { frontmatter, ogImageOverride, headings = [], readingTime } = Astro.props;
 const { title, description, pubDate, heroImage, tags = [] } = frontmatter;
 
-const ogImage = ogImageOverride || (heroImage?.trim() ? heroImage : SITE.defaultOgImage);
-
-// h2・h3 のみ目次に表示（h1 は記事タイトルなので除外）
-const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const ogImage     = ogImageOverride || (heroImage?.trim() ? heroImage : SITE.defaultOgImage);
+const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
 ---
 
 <BaseLayout {title} {description} {ogImage}>
-  <article class="prose prose-base max-w-none prose-img:mx-auto prose-a:text-primary">
-
-    {/* ヒーロー画像 */}
+  <article>
+    <!-- ヒーロー画像 -->
     {heroImage?.trim() && (
       <img
         src={heroImage}
         alt={title}
-        class="w-full max-h-64 object-contain rounded-xl mb-6 not-prose"
+        class="w-full max-h-64 object-contain rounded-xl mb-6"
         loading="eager"
       />
     )}
 
-    {/* タイトル */}
-    <h1 class="text-3xl font-bold mb-2 not-prose">{title}</h1>
+    <!-- タイトル -->
+    <h1 class="text-2xl font-bold text-slate-900 mb-2">{title}</h1>
 
-    {/* 日付 + 読了目安 */}
-    <div class="flex items-center gap-2 text-sm text-base-content/50 not-prose mb-3">
+    <!-- メタ情報 -->
+    <div class="flex items-center gap-2 text-sm text-slate-400 mb-3">
       <time>{formatDate(pubDate)}</time>
       {readingTime && (
         <>
           <span>·</span>
-          <span>約 {readingTime} 分で読めます</span>
+          <span>約 {readingTime} 分</span>
         </>
       )}
     </div>
 
-    {/* タグ */}
+    <!-- タグ -->
     {tags.length > 0 && (
-      <div class="flex flex-wrap gap-1.5 mb-5 not-prose">
-        {tags.map((tag) => (
-          <a
-            href={`/blog/tag/${tag}`}
-            class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors"
-          >
-            #{tag}
-          </a>
+      <div class="flex flex-wrap gap-2 mb-5">
+        {tags.map(tag => (
+          <a href={`/blog/tag/${tag}`}
+            class="text-xs px-2.5 py-1 rounded-full border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+          >#{tag}</a>
         ))}
       </div>
     )}
 
-    {/* 目次 */}
+    <!-- 目次 -->
     {tocHeadings.length >= 2 && (
-      <details class="mb-6 p-4 bg-base-200 rounded-xl not-prose" open>
-        <summary class="cursor-pointer font-bold text-sm select-none text-base-content/80">
-          目次
-        </summary>
-        <nav class="mt-3 space-y-1">
-          {tocHeadings.map((h) => (
-            <a
-              href={`#${h.slug}`}
+      <details class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-100" open>
+        <summary class="cursor-pointer font-semibold text-sm text-slate-700 select-none">目次</summary>
+        <nav class="mt-3 flex flex-col gap-1">
+          {tocHeadings.map(h => (
+            <a href={`#${h.slug}`}
               class:list={[
-                'block text-sm transition-colors hover:text-primary',
-                h.depth === 2
-                  ? 'font-medium text-base-content/70'
-                  : 'pl-4 text-base-content/50 text-xs',
+                'text-sm transition-colors hover:text-indigo-600',
+                h.depth === 2 ? 'font-medium text-slate-600' : 'pl-4 text-slate-400 text-xs',
               ]}
-            >
-              {h.text}
-            </a>
+            >{h.text}</a>
           ))}
         </nav>
       </details>
     )}
 
-    <div class="divider not-prose my-4"></div>
+    <hr class="border-slate-100 mb-6" />
 
-    {/* 本文 */}
-    <slot />
+    <!-- 本文 -->
+    <div class="prose prose-slate max-w-none prose-img:mx-auto prose-a:text-indigo-600 prose-headings:text-slate-800">
+      <slot />
+    </div>
   </article>
 
-  {/* コードブロックのコピーボタン */}
+  <!-- コードブロックのコピーボタン -->
   <script>
-    document.querySelectorAll('pre').forEach((block) => {
+    document.querySelectorAll('pre').forEach(block => {
       if (!block.parentNode) return;
       if (block.getAttribute('data-language') === 'mermaid' || block.classList.contains('mermaid')) return;
 

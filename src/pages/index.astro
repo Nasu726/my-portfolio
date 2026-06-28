@@ -5,58 +5,55 @@ import BlogCard from '../components/BlogCard.astro';
 import { getCollection } from 'astro:content';
 import { HOME } from '../config';
 
-// 最新の Works を取得（draft 除外、日付降順）
 const allWorks = (await getCollection('works', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const latestWorks = allWorks.slice(0, HOME.latestWorksCount);
 
-// 最新の Blog を取得（draft 除外、日付降順）
 const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const latestPosts = allPosts.slice(0, HOME.latestBlogCount);
 ---
 
 <BaseLayout>
-  {/* ヒーローセクション */}
-  <section class="pb-8 pt-2">
-    <p class="text-base-content/60 text-sm mb-1">マイページへようこそ！</p>
-    <h1 class="text-4xl font-bold mb-2">nasu</h1>
-    <p class="text-xl font-semibold text-primary mb-4">面倒なことはコンピュータにやらせよう</p>
-    <p class="text-sm text-base-content/70 leading-relaxed mb-6">
+  <!-- ヒーロー -->
+  <section class="pb-10 pt-2">
+    <p class="text-sm text-slate-400 mb-2">マイページへようこそ！</p>
+    <h1 class="text-4xl font-bold text-slate-900 mb-2">nasu</h1>
+    <p class="text-lg font-medium text-indigo-500 mb-4">面倒なことはコンピュータにやらせよう</p>
+    <p class="text-sm text-slate-600 leading-relaxed mb-6">
       電気通信大学で情報工学を学んでいます。<br />
-      キーワード：アルゴリズム / 競技プログラミング / Python / C++ / ロシア語
+      アルゴリズム・競技プログラミング・Python・C++・ロシア語
     </p>
     <div class="flex gap-3">
-      <a href="/my-career" class="btn btn-outline btn-sm">My Career</a>
-      <a
-        href="mailto:contact@nasu.uk"
-        class="btn btn-outline btn-sm"
+      <a href="/my-career"
+        class="inline-flex items-center px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+      >My Career</a>
+      <a href="mailto:contact@nasu.uk"
         onclick="return confirm('メールクライアントを開きますか？')"
-      >
-        Contact
-      </a>
+        class="inline-flex items-center px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+      >Contact</a>
     </div>
   </section>
 
-  {/* Latest Works */}
+  <!-- Latest Works -->
   <section class="mb-10">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold">Latest Works</h2>
-      <a href="/works" class="btn btn-ghost btn-sm">全て見る →</a>
+      <h2 class="text-base font-bold text-slate-700 uppercase tracking-wide">Latest Works</h2>
+      <a href="/works" class="text-sm text-indigo-500 hover:text-indigo-700 transition-colors">全て見る →</a>
     </div>
     <div class="flex flex-col gap-3">
-      {latestWorks.map((work) => <WorkCard {work} />)}
+      {latestWorks.map(work => <WorkCard {work} />)}
     </div>
   </section>
 
-  {/* Latest Blog */}
+  <!-- Latest Blog -->
   <section class="mb-10">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold">Latest Blog</h2>
-      <a href="/blog" class="btn btn-ghost btn-sm">全て見る →</a>
+      <h2 class="text-base font-bold text-slate-700 uppercase tracking-wide">Latest Blog</h2>
+      <a href="/blog" class="text-sm text-indigo-500 hover:text-indigo-700 transition-colors">全て見る →</a>
     </div>
     <div class="flex flex-col gap-3">
-      {latestPosts.map((post) => <BlogCard {post} />)}
+      {latestPosts.map(post => <BlogCard {post} />)}
     </div>
   </section>
 </BaseLayout>

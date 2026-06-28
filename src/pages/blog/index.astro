@@ -1,8 +1,4 @@
 ---
-/**
- * ブログ一覧ページです。
- * ローカル記事と Qiita・Zenn 記事を日付の新しい順にマージして表示します。
- */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import ExternalArticleCard from '../../components/ExternalArticleCard.astro';
@@ -10,21 +6,16 @@ import { getCollection } from 'astro:content';
 import { fetchAllExternalArticles } from '../../lib/externalArticles';
 import { collectTags } from '../../lib/utils';
 
-// ローカル記事を取得（draft 除外）
 const localPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// 外部記事を取得（失敗しても [] が返ってくる）
 const externalArticles = await fetchAllExternalArticles();
 
-// タグ一覧をローカル + 外部で統合・重複除去・ソート
 const allTags = collectTags([
-  ...localPosts.map((p) => p.data.tags),
-  ...externalArticles.map((a) => a.tags),
+  ...localPosts.map(p => p.data.tags),
+  ...externalArticles.map(a => a.tags),
 ]);
 
-// ローカル記事と外部記事を日付の新しい順にマージするために
-// 共通の日付フィールドを使って並べ替える
 type AnyPost =
   | { kind: 'local';    post:    (typeof localPosts)[number];       date: Date }
   | { kind: 'external'; article: (typeof externalArticles)[number]; date: Date };
@@ -36,34 +27,33 @@ const merged: AnyPost[] = [
 ---
 
 <BaseLayout title="Blog" description="ブログ記事一覧">
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold mb-2">Blog</h1>
-    <p class="text-base-content/60 text-sm">ローカル記事 + Qiita / Zenn の記事を統合表示しています</p>
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-slate-900 mb-1">Blog</h1>
+    <p class="text-sm text-slate-400">ローカル記事 + Qiita・はてなブログの記事を統合表示</p>
   </div>
 
-  {/* タグフィルター */}
+  <!-- タグフィルター -->
   {allTags.length > 0 && (
-    <div class="flex flex-wrap gap-2 mb-6">
-      {allTags.map((tag) => (
-        <a href={`/blog/tag/${tag}`} class="badge badge-outline hover:badge-primary transition-colors">
-          #{tag}
-        </a>
+    <div class="flex flex-wrap gap-2 mb-8 pb-6 border-b border-slate-100">
+      {allTags.map(tag => (
+        <a href={`/blog/tag/${tag}`}
+          class="text-xs px-2.5 py-1 rounded-full border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+        >#{tag}</a>
       ))}
     </div>
   )}
 
-  {/* 記事一覧 */}
-  {merged.length === 0 ? (
-    <div class="alert">
-      <p>まだ記事がありません。</p>
-    </div>
-  ) : (
-    <div class="flex flex-col gap-3">
-      {merged.map((item) =>
-        item.kind === 'local'
-          ? <BlogCard post={item.post} />
-          : <ExternalArticleCard article={item.article} />
-      )}
-    </div>
-  )}
+  <!-- 記事一覧 -->
+  {merged.length === 0
+    ? <p class="text-sm text-slate-400">まだ記事がありません。</p>
+    : (
+      <div class="flex flex-col gap-3">
+        {merged.map(item =>
+          item.kind === 'local'
+            ? <BlogCard post={item.post} />
+            : <ExternalArticleCard article={item.article} />
+        )}
+      </div>
+    )
+  }
 </BaseLayout>

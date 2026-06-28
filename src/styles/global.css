@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ─────────────────────────────────────────────────────
    グローバルスタイル
    Tailwind / DaisyUI では対応しにくい細かいスタイルをここに書きます

@@ -1,6 +1,6 @@
 ---
-import { SITE } from '../config';
-import SideBar from '../components/SideBar.astro';
+import { SITE, NAV_ITEMS, SOCIAL_LINKS } from '../config';
+import '../styles/global.css';
 
 interface Props {
   title?:       string;
@@ -16,71 +16,138 @@ const {
 
 const pageTitle  = title === SITE.title ? SITE.title : `${title} | ${SITE.title}`;
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage}`;
+const path       = Astro.url.pathname;
+
+function isActive(href: string) {
+  return href === '/' ? path === '/' : path.startsWith(href);
+}
 ---
 
 <!doctype html>
 <html lang="ja" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="generator" content={Astro.generator} />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={Astro.url.href} />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={Astro.url.href} />
+  <meta property="og:title"       content={pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={ogImageUrl} />
+  <meta property="og:locale"      content="ja_JP" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:site"        content={`@${SITE.twitterHandle}`} />
+  <meta name="twitter:title"       content={pageTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={ogImageUrl} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous" />
+</head>
+<body class="bg-white text-slate-800 antialiased">
 
-    <title>{pageTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={Astro.url.href} />
+  <!-- モバイルヘッダー -->
+  <header class="lg:hidden sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-100 h-14 flex items-center px-4 gap-3">
+    <button id="menu-btn" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors" aria-label="メニューを開く">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <a href="/" class="font-bold text-slate-800">{SITE.title}</a>
+  </header>
 
-    <meta property="og:type"        content="website" />
-    <meta property="og:url"         content={Astro.url.href} />
-    <meta property="og:title"       content={pageTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image"       content={ogImageUrl} />
-    <meta property="og:locale"      content="ja_JP" />
-
-    <meta name="twitter:card"        content="summary_large_image" />
-    <meta name="twitter:site"        content={`@${SITE.twitterHandle}`} />
-    <meta name="twitter:title"       content={pageTitle} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image"       content={ogImageUrl} />
-
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
-      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
-      crossorigin="anonymous"
-    />
-  </head>
-
-  <body>
-    <div class="bg-base-100 drawer lg:drawer-open">
-      <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-
-      <div class="drawer-content flex flex-col min-h-screen">
-        {/* モバイル用ヘッダー */}
-        <header class="lg:hidden sticky top-0 z-30 bg-base-100/90 backdrop-blur flex items-center gap-3 px-4 py-3 border-b border-base-300">
-          <label for="my-drawer" class="btn btn-ghost btn-sm btn-square" aria-label="メニューを開く">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </label>
-          <a href="/" class="font-bold text-base-content flex-1">{SITE.title}</a>
-        </header>
-
-        <main class="flex-1 p-6 md:p-10 max-w-4xl w-full mx-auto">
-          <slot />
-        </main>
-
-        <footer class="footer footer-center p-4 text-base-content/40 text-sm border-t border-base-300">
-          <p>
-            © {new Date().getFullYear()} {SITE.author} &nbsp;·&nbsp;
-            Built with <a href="https://astro.build" class="link link-hover" target="_blank" rel="noopener noreferrer">Astro</a>
-          </p>
-        </footer>
+  <!-- モバイルメニュー（オーバーレイ） -->
+  <div id="mobile-menu" class="lg:hidden fixed inset-0 z-40 hidden">
+    <div id="menu-backdrop" class="absolute inset-0 bg-black/20"></div>
+    <nav class="absolute left-0 top-0 bottom-0 w-64 bg-white border-r border-slate-100 flex flex-col p-6 shadow-lg">
+      <a href="/" class="flex items-center gap-2.5 mb-8">
+        <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white font-bold text-lg leading-none select-none">n</div>
+        <span class="font-bold text-slate-800">nasu</span>
+      </a>
+      <div class="flex flex-col gap-1 flex-1">
+        {NAV_ITEMS.map(item => (
+          <a href={item.href}
+            class={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              isActive(item.href)
+                ? 'bg-indigo-50 text-indigo-600'
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >{item.label}</a>
+        ))}
       </div>
+      <div class="pt-5 border-t border-slate-100 flex gap-4 flex-wrap">
+        {SOCIAL_LINKS.map(link => (
+          <a href={link.url} aria-label={link.ariaLabel}
+            target={link.url.startsWith('http') ? '_blank' : undefined}
+            rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="text-slate-400 hover:text-slate-700 transition-colors"
+          >
+            {link.iconSrc
+              ? <img src={link.iconSrc} alt={link.service} class="w-5 h-5" loading="lazy" />
+              : <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor" aria-hidden="true"><path d={link.icon}/></svg>
+            }
+          </a>
+        ))}
+      </div>
+    </nav>
+  </div>
 
-      <SideBar />
+  <!-- デスクトップレイアウト -->
+  <div class="lg:flex">
+    <!-- サイドバー（デスクトップ固定） -->
+    <aside class="hidden lg:flex flex-col fixed top-0 left-0 h-screen w-56 border-r border-slate-100 bg-slate-50/60 px-4 py-6">
+      <a href="/" class="flex items-center gap-2.5 mb-8">
+        <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white font-bold text-lg leading-none select-none">n</div>
+        <span class="font-bold text-slate-800">nasu</span>
+      </a>
+      <nav class="flex flex-col gap-1 flex-1">
+        {NAV_ITEMS.map(item => (
+          <a href={item.href}
+            class={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              isActive(item.href)
+                ? 'bg-indigo-50 text-indigo-600'
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >{item.label}</a>
+        ))}
+      </nav>
+      <div class="pt-4 border-t border-slate-100 flex gap-3 flex-wrap">
+        {SOCIAL_LINKS.map(link => (
+          <a href={link.url} aria-label={link.ariaLabel}
+            target={link.url.startsWith('http') ? '_blank' : undefined}
+            rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            {link.iconSrc
+              ? <img src={link.iconSrc} alt={link.service} class="w-4 h-4" loading="lazy" />
+              : <svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor" aria-hidden="true"><path d={link.icon}/></svg>
+            }
+          </a>
+        ))}
+      </div>
+    </aside>
+
+    <!-- メインコンテンツエリア -->
+    <div class="lg:ml-56 flex-1 flex flex-col min-h-screen">
+      <main class="flex-1 px-6 py-8 max-w-3xl w-full mx-auto">
+        <slot />
+      </main>
+      <footer class="px-6 py-4 text-center text-xs text-slate-400 border-t border-slate-100">
+        © {new Date().getFullYear()} {SITE.author} · Built with
+        <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="hover:text-slate-600 transition-colors">Astro</a>
+      </footer>
     </div>
-  </body>
+  </div>
+
+  <script>
+    const btn      = document.getElementById('menu-btn');
+    const menu     = document.getElementById('mobile-menu');
+    const backdrop = document.getElementById('menu-backdrop');
+    btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+    backdrop?.addEventListener('click', () => menu?.classList.add('hidden'));
+  </script>
+</body>
 </html>

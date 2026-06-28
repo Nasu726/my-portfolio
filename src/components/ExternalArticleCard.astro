@@ -1,82 +1,77 @@
 ---
-/**
- * Qiita・Zenn などの外部記事カードコンポーネントです。
- * カードクリックで外部 URL へ遷移（target="_blank"）します。
- *
- * 新しいサービスを追加する場合は SOURCE_BADGE に追加してください。
- *
- * Props: article: ExternalArticle（src/lib/externalArticles.ts で定義）
- */
 import type { ExternalArticle } from '../lib/externalArticles';
 import type { ExternalBlogService } from '../config';
 import { formatDate, isNew } from '../lib/utils';
+import { SITE } from '../config';
 
 interface Props {
   article: ExternalArticle;
 }
 
 const { article } = Astro.props;
-const { title, description, pubDate, url, tags, source, heroImage } = article;
+const { title, description, pubDate, url, tags, source } = article;
 const showNew = isNew(pubDate);
 
-// 新しいサービスを追加したらここにも追加してください
-const SOURCE_BADGE: Record<ExternalBlogService, { label: string; className: string }> = {
-  qiita: { label: 'Qiita', className: 'badge-success' },
-  zenn:  { label: 'Zenn',  className: 'badge-info'    },
+const SOURCE_BADGE: Record<ExternalBlogService, { label: string; cls: string }> = {
+  qiita: { label: 'Qiita', cls: 'bg-green-100 text-green-700' },
+  zenn:  { label: 'Zenn',  cls: 'bg-blue-100  text-blue-700'  },
 };
-
 const badge = SOURCE_BADGE[source];
 ---
 
-<a
-  href={url}
-  target="_blank"
-  rel="noopener noreferrer"
-  class="card card-side bg-base-100 border border-base-300 hover:border-accent hover:shadow-md transition-all duration-200 group"
->
-  {/* サムネイル画像（あれば） */}
-  {heroImage && (
-    <figure class="w-32 shrink-0">
-      <img
-        src={heroImage}
-        alt={title}
-        class="w-full h-full object-cover"
-        loading="lazy"
-      />
-    </figure>
-  )}
+<article class="group relative bg-white rounded-2xl border border-base-300 hover:border-primary/40 hover:shadow-md transition-all duration-200 p-5">
+  {/* stretched link（外部リンク） */}
+  <a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="absolute inset-0 rounded-2xl z-0"
+    aria-label={title}
+  ></a>
 
-  <div class="card-body py-4 px-5">
-    {/* タイトル行 + New バッジ + ソースバッジ */}
-    <div class="flex items-start gap-2 flex-wrap">
-      {showNew && (
-        <span class="badge badge-primary badge-sm shrink-0 mt-1">New</span>
-      )}
-      <span class={`badge badge-sm shrink-0 mt-1 ${badge.className}`}>{badge.label}</span>
-      <h2 class="card-title text-base font-bold leading-snug group-hover:text-accent transition-colors line-clamp-2">
-        {title}
-        {/* 外部リンクアイコン */}
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-40 group-hover:opacity-70 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-        </svg>
-      </h2>
-    </div>
+  {/* ソースバッジ + 外部リンクアイコン */}
+  <div class="flex items-center justify-between mb-2">
+    <span class={`relative z-10 text-xs font-medium px-2 py-0.5 rounded-full ${badge.cls}`}>
+      {badge.label}
+    </span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-base-content/30 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+    </svg>
+  </div>
 
-    {/* 概要 */}
-    <p class="text-sm text-base-content/70 line-clamp-2">{description}</p>
+  {/* タイトル */}
+  <h2 class="font-bold text-base leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
+    {showNew && <span class="inline-block badge badge-primary badge-xs mr-1.5 align-middle">New</span>}
+    {title}
+  </h2>
 
-    {/* 日付 + タグ */}
-    <div class="flex flex-wrap items-center gap-2 mt-1">
-      <time class="text-xs text-base-content/50">{formatDate(pubDate)}</time>
+  {/* 概要 */}
+  <p class="text-sm text-base-content/60 line-clamp-2 mb-4">{description}</p>
+
+  {/* タグ */}
+  {tags.length > 0 && (
+    <div class="flex flex-wrap gap-1.5 mb-4">
       {tags.map((tag) => (
         <a
           href={`/blog/tag/${tag}`}
-          class="badge badge-outline badge-sm hover:badge-accent transition-colors"
-          onclick="event.stopPropagation()"
+          class="relative z-10 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors"
         >
           #{tag}
         </a>
       ))}
     </div>
+  )}
+
+  {/* 著者行 */}
+  <div class="flex items-center gap-2">
+    <img
+      src="/nasucat.webp"
+      alt={SITE.author}
+      class="w-6 h-6 rounded-full object-cover flex-shrink-0"
+      loading="lazy"
+    />
+    <span class="text-xs text-base-content/60">{SITE.author}</span>
+    <span class="text-xs text-base-content/30">·</span>
+    <time class="text-xs text-base-content/50">{formatDate(pubDate)}</time>
   </div>
-</a>
+</article>

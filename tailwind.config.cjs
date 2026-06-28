@@ -40,8 +40,7 @@ module.exports = {
           error:             'hsl(0 84% 70%)',
         },
       },
-      // DaisyUI 組み込みのダークテーマ
-      'dark',
+      // ダークテーマは不要なので除去済み
     ],
     defaultTheme: 'light',
     logs: false,

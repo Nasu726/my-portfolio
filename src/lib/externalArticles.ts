@@ -45,9 +45,9 @@ async function fetchQiitaArticles(apiUrl: string): Promise<ExternalArticle[]> {
 
   const items = await res.json() as any[];
 
-  // 非公開記事（private: true）は除外する
+  // 非公開記事を除外し、ユーザー ID が一致するものだけ取得
   return items
-    .filter((item: any) => !item.private)
+    .filter((item: any) => !item.private && item.user?.id === 'nasu726')
     .map((item: any): ExternalArticle => ({
       title:       item.title,
       description: stripMarkdown(item.body || item.title),
@@ -72,15 +72,18 @@ async function fetchZennArticles(apiUrl: string): Promise<ExternalArticle[]> {
   const data = await res.json() as any;
   const articles: any[] = data.articles || [];
 
-  return articles.map((item: any): ExternalArticle => ({
-    title:       item.title,
-    description: stripMarkdown(item.body_letters_count > 0 ? item.title : item.title),
-    pubDate:     new Date(item.published_at),
-    url:         `https://zenn.dev${item.path}`,
-    tags:        item.topics ? item.topics.map((t: any) => t.name) : [],
-    source:      'zenn',
-    heroImage:   item.cover_image_url || undefined,
-  }));
+  // username が一致するものだけ（API フィルター漏れのフェイルセーフ）
+  return articles
+    .filter((item: any) => item.user?.username === 'nasu726')
+    .map((item: any): ExternalArticle => ({
+      title:       item.title,
+      description: item.title,
+      pubDate:     new Date(item.published_at),
+      url:         `https://zenn.dev${item.path}`,
+      tags:        item.topics ? item.topics.map((t: any) => t.name) : [],
+      source:      'zenn',
+      heroImage:   item.cover_image_url || undefined,
+    }));
 }
 
 // ─────────────────────────────────────────────────────

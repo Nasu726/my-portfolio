@@ -66,3 +66,19 @@ export function stripMarkdown(text: string, maxLength = 120): string {
 export function collectTags(tagArrays: string[][]): string[] {
   return [...new Set(tagArrays.flat())].filter(Boolean).sort();
 }
+
+// ─────────────────────────────────────────────────────
+// 読了時間推定
+// ─────────────────────────────────────────────────────
+
+/**
+ * Markdown 本文の文字数から読了時間（分）を推定します。
+ * 日本語は約 500 字/分を基準にしています。
+ */
+export function calcReadingTime(text: string): number {
+  const noCode = text
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]*`/g, '');
+  const charCount = noCode.replace(/\s/g, '').length;
+  return Math.max(1, Math.ceil(charCount / 500));
+}

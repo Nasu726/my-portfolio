@@ -1,20 +1,8 @@
 ---
-/**
- * サイドバーコンポーネントです。
- * ナビゲーション、ソーシャルリンク、テーマ切り替えボタンを含みます。
- *
- * ナビ項目の追加/変更 → src/config.ts の NAV_ITEMS を編集
- * ソーシャルリンクの追加/変更 → src/config.ts の SOCIAL_LINKS を編集
- */
 import { NAV_ITEMS, SOCIAL_LINKS, SITE } from '../config';
 
-// 現在のページのパスを取得してアクティブリンクを判定する
 const currentPath = Astro.url.pathname;
 
-/**
- * href が現在のパスに前方一致するかチェックします。
- * ホーム（/）のみ完全一致にして、他のページが誤ってアクティブにならないようにします。
- */
 function isActive(href: string): boolean {
   if (href === '/') return currentPath === '/';
   return currentPath.startsWith(href);
@@ -22,18 +10,22 @@ function isActive(href: string): boolean {
 ---
 
 <div class="drawer-side z-40">
-  {/* drawer を閉じるためのオーバーレイ（モバイルのみ機能） */}
   <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-  <aside class="bg-base-200 w-64 min-h-screen flex flex-col p-4">
-    {/* サイト名 */}
-    <a href="/" class="text-xl font-bold text-base-content px-2 py-4 hover:text-primary transition-colors">
-      {SITE.title}
+  <aside class="bg-base-100 border-r border-base-300 w-60 min-h-screen flex flex-col px-4 py-6">
+    {/* ロゴ */}
+    <a href="/" class="flex items-center gap-2 mb-8 px-2 group">
+      <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+        <span class="text-white font-bold text-sm">n</span>
+      </div>
+      <span class="font-bold text-base-content group-hover:text-primary transition-colors text-sm">
+        {SITE.author}
+      </span>
     </a>
 
     {/* ナビゲーション */}
-    <nav class="flex-1 mt-2">
-      <ul class="menu menu-md gap-1 px-0">
+    <nav class="flex-1">
+      <ul class="space-y-1">
         {NAV_ITEMS.map((item) => (
           <li>
             <a
@@ -41,8 +33,10 @@ function isActive(href: string): boolean {
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
               class:list={[
-                'rounded-lg font-medium',
-                isActive(item.href) ? 'active' : '',
+                'flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                isActive(item.href)
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-base-content/70 hover:text-base-content hover:bg-base-200',
               ]}
             >
               {item.label}
@@ -52,42 +46,31 @@ function isActive(href: string): boolean {
       </ul>
     </nav>
 
-    {/* ソーシャルリンクアイコン */}
-    <div class="flex flex-wrap gap-2 px-2 py-4 border-t border-base-300">
+    {/* ソーシャルリンク */}
+    <div class="flex flex-wrap gap-1 pt-4 border-t border-base-300 mt-4">
       {SOCIAL_LINKS.map((link) => (
         <a
           href={link.url}
           target={link.url.startsWith('http') ? '_blank' : undefined}
           rel={link.url.startsWith('http') ? 'noopener noreferrer' : undefined}
           aria-label={link.ariaLabel}
-          class="btn btn-ghost btn-sm btn-square hover:text-primary"
+          title={link.ariaLabel}
+          class="p-2 rounded-lg text-base-content/40 hover:text-base-content/80 hover:bg-base-200 transition-colors"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="w-5 h-5"
-          >
-            <path d={link.icon} />
-          </svg>
+          {link.iconSrc ? (
+            <img
+              src={link.iconSrc}
+              alt={link.ariaLabel}
+              class="w-4 h-4 opacity-50 hover:opacity-80"
+              loading="lazy"
+            />
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+              <path d={link.icon} />
+            </svg>
+          )}
         </a>
       ))}
-    </div>
-
-    {/* テーマ切り替えボタン */}
-    <div class="flex items-center gap-2 px-2 py-3 border-t border-base-300">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-      <input
-        type="checkbox"
-        value="dark"
-        class="theme-controller toggle toggle-sm"
-        aria-label="ダークモードに切り替え"
-      />
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
     </div>
   </aside>
 </div>

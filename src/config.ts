@@ -18,10 +18,11 @@ export type NavItem = {
 };
 
 export type SocialLink = {
-  service: string;  // サービス名（aria-label 用）
+  service: string;
   url: string;
-  icon: string;     // SVG の path d 属性の値（viewBox="0 0 24 24" 想定）
   ariaLabel: string;
+  icon: string;      // SVG path d 属性（viewBox="0 0 24 24"）
+  iconSrc?: string;  // 設定した場合、SVG path の代わりに <img src> として使う
 };
 
 // 新しいブログサービスを追加する場合は、まずこの型にサービス名を追加してください
@@ -85,7 +86,8 @@ export const SOCIAL_LINKS: SocialLink[] = [
     service: 'Qiita',
     url: 'https://qiita.com/nasu726',
     ariaLabel: 'Qiita',
-    icon: 'M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z',
+    icon: '',
+    iconSrc: 'https://cdn.simpleicons.org/qiita',
   },
   {
     service: 'Zenn',
@@ -97,7 +99,8 @@ export const SOCIAL_LINKS: SocialLink[] = [
     service: 'note',
     url: 'https://note.com/nasu726',
     ariaLabel: 'note',
-    icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z',
+    icon: '',
+    iconSrc: 'https://cdn.simpleicons.org/note',
   },
   {
     service: 'RSS',
@@ -124,7 +127,7 @@ export const EXTERNAL_BLOG_SOURCES: ExternalBlogSource[] = [
     service: 'qiita',
     userId: 'nasu726',
     // 認証なし: 60 req/時間（IP 単位）。認証ありにするには環境変数 QIITA_TOKEN を設定。
-    apiUrl: 'https://qiita.com/api/v2/users/nasu726/items?per_page=100',
+    apiUrl: 'https://qiita.com/api/v2/users/nasu726/items?per_page=30',
   },
   {
     service: 'zenn',

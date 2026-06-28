@@ -1,65 +1,60 @@
 ---
-/**
- * ローカルブログ記事のカードコンポーネントです。
- * カードクリックで /blog/[slug] へ内部遷移します。
- *
- * Props: post: CollectionEntry<'blog'>
- */
 import type { CollectionEntry } from 'astro:content';
 import { formatDate, isNew } from '../lib/utils';
+import { SITE } from '../config';
 
 interface Props {
   post: CollectionEntry<'blog'>;
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, heroImage, tags } = post.data;
-const slug = post.slug;
+const { title, description, pubDate, tags } = post.data;
+const slug    = post.slug;
 const showNew = isNew(pubDate);
 ---
 
-<a
-  href={`/blog/${slug}`}
-  class="card card-side bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition-all duration-200 group"
->
-  {/* サムネイル画像（あれば） */}
-  {heroImage && (
-    <figure class="w-32 shrink-0">
-      <img
-        src={heroImage}
-        alt={title}
-        class="w-full h-full object-cover"
-        loading="lazy"
-      />
-    </figure>
-  )}
+{/*
+  stretched-link パターン:
+  外側 <article> を relative にして、非表示の <a> を absolute inset-0 で敷く。
+  タグリンクは relative z-10 で上に出す。
+*/}
+<article class="group relative bg-white rounded-2xl border border-base-300 hover:border-primary/40 hover:shadow-md transition-all duration-200 p-5">
+  {/* カード全体を覆うリンク（stretched link） */}
+  <a href={`/blog/${slug}`} class="absolute inset-0 rounded-2xl z-0" aria-label={title}></a>
 
-  <div class="card-body py-4 px-5">
-    {/* タイトル行 + New バッジ */}
-    <div class="flex items-start gap-2">
-      {showNew && (
-        <span class="badge badge-primary badge-sm shrink-0 mt-1">New</span>
-      )}
-      <h2 class="card-title text-base font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
-        {title}
-      </h2>
-    </div>
+  {/* タイトル */}
+  <h2 class="font-bold text-base leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
+    {showNew && <span class="inline-block badge badge-primary badge-xs mr-1.5 align-middle">New</span>}
+    {title}
+  </h2>
 
-    {/* 概要 */}
-    <p class="text-sm text-base-content/70 line-clamp-2">{description}</p>
+  {/* 概要 */}
+  <p class="text-sm text-base-content/60 line-clamp-2 mb-4">{description}</p>
 
-    {/* 日付 + タグ */}
-    <div class="flex flex-wrap items-center gap-2 mt-1">
-      <time class="text-xs text-base-content/50">{formatDate(pubDate)}</time>
+  {/* タグ */}
+  {tags.length > 0 && (
+    <div class="flex flex-wrap gap-1.5 mb-4">
       {tags.map((tag) => (
         <a
           href={`/blog/tag/${tag}`}
-          class="badge badge-outline badge-sm hover:badge-primary transition-colors"
-          onclick="event.stopPropagation()"
+          class="relative z-10 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full hover:bg-primary/20 transition-colors"
         >
           #{tag}
         </a>
       ))}
     </div>
+  )}
+
+  {/* 著者行 */}
+  <div class="flex items-center gap-2">
+    <img
+      src="/nasucat.webp"
+      alt={SITE.author}
+      class="w-6 h-6 rounded-full object-cover flex-shrink-0"
+      loading="lazy"
+    />
+    <span class="text-xs text-base-content/60">{SITE.author}</span>
+    <span class="text-xs text-base-content/30">·</span>
+    <time class="text-xs text-base-content/50">{formatDate(pubDate)}</time>
   </div>
-</a>
+</article>

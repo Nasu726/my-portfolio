@@ -1,17 +1,4 @@
 ---
-/**
- * 全ページ共通のベースレイアウトです。
- *
- * DaisyUI の drawer コンポーネントを使って、
- * デスクトップ: 左サイドバー（固定）+ 右メインコンテンツ
- * モバイル: ハンバーガーメニューでサイドバーが引き出し式
- * のレイアウトを実現しています。
- *
- * Props:
- *   title?       - <title> タグのテキスト。省略するとサイト名のみ
- *   description? - OGP の description
- *   ogImage?     - OGP 画像の URL。省略するとサイト共通画像（/og/site.png）
- */
 import { SITE } from '../config';
 import SideBar from '../components/SideBar.astro';
 
@@ -27,10 +14,7 @@ const {
   ogImage     = SITE.defaultOgImage,
 } = Astro.props;
 
-// <title> タグ: ページ固有タイトルがある場合は "ページ名 | サイト名" の形式にする
-const pageTitle = title === SITE.title ? SITE.title : `${title} | ${SITE.title}`;
-
-// OGP 画像の絶対 URL を組み立てる
+const pageTitle  = title === SITE.title ? SITE.title : `${title} | ${SITE.title}`;
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage}`;
 ---
 
@@ -41,12 +25,10 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
 
-    {/* SEO */}
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={Astro.url.href} />
 
-    {/* OGP（Open Graph Protocol） */}
     <meta property="og:type"        content="website" />
     <meta property="og:url"         content={Astro.url.href} />
     <meta property="og:title"       content={pageTitle} />
@@ -54,76 +36,43 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage}
     <meta property="og:image"       content={ogImageUrl} />
     <meta property="og:locale"      content="ja_JP" />
 
-    {/* Twitter Card */}
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:site"        content={`@${SITE.twitterHandle}`} />
     <meta name="twitter:title"       content={pageTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image"       content={ogImageUrl} />
 
-    {/* Favicon */}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
 
-    {/* RSS フィード */}
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={SITE.title}
-      href="/rss.xml"
-    />
-
-    {/* KaTeX CSS（数式レンダリング用） */}
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
       integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
       crossorigin="anonymous"
     />
-
-    {/* テーマの初期化: ページ表示前に localStorage から読み込んでちらつきを防ぐ */}
-    <script is:inline>
-      (function () {
-        const saved = localStorage.getItem('theme');
-        if (saved) document.documentElement.setAttribute('data-theme', saved);
-      })();
-    </script>
   </head>
 
   <body>
-    {/* DaisyUI drawer レイアウト */}
     <div class="bg-base-100 drawer lg:drawer-open">
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
 
-      {/* メインコンテンツ領域 */}
       <div class="drawer-content flex flex-col min-h-screen">
-        {/* モバイル用ヘッダー（lg 以上では非表示） */}
+        {/* モバイル用ヘッダー */}
         <header class="lg:hidden sticky top-0 z-30 bg-base-100/90 backdrop-blur flex items-center gap-3 px-4 py-3 border-b border-base-300">
-          {/* ハンバーガーボタン */}
           <label for="my-drawer" class="btn btn-ghost btn-sm btn-square" aria-label="メニューを開く">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </label>
-
-          {/* サイト名 */}
           <a href="/" class="font-bold text-base-content flex-1">{SITE.title}</a>
-
-          {/* モバイル用テーマ切り替え */}
-          <input
-            type="checkbox"
-            value="dark"
-            class="theme-controller toggle toggle-sm"
-            aria-label="ダークモードに切り替え"
-          />
         </header>
 
-        {/* ページ本文 */}
         <main class="flex-1 p-6 md:p-10 max-w-4xl w-full mx-auto">
           <slot />
         </main>
 
-        {/* フッター */}
-        <footer class="footer footer-center p-4 text-base-content/50 text-sm border-t border-base-300">
+        <footer class="footer footer-center p-4 text-base-content/40 text-sm border-t border-base-300">
           <p>
             © {new Date().getFullYear()} {SITE.author} &nbsp;·&nbsp;
             Built with <a href="https://astro.build" class="link link-hover" target="_blank" rel="noopener noreferrer">Astro</a>
@@ -131,44 +80,7 @@ const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE.url}${ogImage}
         </footer>
       </div>
 
-      {/* サイドバー */}
       <SideBar />
     </div>
-
-    {/* テーマ切り替えスクリプト */}
-    <script is:inline>
-      // DaisyUI の theme-controller（トグル）が変更されたときにテーマを適用・保存する
-      function syncTheme() {
-        const controller = document.querySelector('.theme-controller');
-        const saved = localStorage.getItem('theme') || 'light';
-
-        // HTML タグにテーマを適用
-        document.documentElement.setAttribute('data-theme', saved);
-
-        // 全てのトグルの checked 状態をテーマに合わせる
-        document.querySelectorAll('.theme-controller').forEach((el) => {
-          el.checked = saved === 'dark';
-          el.onchange = (e) => {
-            const next = e.target.checked ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            // 全トグルの状態を同期
-            document.querySelectorAll('.theme-controller').forEach((c) => {
-              c.checked = next === 'dark';
-            });
-          };
-        });
-      }
-
-      // 初回実行
-      syncTheme();
-      // Astro のページ遷移後にも再実行（View Transitions 使用時）
-      document.addEventListener('astro:page-load', syncTheme);
-      // ページ遷移直後の HTML 入れ替わり時にテーマが戻らないよう保持
-      document.addEventListener('astro:after-swap', () => {
-        const saved = localStorage.getItem('theme');
-        if (saved) document.documentElement.setAttribute('data-theme', saved);
-      });
-    </script>
   </body>
 </html>

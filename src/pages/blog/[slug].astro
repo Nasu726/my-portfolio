@@ -1,10 +1,7 @@
 ---
-/**
- * ブログ記事の個別ページです。
- * src/content/blog/ の各 .md / .mdx ファイルに対応するページを生成します。
- */
 import { getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
+import { calcReadingTime } from '../../lib/utils';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
@@ -17,16 +14,17 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { title, description, pubDate, heroImage, tags } = entry.data;
 
-// 動的 OGP 画像の URL（このスラッグ専用の画像）
 const ogImageOverride = `/og/blog/${entry.slug}.png`;
 
-// MDX / Markdown をレンダリング
 const { Content, headings } = await render(entry);
+const readingTime = calcReadingTime(entry.body ?? '');
 ---
 
 <PostLayout
   frontmatter={{ title, description, pubDate, heroImage, tags }}
   {ogImageOverride}
+  {headings}
+  {readingTime}
 >
   <Content />
 </PostLayout>

@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { tagToSlug } from '../../lib/tags';
+
+export async function getStaticPaths() {
+  const [posts, works] = await Promise.all([
+    getCollection('blog', ({ data }) => !data.draft),
+    getCollection('works', ({ data }) => !data.draft),
+  ]);
+
+  const tagMap = new Map<string, { posts: typeof posts; works: typeof works }>();
+
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      if (!tagMap.has(tag)) tagMap.set(tag, { posts: [], works: [] });
+      tagMap.get(tag)!.posts.push(post);
+    }
+  }
+  for (const work of works) {
+    for (const tag of work.data.tags) {
+      if (!tagMap.has(tag)) tagMap.set(tag, { posts: [], works: [] });
+      tagMap.get(tag)!.works.push(work);
+    }
+  }
+
+  return [...tagMap.entries()].map(([tag, data]) => ({
+    // params はURLセグメントとして使われるため、リンク生成側(TagBadge等)の
+    // tagToSlug(tag) と一致するスラグにしておく（+ などの記号対策）。
+    params: { tag: tagToSlug(tag) },
+    props: { tag, ...data },
+  }));
+}
+
+const { tag, posts, works } = Astro.props;
+const total = posts.length + works.length;
+---
+
+<BaseLayout
+  title={`#${tag}`}
+  description={`タグ「${tag}」の記事・作品一覧`}
+>
+  <h1 class="text-2xl font-bold text-gray-800 mb-1">
+    <span class="text-purple-500">#</span>{tag}
+  </h1>
+  <p class="text-sm text-gray-400 mb-8">{total} 件</p>
+
+  {posts.length > 0 && (
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold text-gray-600 mb-4">Blog</h2>
+      <div class="grid gap-4 sm:grid-cols-2">
+        {posts
+          .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+          .map((post) => (
+            <PostCard
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              tags={post.data.tags}
+              href={`/Blog/${post.id}`}
+            />
+          ))}
+      </div>
+    </section>
+  )}
+
+  {works.length > 0 && (
+    <section>
+      <h2 class="text-lg font-semibold text-gray-600 mb-4">Works</h2>
+      <div class="grid gap-4 sm:grid-cols-2">
+        {works
+          .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+          .map((work) => (
+            <PostCard
+              title={work.data.title}
+              description={work.data.description}
+              pubDate={work.data.pubDate}
+              tags={work.data.tags}
+              href={`/Works/${work.id}`}
+            />
+          ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

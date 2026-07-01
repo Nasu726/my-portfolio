@@ -1,0 +1,39 @@
+---
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/Blog', label: 'Blog' },
+  { href: '/Works', label: 'Works' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-purple-100 shadow-sm">
+  <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    <!-- ロゴ -->
+    <a href="/" class="flex items-center gap-2 group shrink-0">
+      <img
+        src="/nasucat.webp"
+        alt="nasucat"
+        class="w-9 h-9 rounded-full object-cover ring-2 ring-purple-200 group-hover:ring-purple-400 transition-all"
+      />
+      <span class="font-bold text-purple-700 text-lg hidden sm:block">nasu</span>
+    </a>
+
+    <!-- ナビゲーション -->
+    <nav class="flex items-center gap-1">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+            ${currentPath === href || (href !== '/' && currentPath.startsWith(href))
+              ? 'bg-purple-100 text-purple-700'
+              : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600'
+            }`}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

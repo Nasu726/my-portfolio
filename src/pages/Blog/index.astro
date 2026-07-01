@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import TagBadge from '../../components/TagBadge.astro';
+import { getCollection } from 'astro:content';
+import { fetchQiitaPosts } from '../../lib/qiita';
+
+const blogPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const blogUnified = blogPosts.map((post) => ({
+  title: post.data.title,
+  description: post.data.description,
+  pubDate: post.data.pubDate,
+  tags: post.data.tags,
+  href: `/Blog/${post.id}`,
+  external: false,
+  badge: undefined as string | undefined,
+}));
+
+const qiitaUnified = await fetchQiitaPosts();
+
+const allPosts = [...blogUnified, ...qiitaUnified].sort(
+  (a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()
+);
+
+const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
+---
+
+<BaseLayout title="Blog" description="nasu726のブログ。アルゴリズム、プログラミング、日々の学びを書いています。">
+  <div class="flex items-baseline justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Blog</h1>
+    <span class="text-sm text-gray-400">{allPosts.length} 記事</span>
+  </div>
+
+  <!-- タグフィルター -->
+  {allTags.length > 0 && (
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+      <span class="text-sm text-gray-500">タグ:</span>
+      <button
+        id="tag-all"
+        class="px-3 py-1 rounded-full text-xs font-medium bg-purple-600 text-white transition-colors"
+        data-tag="__all__"
+      >
+        すべて
+      </button>
+      {allTags.map((tag) => (
+        <button
+          class="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors tag-btn"
+          data-tag={tag}
+        >
+          #{tag}
+        </button>
+      ))}
+    </div>
+  )}
+
+  <!-- 記事一覧 -->
+  <div id="post-list" class="grid gap-4 sm:grid-cols-2">
+    {allPosts.map((post) => (
+      <div data-tags={post.tags.join(',')}>
+        <PostCard
+          title={post.title}
+          description={post.description}
+          pubDate={post.pubDate}
+          tags={post.tags}
+          href={post.href}
+          external={post.external}
+          badge={post.badge}
+        />
+      </div>
+    ))}
+  </div>
+
+  {allPosts.length === 0 && (
+    <p class="text-gray-400 text-center py-16">記事はまだありません。</p>
+  )}
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-tag]');
+  const cards = document.querySelectorAll<HTMLDivElement>('#post-list > [data-tags]');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const selected = btn.dataset.tag!;
+
+      // ボタンのスタイル切り替え
+      buttons.forEach((b) => {
+        const isActive = b.dataset.tag === selected;
+        b.classList.toggle('bg-purple-600', isActive);
+        b.classList.toggle('text-white', isActive);
+        b.classList.toggle('bg-purple-100', !isActive);
+        b.classList.toggle('text-purple-700', !isActive);
+      });
+
+      // カード表示切り替え
+      cards.forEach((card) => {
+        const tags = card.dataset.tags?.split(',') ?? [];
+        const show = selected === '__all__' || tags.includes(selected);
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

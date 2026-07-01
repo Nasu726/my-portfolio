@@ -1,0 +1,19 @@
+---
+import { tagToSlug } from '../lib/tags';
+
+interface Props {
+  tag: string;
+  href?: string;
+}
+
+const { tag, href } = Astro.props;
+const url = href ?? `/tags/${tagToSlug(tag)}`;
+---
+
+<a
+  href={url}
+  class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium
+         bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+>
+  #{tag}
+</a>

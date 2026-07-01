@@ -1,0 +1,111 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/Noto_Sans_JP/NotoSansJP-VariableFont_wght.ttf') format('truetype');
+}
+
+@theme {
+  --color-pastel-pink: #ffd6e0;
+  --color-pastel-lavender: #e8d5f5;
+  --color-pastel-mint: #d5f5e3;
+  --color-pastel-sky: #d5eaf5;
+  --color-pastel-peach: #fde8d5;
+  --color-pastel-yellow: #fdf5d5;
+
+  --color-accent: #b39ddb;
+  --color-accent-hover: #9575cd;
+
+  --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #fafafa;
+  color: #2d2d2d;
+}
+
+/* スムーズスクロール */
+html {
+  scroll-behavior: smooth;
+}
+
+/* コードブロック：スクロールバー非表示・コピーボタン用スペース */
+pre {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+pre::-webkit-scrollbar {
+  display: none;
+}
+pre.has-copy-btn {
+  position: relative !important;
+  padding-top: 2.5rem !important;
+}
+
+/* 本文中のリンク：常時下線だと文章が読みにくいのでホバー時のみ表示する */
+.prose :where(a):not(:where([class~="not-prose"] *)) {
+  text-decoration-line: none;
+  text-underline-offset: 2px;
+}
+.prose :where(a):not(:where([class~="not-prose"] *)):hover {
+  text-decoration-line: underline;
+}
+
+/* prose-code: のスタイル（背景・パディング等）がコードブロック内のcodeにまで
+   適用され、行ごとに帯状の背景がつく問題を防ぐ。Shikiのテーマ色をそのまま使う。 */
+.prose pre code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  color: inherit !important;
+}
+.prose pre code::before,
+.prose pre code::after {
+  content: none !important;
+}
+
+/* KaTeX 表示数式：スクロールバー非表示 */
+.katex-display {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 0.25rem;
+}
+.katex-display::-webkit-scrollbar {
+  display: none;
+}
+
+/* コピーボタン */
+.copy-code-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  background: rgba(255, 255, 255, 0.12);
+  color: #aaa;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  z-index: 10;
+  line-height: 1.4;
+  user-select: none;
+}
+.copy-code-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.copy-code-btn.copied {
+  color: #86efac;
+  border-color: #86efac44;
+}

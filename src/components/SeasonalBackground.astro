@@ -1,0 +1,170 @@
+---
+// 背景の波紋エフェクト。コンテンツの背面に常時表示する。
+---
+
+<canvas id="seasonal-canvas" class="seasonal-canvas" aria-hidden="true"></canvas>
+
+<style>
+  .seasonal-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .seasonal-canvas {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  interface Ripple {
+    x: number;
+    y: number;
+    age: number;
+    maxAge: number;
+    maxRadius: number;
+    opacity: number;
+  }
+
+  // devicePixelRatioが高い端末でも描画負荷を抑えるための上限
+  const MAX_DEVICE_PIXEL_RATIO = 2;
+  // リサイズ連打時に毎回再計算しないためのデバウンス時間（ミリ秒）
+  const RESIZE_DEBOUNCE_MS = 200;
+  // タブを離れて戻った直後などに1フレームの経過時間が異常に大きくならないための上限（秒）
+  const MAX_FRAME_DELTA_SEC = 0.05;
+
+  // 波紋が出現してから消えるまでの寿命（秒）。下限値 + [0, 振れ幅) のランダムで決まる
+  const RIPPLE_LIFETIME_MIN_SEC = 2.6;
+  const RIPPLE_LIFETIME_VARIANCE_SEC = 1.6;
+  // 波紋が最大まで広がったときの半径（px）。下限値 + [0, 振れ幅) のランダムで決まる
+  const RIPPLE_RADIUS_MIN_PX = 18;
+  const RIPPLE_RADIUS_VARIANCE_PX = 58;
+  // 波紋が出現した瞬間の不透明度。下限値 + [0, 振れ幅) のランダムで決まる
+  const RIPPLE_OPACITY_MIN = 0.33;
+  const RIPPLE_OPACITY_VARIANCE = 0.27;
+  // 波紋の線の色
+  const RIPPLE_COLOR = '#7fb8d9';
+  // 波紋の線の太さ：出現直後の太さから寿命に応じて細くなり、下限の太さで止まる
+  const RIPPLE_STROKE_WIDTH_START_PX = 2;
+  const RIPPLE_STROKE_WIDTH_DECAY_PX = 1.5;
+  const RIPPLE_STROKE_WIDTH_MIN_PX = 0.4;
+
+  // ページ読み込み時に最初から表示しておく波紋の数
+  const INITIAL_RIPPLE_COUNT = 4;
+  // 次の波紋が発生するまでの間隔（秒）。下限値 + [0, 振れ幅) のランダムで決まる
+  const RIPPLE_SPAWN_INTERVAL_MIN_SEC = 0.6;
+  const RIPPLE_SPAWN_INTERVAL_VARIANCE_SEC = 0.9;
+
+  function initRippleCanvas() {
+    const canvas = document.getElementById('seasonal-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let dpr = Math.min(window.devicePixelRatio || 1, MAX_DEVICE_PIXEL_RATIO);
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas!.width = Math.round(width * dpr);
+      canvas!.height = Math.round(height * dpr);
+      canvas!.style.width = `${width}px`;
+      canvas!.style.height = `${height}px`;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function randomX(): number {
+      return Math.random() * width;
+    }
+
+    let ripples: Ripple[] = [];
+    let rippleSpawnTimer = 0;
+
+    function spawnRipple() {
+      ripples.push({
+        x: randomX(),
+        y: Math.random() * height,
+        age: 0,
+        maxAge: RIPPLE_LIFETIME_MIN_SEC + Math.random() * RIPPLE_LIFETIME_VARIANCE_SEC,
+        maxRadius: RIPPLE_RADIUS_MIN_PX + Math.random() * RIPPLE_RADIUS_VARIANCE_PX,
+        opacity: RIPPLE_OPACITY_MIN + Math.random() * RIPPLE_OPACITY_VARIANCE,
+      });
+    }
+
+    for (let i = 0; i < INITIAL_RIPPLE_COUNT; i++) spawnRipple();
+
+    resize();
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(resize, RESIZE_DEBOUNCE_MS);
+    });
+
+    function drawRipple(r: Ripple) {
+      const c = ctx!;
+      const t = r.age / r.maxAge;
+      const radius = r.maxRadius * t;
+      const alpha = (1 - t) * r.opacity;
+      if (alpha <= 0) return;
+      c.save();
+      c.globalAlpha = alpha;
+      c.strokeStyle = RIPPLE_COLOR;
+      c.lineWidth = Math.max(
+        RIPPLE_STROKE_WIDTH_START_PX - t * RIPPLE_STROKE_WIDTH_DECAY_PX,
+        RIPPLE_STROKE_WIDTH_MIN_PX
+      );
+      c.beginPath();
+      c.arc(r.x, r.y, radius, 0, Math.PI * 2);
+      c.stroke();
+      c.restore();
+    }
+
+    let lastTime = performance.now();
+    let running = true;
+    let rafId = 0;
+
+    function frame(now: number) {
+      if (!running) return;
+      const dt = Math.min((now - lastTime) / 1000, MAX_FRAME_DELTA_SEC);
+      lastTime = now;
+
+      ctx!.clearRect(0, 0, width, height);
+
+      rippleSpawnTimer -= dt;
+      if (rippleSpawnTimer <= 0) {
+        rippleSpawnTimer =
+          RIPPLE_SPAWN_INTERVAL_MIN_SEC + Math.random() * RIPPLE_SPAWN_INTERVAL_VARIANCE_SEC;
+        spawnRipple();
+      }
+      ripples = ripples.filter((r) => {
+        r.age += dt;
+        return r.age < r.maxAge;
+      });
+      for (const r of ripples) drawRipple(r);
+
+      rafId = requestAnimationFrame(frame);
+    }
+
+    rafId = requestAnimationFrame(frame);
+
+    document.addEventListener('visibilitychange', () => {
+      running = document.visibilityState === 'visible';
+      if (running) {
+        lastTime = performance.now();
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(frame);
+      } else {
+        cancelAnimationFrame(rafId);
+      }
+    });
+  }
+
+  initRippleCanvas();
+</script>

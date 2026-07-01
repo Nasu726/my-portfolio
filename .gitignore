@@ -1,0 +1,12 @@
+dist/
+node_modules/
+.cache/
+.env
+.env.*
+!.env.example
+.astro/
+.claude/
+
+# 個人用運営メモ
+OPERATIONS.md
+PLAN.md

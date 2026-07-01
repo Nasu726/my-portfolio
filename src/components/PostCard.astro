@@ -1,0 +1,56 @@
+---
+import TagBadge from './TagBadge.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  href: string;
+  external?: boolean;
+  badge?: string;
+}
+
+const { title, description, pubDate, tags, href, external = false, badge } = Astro.props;
+const dateStr = pubDate.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<!-- カード全体をクリック可能にしつつ、タグリンクも機能させる（stretched-link パターン） -->
+<div
+  class="group relative bg-white rounded-2xl border border-purple-100 p-5
+         hover:border-purple-300 hover:shadow-md transition-all"
+>
+  <div class="flex items-center gap-2 mb-1.5">
+    <p class="text-xs text-gray-400">{dateStr}</p>
+    {badge && (
+      <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-600">
+        {badge}
+      </span>
+    )}
+  </div>
+
+  <h2 class="font-bold text-gray-800 text-lg group-hover:text-purple-700 transition-colors line-clamp-2">
+    <!-- stretched-link: 疑似要素でカード全体をカバー -->
+    <a
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      class="after:absolute after:inset-0 after:rounded-2xl"
+    >
+      {title}
+      {external && <span class="text-purple-300 text-sm align-middle">↗</span>}
+    </a>
+  </h2>
+
+  <p class="mt-1.5 text-sm text-gray-500 line-clamp-2">{description}</p>
+
+  {tags.length > 0 && (
+    <div class="relative z-10 mt-3 flex flex-wrap gap-1">
+      {tags.map((tag) => <TagBadge tag={tag} />)}
+    </div>
+  )}
+</div>

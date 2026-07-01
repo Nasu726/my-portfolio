@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allWorks = (await getCollection('works', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const allTags = [...new Set(allWorks.flatMap((w) => w.data.tags))].sort();
+---
+
+<BaseLayout title="Works" description="nasu726の作品一覧。個人開発・制作物を公開しています。">
+  <div class="flex items-baseline justify-between mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Works</h1>
+    <span class="text-sm text-gray-400">{allWorks.length} 件</span>
+  </div>
+
+  <!-- タグフィルター -->
+  {allTags.length > 0 && (
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+      <span class="text-sm text-gray-500">タグ:</span>
+      <button
+        class="px-3 py-1 rounded-full text-xs font-medium bg-purple-600 text-white transition-colors tag-btn"
+        data-tag="__all__"
+      >
+        すべて
+      </button>
+      {allTags.map((tag) => (
+        <button
+          class="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors tag-btn"
+          data-tag={tag}
+        >
+          #{tag}
+        </button>
+      ))}
+    </div>
+  )}
+
+  <!-- 作品一覧 -->
+  <div id="work-list" class="grid gap-4 sm:grid-cols-2">
+    {allWorks.map((work) => (
+      <div data-tags={work.data.tags.join(',')}>
+        <PostCard
+          title={work.data.title}
+          description={work.data.description}
+          pubDate={work.data.pubDate}
+          tags={work.data.tags}
+          href={`/Works/${work.id}`}
+        />
+      </div>
+    ))}
+  </div>
+
+  {allWorks.length === 0 && (
+    <p class="text-gray-400 text-center py-16">作品はまだありません。</p>
+  )}
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
+  const cards = document.querySelectorAll<HTMLDivElement>('#work-list > [data-tags]');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const selected = btn.dataset.tag!;
+      buttons.forEach((b) => {
+        const isActive = b.dataset.tag === selected;
+        b.classList.toggle('bg-purple-600', isActive);
+        b.classList.toggle('text-white', isActive);
+        b.classList.toggle('bg-purple-100', !isActive);
+        b.classList.toggle('text-purple-700', !isActive);
+      });
+      cards.forEach((card) => {
+        const tags = card.dataset.tags?.split(',') ?? [];
+        card.style.display = selected === '__all__' || tags.includes(selected) ? '' : 'none';
+      });
+    });
+  });
+</script>

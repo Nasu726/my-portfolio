@@ -1,0 +1,79 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeasonalBackground from '../components/SeasonalBackground.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  useKatex?: boolean;
+  /** 画面ぴったりに収め、Footerなし・スクロール不可にする（404ページ用） */
+  fullHeight?: boolean;
+  /** メインコンテナを広げる（記事ページでサイドバー目次を置くため） */
+  wide?: boolean;
+}
+
+const {
+  title,
+  description = 'nasuのポートフォリオサイト。アルゴリズムやプログラミングに関するブログと作品を公開しています。',
+  ogImage = '/og-default.png',
+  useKatex = false,
+  fullHeight = false,
+  wide = false,
+} = Astro.props;
+
+const siteUrl = Astro.site ?? 'https://nasu726.dev';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/webp" href="/nasucat.webp" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="application/rss+xml" title="nasuのブログ" href="/rss.xml" />
+
+    <!-- Primary Meta -->
+    <title>{title} | nasu</title>
+    <meta name="description" content={description} />
+
+    <!-- OGP -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={`${title} | nasu`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, siteUrl)} />
+    <meta property="og:site_name" content="nasu" />
+    <meta property="og:locale" content="ja_JP" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ueCube24_1" />
+    <meta name="twitter:creator" content="@ueCube24_1" />
+    <meta name="twitter:title" content={`${title} | nasu`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, siteUrl)} />
+
+    {useKatex && (
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+        crossorigin="anonymous"
+      />
+    )}
+    <slot name="head" />
+  </head>
+  <body class={`flex flex-col bg-[#fafafa] relative ${fullHeight ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+    <SeasonalBackground />
+    <Header />
+    <main class={`flex-1 ${wide ? 'max-w-6xl' : 'max-w-4xl'} mx-auto w-full px-4 py-10 flex flex-col min-h-0`}>
+      <slot />
+    </main>
+    {!fullHeight && <Footer />}
+  </body>
+</html>

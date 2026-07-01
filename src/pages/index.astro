@@ -1,0 +1,226 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { fetchQiitaPosts } from '../lib/qiita';
+
+const blogPosts = (await getCollection('blog', ({ data }) => !data.draft)).map((post) => ({
+  title: post.data.title,
+  description: post.data.description,
+  pubDate: post.data.pubDate,
+  tags: post.data.tags,
+  href: `/Blog/${post.id}`,
+  external: false,
+  badge: undefined as string | undefined,
+}));
+
+const qiitaPosts = await fetchQiitaPosts();
+
+const posts = [...blogPosts, ...qiitaPosts]
+  .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
+  .slice(0, 4);
+
+const works = (await getCollection('works', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const skills = [
+  { category: '言語', tags: ['Python', 'C', 'MIPS'] },
+  { category: 'フレームワーク', tags: ['Astro', 'React', 'TailwindCSS'] },
+  { category: 'インフラ・ツール', tags: ['Linux', 'Docker', 'Cloudflare', 'Git', 'GitHub', 'VSCode'] },
+];
+
+const externalLinks = [
+  {
+    href: 'https://github.com/nasu726',
+    label: 'GitHub',
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>`,
+  },
+  {
+    href: 'https://x.com/ueCube24_1',
+    label: 'X (Twitter)',
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+  },
+  {
+    href: 'https://qiita.com/nasu726',
+    label: 'Qiita',
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.3726 0 0 5.3726 0 12s5.3726 12 12 12c3.3984 0 6.4665-1.413 8.6498-3.6832-.383-.0574-.7746-.2062-1.1466-.4542-.7145-.4763-1.3486-.9263-1.6817-1.674-1.2945 1.3807-3.0532 1.835-5.1822 2.0503-4.311.4359-8.0456-1.4893-8.4979-6.2996-.1922-2.045.2628-3.989 1.1804-5.582l-.5342-2.1009c-.0862-.3652.2498-.7126.6057-.6262l1.8456.448c1.0974-.9012 2.4249-1.49 3.8892-1.638 1.2526-.1267 2.467.0834 3.571.5624l1.7348-1.0494c.3265-.1974.7399.0257.7711.4164l.1 2.4747v.0002c1.334 1.4084 2.2424 3.3319 2.4478 5.516.116 1.2339-.012 2.1776-.339 3.078-.1531.4215-.1992.7778.0776 1.1305.2674.3408.6915 1.0026 1.1644.8917.7107-.1666 1.4718-.1223 1.9422.1715C23.4925 15.9525 24 14.0358 24 12c0-6.6274-5.3726-12-12-12Zm-.0727 5.727a5.2731 5.2731 0 0 0-.6146.0273c-2.2084.2233-3.9572 1.8135-4.4937 3.8484l-1.3176-.1996-.014.2589 1.2972.1407c-.0352.1497-.0643.2384-.086.3923l-1.1319.0902.0103.2025 1.1032-.088c-.0194.1713-.031.2814-.0332.4565l-1.0078.412.0495.2499.9598-.4492c.002.1339.008.2053.0207.3407.2667 2.8371 2.6364 3.3981 5.4677 3.1118 2.8312-.2863 5.0517-1.3114 4.785-4.1486-.013-.1361-.0324-.2068-.0553-.3392l1.0397.2257.0242-.229-1.0906-.207c-.0342-.1687-.0765-.271-.1264-.4327l1.1208-.1374-.0158-.2019-1.1499.1409a5.1093 5.1093 0 0 0-.1665-.4259l1.2665-.4042-.0397-.2536-1.3471.4667c-.819-1.7168-2.5002-2.8224-4.4546-2.8482Z"/></svg>`,
+  },
+  {
+    href: 'https://nasu726.hatenablog.com',
+    label: 'はてなブログ',
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20.47 0C22.42 0 24 1.58 24 3.53v16.94c0 1.95-1.58 3.53-3.53 3.53H3.53C1.58 24 0 22.42 0 20.47V3.53C0 1.58 1.58 0 3.53 0h16.94zm-3.705 14.47c-.78 0-1.41.63-1.41 1.41s.63 1.414 1.41 1.414 1.41-.645 1.41-1.425-.63-1.41-1.41-1.41zM8.61 17.247c1.2 0 2.056-.042 2.58-.12.526-.084.976-.222 1.32-.412.45-.232.78-.564 1.02-.99s.36-.915.36-1.48c0-.78-.21-1.403-.63-1.87-.42-.48-.99-.734-1.74-.794.66-.18 1.156-.45 1.456-.81.315-.344.465-.824.465-1.424 0-.48-.103-.885-.3-1.26-.21-.36-.493-.645-.883-.87-.345-.195-.735-.315-1.215-.405-.464-.074-1.29-.12-2.474-.12H5.654v10.486H8.61zm.736-4.185c.705 0 1.185.088 1.44.262.27.18.39.495.39.93 0 .405-.135.69-.42.855-.27.18-.765.254-1.44.254H8.31v-2.297h1.05zm8.656.706v-7.06h-2.46v7.06H18zM8.925 9.08c.71 0 1.185.08 1.432.24.245.16.367.435.367.83 0 .38-.13.646-.39.804-.265.154-.747.232-1.452.232h-.57V9.08h.615z"/></svg>`,
+  },
+  {
+    href: 'https://note.com/nasu726',
+    label: 'note',
+    svg: `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M0 .279c4.623 0 10.953-.235 15.498-.117 6.099.156 8.39 2.813 8.468 9.374.077 3.71 0 14.335 0 14.335h-6.598c0-9.296.04-10.83 0-13.759-.078-2.578-.814-3.807-2.795-4.041-2.097-.235-7.975-.04-7.975-.04v17.84H0Z"/></svg>`,
+  },
+];
+---
+
+<BaseLayout title="Home">
+  <!-- ヒーロー -->
+  <section class="flex flex-col items-center text-center pt-10 pb-8 gap-3">
+    <img
+      src="/nasucat.webp"
+      alt="nasucat"
+      class="w-24 h-24 rounded-full object-cover ring-4 ring-purple-200 shadow-lg"
+    />
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">nasu</h1>
+    </div>
+  </section>
+
+  <!-- 自己紹介 -->
+  <section class="bg-white rounded-2xl border border-purple-100 p-6 md:p-8">
+    <div class="grid md:grid-cols-[1fr_220px] gap-8">
+      <!-- Bio + 略歴 -->
+      <div class="space-y-6">
+        <div>
+          <h2 class="text-lg font-bold text-gray-700 mb-2">About</h2>
+          <p class="text-gray-600 leading-relaxed text-sm">
+            情報数理工学を専攻しています。<br/>
+            アルゴリズムとデータ構造が好きで、競技プログラミングによく参加しています。<br/>
+            ヒューリスティック探索の勉強も始めました。<br/>
+            趣味で語学(ロシア語)も楽しんでいます。
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 mb-3">プロフィール</h3>
+          <div class="space-y-3">
+            <div>
+              <p class="text-xs text-gray-400 mb-1">現在の所属</p>
+              <p class="text-sm text-gray-600">電気通信大学 情報理工学域 I類 情報数理工学プログラム 3年 (2024年入学)</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 mb-1">サークル・役職</p>
+              <ul class="text-sm text-gray-600 space-y-0.5">
+                <li>電気通信大学MMA</li>
+                  <ul class="list-disc pl-5">
+                    <li>合宿煙火担当（2025年～）</li>
+                    <li>会計（2025年度）</li>
+                  </ul>
+              </ul>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 mb-1">資格・検定</p>
+              <ul class="text-sm text-gray-600 space-y-0.5">
+                <li>基本情報技術者 (2025年)</li>
+                <li>ロシア語能力検定試験 3級 (2025年)</li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-xs text-gray-400 mb-1">その他</p>
+              <ul class="text-sm text-gray-600 space-y-0.5">
+                <li><a href="https://atcoder.jp/users/nasu726" class="underline">AtCoder (Highest 1052/1681)</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- スキル + 外部リンク -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-semibold text-gray-500">Skills</h3>
+        {skills.map(({ category, tags }) => (
+          <div>
+            <p class="text-xs text-gray-400 mb-1.5">{category}</p>
+            <div class="flex flex-wrap gap-1">
+              {tags.map((tag) => (
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <div class="pt-2 border-t border-purple-50">
+          <p class="text-xs text-gray-400 mb-2">外部リンク</p>
+          <div class="flex flex-wrap gap-2">
+            {externalLinks.map(({ href, label, svg }) => (
+              <a
+                href={href}
+                title={label}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-50 border border-gray-100
+                       text-gray-400 hover:text-purple-600 hover:bg-purple-50 hover:border-purple-200
+                       transition-all"
+                set:html={svg}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-purple-50">
+          <p class="text-xs text-gray-400 mb-2">連絡先</p>
+          <div class="flex flex-wrap gap-2">
+            <button
+              id="contact-btn"
+              type="button"
+              class="flex items-center gap-1.5 text-gray-600 hover:text-purple-500 transition-colors cursor-pointer"
+              data-user="contact"
+              data-domain="nasu.uk"
+              title="クリックでメールを送る"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m2 7 10 6 10-6" />
+              </svg>
+              contact [at] nasu.uk
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最新ブログ -->
+  <section class="mt-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-gray-700">最新のブログ</h2>
+      <a href="/Blog" class="inline-block -m-3 p-3 text-sm text-purple-500 hover:text-purple-700 transition-colors">すべて見る →</a>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      {posts.map((post) => (
+        <PostCard
+          title={post.title}
+          description={post.description}
+          pubDate={post.pubDate}
+          tags={post.tags}
+          href={post.href}
+          external={post.external}
+          badge={post.badge}
+        />
+      ))}
+    </div>
+    {posts.length === 0 && (
+      <p class="text-gray-400 text-center py-8">記事はまだありません。</p>
+    )}
+  </section>
+
+  <!-- 最新作品 -->
+  <section class="mt-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-gray-700">最新の作品</h2>
+      <a href="/Works" class="inline-block -m-3 p-3 text-sm text-purple-500 hover:text-purple-700 transition-colors">すべて見る →</a>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      {works.map((work) => (
+        <PostCard
+          title={work.data.title}
+          description={work.data.description}
+          pubDate={work.data.pubDate}
+          tags={work.data.tags}
+          href={`/Works/${work.id}`}
+        />
+      ))}
+    </div>
+    {works.length === 0 && (
+      <p class="text-gray-400 text-center py-8">作品はまだありません。</p>
+    )}
+  </section>
+</BaseLayout>

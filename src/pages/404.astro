@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 Not Found"
+  description="ページが見つかりません。"
+  fullHeight
+>
+  <div class="flex-1 flex flex-col items-center justify-center gap-5 text-center select-none">
+    <p class="text-8xl font-black text-gray-200 leading-none">404</p>
+    <p class="text-gray-400 font-medium">Not Found</p>
+    <a
+      href="/"
+      class="px-5 py-2 rounded-full bg-purple-100 text-purple-700 font-medium hover:bg-purple-200 transition-colors"
+    >
+      Home へ戻る
+    </a>
+
+    <a href="/secret-garden" class="maybe-link mt-1">それとも...</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .maybe-link {
+    font-size: 0.8rem;
+    color: #c4c4cc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .maybe-link:hover {
+    color: #9575cd;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

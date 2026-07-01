@@ -1,0 +1,47 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-20 border-t border-purple-100 bg-white">
+  <div class="max-w-4xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+    <p>© {year} nasu</p>
+    <div class="flex items-center gap-4">
+      <button
+        id="contact-btn"
+        type="button"
+        class="flex items-center gap-1.5 hover:text-purple-500 transition-colors cursor-pointer"
+        data-user="contact"
+        data-domain="nasu.uk"
+        title="クリックでメールを送る"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="m2 7 10 6 10-6" />
+        </svg>
+        contact [at] nasu.uk
+      </button>
+      <a href="/rss.xml" class="flex items-center gap-1 hover:text-orange-500 transition-colors">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+          <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/>
+        </svg>
+        RSS
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // メールアドレスをHTMLソースにそのまま埋め込まない簡易bot対策。
+  // data属性から組み立てて、クリック時のみ mailto を発行する。
+  document.querySelectorAll<HTMLButtonElement>('#contact-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const { user, domain } = btn.dataset;
+      if (!user || !domain) return;
+      const address = `${user}@${domain}`;
+      const ok = window.confirm(`メールソフトを開いて ${address} 宛のメールを作成します。よろしいですか？`);
+      if (ok) {
+        window.location.href = `mailto:${address}`;
+      }
+    });
+  });
+</script>

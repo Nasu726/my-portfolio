@@ -7,7 +7,7 @@ links:
   github: "https://github.com/nasu726"
 ---
 
-Astro v5 と Tailwind CSS v4 を使って作ったこのサイト自身です。
+Astro v7 と Tailwind CSS v4 を使って作ったこのサイト自身です。
 
 ## 機能
 

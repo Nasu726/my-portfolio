@@ -8,6 +8,8 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  /** 記事ページは 'article'、それ以外は 'website' */
+  ogType?: 'website' | 'article';
   useKatex?: boolean;
   /** 画面ぴったりに収め、Footerなし・スクロール不可にする（404ページ用） */
   fullHeight?: boolean;
@@ -18,7 +20,8 @@ interface Props {
 const {
   title,
   description = 'nasuのポートフォリオサイト。アルゴリズムやプログラミングに関するブログと作品を公開しています。',
-  ogImage = '/og-default.png',
+  ogImage = '/og/pages/home.png',
+  ogType = 'website',
   useKatex = false,
   fullHeight = false,
   wide = false,
@@ -26,6 +29,12 @@ const {
 
 const siteUrl = Astro.site ?? 'https://nasu726.dev';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+const ogImageUrl = new URL(ogImage, siteUrl);
+
+// OG画像の実サイズ（src/lib/ogImage.ts の OG_WIDTH / OG_HEIGHT と揃えること）。
+// 明示するとLINEやSlackが初回スクレイプで確実に大きいカードで表示する
+const OG_IMAGE_WIDTH = '1200';
+const OG_IMAGE_HEIGHT = '630';
 ---
 
 <!doctype html>
@@ -43,11 +52,14 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
     <meta name="description" content={description} />
 
     <!-- OGP -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={`${title} | nasu`} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, siteUrl)} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content={OG_IMAGE_WIDTH} />
+    <meta property="og:image:height" content={OG_IMAGE_HEIGHT} />
+    <meta property="og:image:alt" content={`${title} | nasu`} />
     <meta property="og:site_name" content="nasu" />
     <meta property="og:locale" content="ja_JP" />
 
@@ -57,7 +69,8 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
     <meta name="twitter:creator" content="@ueCube24_1" />
     <meta name="twitter:title" content={`${title} | nasu`} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, siteUrl)} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={`${title} | nasu`} />
 
     {useKatex && (
       <link

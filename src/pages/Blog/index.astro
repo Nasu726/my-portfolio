@@ -27,7 +27,11 @@ const allPosts = [...blogUnified, ...qiitaUnified].sort(
 const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
 ---
 
-<BaseLayout title="Blog" description="nasu726のブログ。アルゴリズム、プログラミング、日々の学びを書いています。">
+<BaseLayout
+  title="Blog"
+  description="nasu726のブログ。アルゴリズム、プログラミング、日々の学びを書いています。"
+  ogImage="/og/pages/blog.png"
+>
   <div class="flex items-baseline justify-between mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Blog</h1>
     <span class="text-sm text-gray-400">{allPosts.length} 記事</span>

@@ -5,6 +5,10 @@ import { join } from 'path';
 
 const root = process.cwd();
 
+// カード右下に入れるサイトの透かし。astro.config.mjs の site から取り、
+// 表示用にスキーム(https://)を落とす。ドメインをここに直書きしない
+const SITE_WATERMARK = new URL(import.meta.env.SITE).host;
+
 // OGP画像の標準サイズ。TwitterやSlackが大きいカードで表示する 1.91:1 の比率
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
@@ -183,7 +187,7 @@ export async function generateOGImage(opts: OGImageOptions): Promise<Buffer> {
                 fontSize: '18px',
                 color: '#a78bfa',
               },
-              children: 'nasu726.dev',
+              children: SITE_WATERMARK,
             },
           },
         ],

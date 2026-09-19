@@ -27,7 +27,8 @@ const {
   wide = false,
 } = Astro.props;
 
-const siteUrl = Astro.site ?? 'https://nasu726.dev';
+// astro.config.mjs の site が唯一の情報源。未設定なら new URL が throw してビルドで気付ける
+const siteUrl = import.meta.env.SITE;
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
 const ogImageUrl = new URL(ogImage, siteUrl);
 

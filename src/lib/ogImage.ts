@@ -22,6 +22,11 @@ const TITLE_LENGTH_THRESHOLD = 30;
 const TITLE_FONT_SIZE_LONG = '48px';
 const TITLE_FONT_SIZE_SHORT = '60px';
 
+// タイトル・説明文の最大行数。超えた分は「…」で省略する。
+// satori では display: '-webkit-box' + WebkitLineClamp が効かず、
+// display: 'block' + lineClamp でないと行数が制限されない
+const MAX_TEXT_LINES = 2;
+
 // フォントを一度だけ読み込む
 function loadFont(file: string): Buffer | null {
   try {
@@ -152,9 +157,8 @@ export async function generateOGImage(opts: OGImageOptions): Promise<Buffer> {
                 marginBottom: '20px',
                 maxWidth: '1056px',
                 overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
+                display: 'block',
+                lineClamp: MAX_TEXT_LINES,
               },
               children: title,
             },
@@ -169,9 +173,8 @@ export async function generateOGImage(opts: OGImageOptions): Promise<Buffer> {
                 lineHeight: 1.6,
                 maxWidth: '980px',
                 overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
+                display: 'block',
+                lineClamp: MAX_TEXT_LINES,
               },
               children: description,
             },

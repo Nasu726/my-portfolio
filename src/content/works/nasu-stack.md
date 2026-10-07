@@ -8,6 +8,8 @@ links:
   demo: "https://nasu726.github.io/Nasu-Stack/catalog/"
 ---
 
+追記(2026-10-07)：v2.1.1 まで更新しました。変更点は末尾の「更新履歴」と [Nasu Stack v2 を公開しました](/Blog/nasu-stack-v2) を参照してください。
+
 ## Nasu Stack
 
 「初心者は困らせない、ベテランは縛らない」を目標にした、React / Astro 向けのコンポーネント集とスターターテンプレートです。ノーコードのビジュアルビルダーと素のフレームワークの間、**コードは触れるけれど全部は組み立てられない層**を対象にしています。
@@ -72,7 +74,7 @@ UIライブラリは「安全そうに見えるもの」を提供してしまう
 ### 導入
 
 ```bash
-npx https://github.com/Nasu726/Nasu-Stack/releases/download/v1.0.0/create-nasu-stack-1.0.0.tgz my-site
+npx https://github.com/Nasu726/Nasu-Stack/releases/download/v2.1.1/create-nasu-stack-2.1.1.tgz my-site
 ```
 
 既存プロジェクトへの追加は shadcn 経由です。
@@ -82,3 +84,13 @@ npx shadcn@4.17.0 add Nasu726/Nasu-Stack/action-button
 ```
 
 npm 名は未取得のため、**`npx create-nasu-stack` は実行しないでください**（無関係な第三者のコードが実行されます）。配布は GitHub Release のみです。ライセンスは MIT。
+
+### 更新履歴
+
+- **v2.1.1 (2026-09-28)** — セキュリティパッチ。Astro の下限を 7.2.10、Sharp を 0.35.4 に上げ、Astro / Blog 雛型の high 以上の既知の脆弱性をゼロにした
+- **v2.1.0 (2026-09-01)** — 実アプリで責任境界を確かめる dogfooding を開始。1本目の [Repository Pulse](https://nasu726.github.io/Nasu-Stack/dogfood/repository-pulse/)（公開リポジトリの概要・Issue / PR 検索・リリース表）を `repository-pulse` 雛型として配布。`AsyncForm` / `AsyncSelect` / `createSubmit` の境界の不整合も修正
+- **v2.0.1 (2026-08-30)** — 外部レビューで見つかった不具合を修正。GitHub Immutable Releases を有効にし、`main` 上で Pages の検証に通ったコミットだけをリリースできるようにした
+- **v2.0.0 (2026-08-27)** — 2つ目の安定版。`validation`・`use-autosave`・`copy-button`・`error-boundary`・`field-array`・`paginator`・`popover`・`load-more-list`・`search-list` など11個を追加し、合計51個に。唯一の意図的な挙動変更として、`useAction` は `VALIDATION` / HTTP `422` を自動リトライしなくなった。v1 の配布物・export・トークンは削除していない。リリース前の検査は33段階
+- **v1.0.0 (2026-08-20)** — 最初の安定版。詳しくは [Nasu Stack v1.0.0 を公開しました](/Blog/nasu-stack-v1)
+
+v2 でも責任境界は変わりません。認証・認可・サーバ側の正規のバリデーション・レート制限・冪等性・トランザクション・下書きの永続保存は、引き続きアプリ・サーバの責任です。既存のアプリを v2 へ上げる手順は [移行ガイド](https://github.com/Nasu726/Nasu-Stack/blob/main/docs/migration-v2.ja.md) にあります。

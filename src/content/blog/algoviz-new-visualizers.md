@@ -1,11 +1,11 @@
 ---
-title: "AlgoViz にビジュアライザを27個追加しました"
+title: "AlgoViz にビジュアライザを追加しました"
 description: "Brainfuck だけだった AlgoViz に、グラフ・木・配列・データ構造・オートマトンのビジュアライザを27個追加しました。設計方針と、作りながら考えたことをまとめます。"
 pubDate: 2026-10-07
 tags: ["React", "C++", "Visualizer", "アルゴリズム", "Works"]
 ---
 
-## AlgoViz にビジュアライザを27個追加しました
+## AlgoViz にビジュアライザを追加しました
 
 こんにちは、なすです。
 

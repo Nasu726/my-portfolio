@@ -12,7 +12,12 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
+    // `updatedDate:` を空欄で書いた場合は、行が無いのと同じ扱い（未設定）にする。
+    // そのまま coerce すると null が 1970-01-01 になってしまうため
+    updatedDate: z.preprocess(
+      (v) => (v === null || v === '' ? undefined : v),
+      z.coerce.date().optional(),
+    ),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),

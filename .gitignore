@@ -5,7 +5,7 @@ node_modules/
 !.env.example
 .astro/
 .claude/
-
+.vscode/
 bash*
 
 # 個人用運営メモ

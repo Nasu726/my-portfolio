@@ -6,6 +6,8 @@ node_modules/
 .astro/
 .claude/
 
+bash*
+
 # 個人用運営メモ
 OPERATIONS.md
 PLAN.md

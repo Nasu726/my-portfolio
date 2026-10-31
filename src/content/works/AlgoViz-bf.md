@@ -2,6 +2,7 @@
 title: "AlgoViz - アルゴリズムビジュアライザ"
 description: "アルゴリズム・データ構造・機械の動作を1手ずつ可視化するWebアプリ。Brainfuckビジュアライザから始まり、グラフ・木・配列・データ構造・オートマトンを加えた28ページに。論理はC++(WebAssembly)、描画はPixiJS。"
 pubDate: 2026-02-21
+updatedDate: 2026-10-07
 tags: ["Visualizer", "アルゴリズム", "Brainfuck", "React", "C++"]
 links:
   github: "https://github.com/Nasu726/AlgoViz"

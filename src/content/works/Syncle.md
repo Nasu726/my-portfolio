@@ -2,6 +2,7 @@
 title: "Syncle"
 description: "グループのタスク管理を助けるWebアプリ。タスク管理・リマインド・メンバー管理をこのアプリで一元管理できます。ハッカソンで制作。"
 pubDate: 2026-01-11
+updatedDate: 2026-06-30
 tags: ["React", "Python", "Hackathon"]
 links:
   demo: "https://syncle-five.vercel.app/signin"

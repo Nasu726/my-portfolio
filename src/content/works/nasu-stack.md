@@ -2,6 +2,7 @@
 title: "Nasu Stack"
 description: "「初心者は困らせない、ベテランは縛らない」React / Astro 向けのUIコンポーネント集。レイアウトと非同期の状態管理を最初から実装済みで提供し、shadcn 方式でコードごとコピーして使える。"
 pubDate: 2026-08-20
+updatedDate: 2026-10-07
 tags: ["React", "Astro", "shadcn", "TypeScript", "UI"]
 links:
   github: "https://github.com/Nasu726/Nasu-Stack"

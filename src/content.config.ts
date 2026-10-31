@@ -31,9 +31,9 @@ const works = defineCollection({
     tags: z.array(z.string()).default([]),
     links: z
       .object({
-        github: z.string().url().optional(),
-        demo: z.string().url().optional(),
-        article: z.string().url().optional(),
+        github: z.url().optional(),
+        demo: z.url().optional(),
+        article: z.url().optional(),
       })
       .optional(),
     draft: z.boolean().default(false),

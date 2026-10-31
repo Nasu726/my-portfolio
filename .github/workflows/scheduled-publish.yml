@@ -1,0 +1,32 @@
+name: Scheduled publish
+
+# 予約投稿の記事を公開する。記事は「ビルドした時点で公開時刻を過ぎているか」で
+# 出し分けている（src/lib/posts.ts）ので、公開時刻を迎えた記事があれば空コミットを push し、
+# GitHub 連携済みの Cloudflare Pages に再ビルドさせる。
+on:
+  schedule:
+    # cron は UTC。GitHub の定期実行は数分〜1時間ほど遅れることがあり、
+    # 混雑時は実行自体が飛ばされることもあるので、昼にも判定して当日中の公開を確実にする
+    - cron: '5 15 * * *' # 日本時間 0:05
+    - cron: '0 3 * * *'  # 日本時間 12:00（予備。0時台に公開済みなら何もしない）
+  workflow_dispatch: # Actions タブから手動実行もできるように
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+      - id: check
+        run: echo "due=$(node scripts/publish-due.mjs)" >> "$GITHUB_OUTPUT"
+      - if: steps.check.outputs.due == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: 予約投稿の記事を公開"
+          git push

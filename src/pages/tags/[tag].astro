@@ -2,11 +2,12 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import { getCollection } from 'astro:content';
+import { isPublished } from '../../lib/posts';
 import { tagToSlug } from '../../lib/tags';
 
 export async function getStaticPaths() {
   const [posts, works] = await Promise.all([
-    getCollection('blog', ({ data }) => !data.draft),
+    getCollection('blog', ({ data }) => isPublished(data)),
     getCollection('works', ({ data }) => !data.draft),
   ]);
 

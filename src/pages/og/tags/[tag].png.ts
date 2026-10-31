@@ -1,11 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { isPublished } from '../../../lib/posts';
 import { createOGImageResponse } from '../../../lib/ogImage';
 import { tagToSlug } from '../../../lib/tags';
 
 export async function getStaticPaths() {
   const [posts, works] = await Promise.all([
-    getCollection('blog', ({ data }) => !data.draft),
+    getCollection('blog', ({ data }) => isPublished(data)),
     getCollection('works', ({ data }) => !data.draft),
   ]);
 

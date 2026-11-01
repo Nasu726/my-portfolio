@@ -2,6 +2,13 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
+// `updatedDate:` を空欄で書いた場合は、行が無いのと同じ扱い（未設定）にする。
+// そのまま coerce すると null が 1970-01-01 になってしまうため
+const optionalDate = z.preprocess(
+  (v) => (v === null || v === '' ? undefined : v),
+  z.coerce.date().optional(),
+);
+
 const blog = defineCollection({
   loader: glob({
     pattern: '**/*.md',
@@ -12,12 +19,7 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
-    // `updatedDate:` を空欄で書いた場合は、行が無いのと同じ扱い（未設定）にする。
-    // そのまま coerce すると null が 1970-01-01 になってしまうため
-    updatedDate: z.preprocess(
-      (v) => (v === null || v === '' ? undefined : v),
-      z.coerce.date().optional(),
-    ),
+    updatedDate: optionalDate,
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
@@ -33,6 +35,7 @@ const works = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
+    updatedDate: optionalDate,
     tags: z.array(z.string()).default([]),
     links: z
       .object({

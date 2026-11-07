@@ -9,7 +9,8 @@
     "astro": "astro",
     "lint": "eslint .",
     "test": "node --test \"src/**/*.test.ts\"",
-    "qiita:update": "node scripts/update-qiita.mjs"
+    "qiita:update": "node scripts/update-qiita.mjs",
+    "links:update": "node scripts/update-link-cards.mjs && astro sync --force"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",

@@ -9,7 +9,7 @@ tags: ["Astro", "Cloudflare", "Web", "Info"]
 はじめまして、なすです。
 電気通信大学の学域2年生で、情報数理工学プログラムに所属しています。
 趣味は競技プログラミングとロシア語です。AtCoderではアルゴリズムが緑で、ヒューリスティックが灰です。ロシア語はロシア語能力検定試験3級を持っています。
-主な使用言語はPythonで、これまでに<a href="https://github.com/Nasu726/RtoJ-anki-register" target="_blank">単語カード登録アプリ</a>を作成しました。
+主な使用言語はPythonで、これまでに<a href="https://github.com/Nasu726/RtoJ-anki-register" target="_blank" rel="noopener noreferrer">単語カード登録アプリ</a>を作成しました。
 
 ## マイページを作ったきっかけ ～ できるまで
 

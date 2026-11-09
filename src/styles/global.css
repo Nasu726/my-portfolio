@@ -115,6 +115,11 @@ pre.has-copy-btn {
   margin-bottom: 1rem;
 }
 
+/* 画像の下に alt を出すキャプション（src/lib/articleHtml.ts） */
+.prose figcaption {
+  text-align: center;
+}
+
 /* 本文の `![説明](URL)` を置き換えた埋め込みプレイヤー（src/lib/embed.ts） */
 .embed {
   margin: 1.5em 0;

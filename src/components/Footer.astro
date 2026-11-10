@@ -4,7 +4,22 @@ const year = new Date().getFullYear();
 
 <footer class="mt-20 border-t border-purple-100 bg-white">
   <div class="max-w-4xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
-    <p>© {year} nasu</p>
+    <div class="text-center sm:text-left">
+      <p>© {year} nasu</p>
+      <!-- 文の途中で折り返さないよう、文ごとに inline-block にする -->
+      <p class="mt-1 text-xs">
+        <span class="inline-block">記事・作品の無断転載を禁じます。</span>
+        <span class="inline-block">
+          ソースコードと記事中のコードは
+          <a
+            href="https://github.com/Nasu726/my-portfolio/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline underline-offset-2 hover:text-purple-500 transition-colors"
+          >MIT License</a>
+        </span>
+      </p>
+    </div>
     <div class="flex items-center gap-4">
       <button
         id="contact-btn"

@@ -1,0 +1,43 @@
+MIT License
+
+Copyright (c) 2026 nasu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Scope
+
+This license applies to the source code of this website, and to code
+snippets (code blocks) that appear in the blog posts.
+
+It does NOT apply to the following, which are not licensed for reuse:
+
+- The text, images and other content of the blog posts and works
+  (src/content/blog/ and src/content/works/), except for code snippets
+- The icon image (public/nasucat.webp)
+
+Copyright (c) 2026 nasu. All rights reserved.
+
+Third-party materials keep their own licenses:
+
+- Noto Sans JP (public/fonts/Noto_Sans_JP/) is licensed under the
+  SIL Open Font License 1.1 (see OFL.txt in that directory)
+- Titles, descriptions and images of external pages shown in link cards
+  (src/data/link-cards.json) and embedded content belong to their owners

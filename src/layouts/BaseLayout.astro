@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeasonalBackground from '../components/SeasonalBackground.astro';
+import TweetEmbed from '../components/TweetEmbed.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -89,5 +90,6 @@ const OG_IMAGE_HEIGHT = '630';
       <slot />
     </main>
     {!fullHeight && <Footer />}
+    <TweetEmbed />
   </body>
 </html>

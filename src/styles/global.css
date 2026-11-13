@@ -120,6 +120,48 @@ pre.has-copy-btn {
   text-align: center;
 }
 
+/* X の投稿の引用枠（src/lib/embed.ts の tweetNode）。読み込めたら X 公式の埋め込みに置き換わる */
+.tweet {
+  margin: 1.5em auto;
+  max-width: 550px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-purple-200);
+  border-left: 4px solid var(--color-purple-300);
+  border-radius: 0.75rem;
+  background-color: #fff;
+}
+.tweet-text {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-gray-800);
+}
+.tweet-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+.tweet-author {
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+.tweet-meta a {
+  margin-left: auto;
+  color: var(--color-purple-600);
+}
+.tweet-meta a:hover {
+  text-decoration: underline;
+}
+/* 公式の埋め込みが出来上がるまで、高さ0の箱の中で描画する（src/components/TweetEmbed.astro） */
+.tweet-embed.is-loading {
+  height: 0;
+  overflow: hidden;
+}
+
 /* 本文の `![説明](URL)` を置き換えた埋め込みプレイヤー（src/lib/embed.ts） */
 .embed {
   margin: 1.5em 0;

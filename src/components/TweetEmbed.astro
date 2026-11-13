@@ -1,0 +1,76 @@
+---
+// 本文の X の引用枠（src/lib/embed.ts の tweetNode）を、画面に近づいたときだけ X 公式の埋め込みに置き換える。
+// X のスクリプトは引用枠のあるページで、近くまでスクロールしたときに1回だけ読み込む。
+// 読み込みに失敗した・投稿が消えた場合は、保存した本文の引用枠がそのまま残る。
+---
+
+<script>
+  type Twttr = {
+    ready: (callback: () => void) => void;
+    widgets: {
+      createTweet: (id: string, container: HTMLElement, options: object) => Promise<HTMLElement | undefined>;
+    };
+  };
+
+  const WIDGETS_SRC = 'https://platform.twitter.com/widgets.js';
+  // 画面に入る少し手前で置き換えを始め、読んでいる最中に高さが変わらないようにする
+  const PRELOAD_MARGIN = '200px 0px';
+
+  let widgets: Promise<Twttr> | null = null;
+
+  function loadWidgets(): Promise<Twttr> {
+    widgets ??= new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = WIDGETS_SRC;
+      script.async = true;
+      script.onload = () => {
+        const twttr = (window as unknown as { twttr?: Twttr }).twttr;
+        if (twttr) twttr.ready(() => resolve(twttr));
+        else reject(new Error('X の埋め込みスクリプトを読み込めませんでした'));
+      };
+      script.onerror = () => reject(new Error('X の埋め込みスクリプトを読み込めませんでした'));
+      document.head.append(script);
+    });
+    return widgets;
+  }
+
+  async function upgrade(quote: HTMLElement) {
+    // 埋め込みが出来上がるまでは高さ0の箱の中で描画し、引用枠と二重に見えないようにする
+    const container = document.createElement('div');
+    container.className = 'tweet-embed is-loading';
+    quote.before(container);
+    try {
+      const twttr = await loadWidgets();
+      const embedded = await twttr.widgets.createTweet(quote.dataset.tweetId ?? '', container, {
+        dnt: true,
+        lang: 'ja',
+        align: 'center',
+        // 返信の投稿でも、引用枠と同じくその投稿だけを出す
+        conversation: 'none',
+      });
+      if (!embedded) throw new Error('投稿を表示できませんでした');
+      container.classList.remove('is-loading');
+      quote.hidden = true;
+    } catch (error) {
+      // 引用枠を残す。広告ブロッカーや削除された投稿でよく起きるので、警告だけ出す
+      container.remove();
+      console.warn('[tweet]', error);
+    }
+  }
+
+  const quotes = document.querySelectorAll<HTMLElement>('blockquote.tweet[data-tweet-id]');
+
+  if (quotes.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          upgrade(entry.target as HTMLElement);
+        }
+      },
+      { rootMargin: PRELOAD_MARGIN },
+    );
+    quotes.forEach((quote) => observer.observe(quote));
+  }
+</script>

@@ -1,4 +1,6 @@
-// 記事の `![説明](URL)` だけの行を集めて OGP を取得し、src/data/link-cards.json に追記するスクリプト。
+// 記事の `![説明](URL)` だけの行を集めて、リンクカードと X の投稿の情報を取得するスクリプト。
+//   ページ  → OGP を src/data/link-cards.json に追記
+//   X の投稿 → oEmbed の本文を src/data/tweets.json に追記
 // ビルド時には実行されない。URLを貼った記事を書いたら手動で実行し、更新されたJSONをコミットする。
 //   npm run links:update
 // 取得済みのURLは取り直さない。取り直したいときは JSON から該当の項目を消して実行する。
@@ -6,9 +8,11 @@ import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { hasImageExtension, parseEmbed } from '../src/lib/embed.ts';
 import { extractLinkCard } from '../src/lib/ogp.ts';
+import { parseTweetId, tweetFromOEmbed } from '../src/lib/tweet.ts';
 
 const CONTENT_DIR = 'src/content';
 const STORE_PATH = 'src/data/link-cards.json';
+const TWEETS_PATH = 'src/data/tweets.json';
 const FETCH_TIMEOUT_MS = 10_000;
 // ブラウザ以外を弾くサイトがあるので、ブラウザに近い User-Agent にしておく
 const USER_AGENT = 'Mozilla/5.0 (compatible; nasu.uk link-card; +https://nasu.uk/)';
@@ -57,22 +61,44 @@ const urls = readdirSync(CONTENT_DIR, { recursive: true })
   .filter((file) => file.endsWith('.md'))
   .flatMap((file) => imageUrls(readFileSync(join(CONTENT_DIR, file), 'utf8')));
 
-const store = JSON.parse(readFileSync(STORE_PATH, 'utf8'));
-const missing = [...new Set(urls)].filter(
-  (url) => !parseEmbed(url) && !hasImageExtension(url) && !(url in store),
-);
-
-let failed = 0;
-for (const url of missing) {
-  try {
-    store[url] = await fetchCard(url);
-    console.log(`取得: ${url}`);
-  } catch (error) {
-    // 取得できないURLは普通のリンクとして表示される。他のURLの取得は続ける
-    failed++;
-    console.warn(`失敗: ${url}（${error.message}）`);
-  }
+async function fetchTweet(url) {
+  const query = new URLSearchParams({ url, omit_script: '1', dnt: 'true' });
+  const res = await fetch(`https://publish.x.com/oembed?${query}`, {
+    headers: { 'User-Agent': USER_AGENT },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  // 削除された投稿や非公開アカウントの投稿は 404 / 403 になる
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return tweetFromOEmbed(await res.json());
 }
 
-writeFileSync(STORE_PATH, `${JSON.stringify(store, null, 2)}\n`, 'utf8');
-console.log(`link-cards.json: 新規 ${missing.length - failed} 件 / 失敗 ${failed} 件 / 合計 ${Object.keys(store).length} 件`);
+/** まだ取得していないものを取得して JSON に追記する。失敗したものは飛ばして他の取得を続ける */
+async function update(path, targets, fetchOne) {
+  const store = JSON.parse(readFileSync(path, 'utf8'));
+  const missing = targets.filter(({ key }) => !(key in store));
+  let failed = 0;
+  for (const { key, url } of missing) {
+    try {
+      store[key] = await fetchOne(url);
+      console.log(`取得: ${url}`);
+    } catch (error) {
+      // 取得できないURLは普通のリンクとして表示される
+      failed++;
+      console.warn(`失敗: ${url}（${error.message}）`);
+    }
+  }
+  writeFileSync(path, `${JSON.stringify(store, null, 2)}\n`, 'utf8');
+  console.log(`${path}: 新規 ${missing.length - failed} 件 / 失敗 ${failed} 件 / 合計 ${Object.keys(store).length} 件`);
+}
+
+const uniqueUrls = [...new Set(urls)];
+const tweets = uniqueUrls.flatMap((url) => {
+  const id = parseTweetId(url);
+  return id ? [{ key: id, url }] : [];
+});
+const pages = uniqueUrls
+  .filter((url) => !parseEmbed(url) && !parseTweetId(url) && !hasImageExtension(url))
+  .map((url) => ({ key: url, url }));
+
+await update(STORE_PATH, pages, fetchCard);
+await update(TWEETS_PATH, tweets, fetchTweet);

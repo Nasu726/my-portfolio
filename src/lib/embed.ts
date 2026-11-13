@@ -1,14 +1,17 @@
 // 本文の画像記法 `![説明](URL)` を、URLの種類に応じて埋め込みやリンクカードに置き換える remark プラグイン。
 // 画像・動画・カードをすべて同じ書き方で貼れるようにしていて、[] の中は alt / title に使う。
 //   YouTube・Twitch・Spotify → iframe のプレイヤー
+//   X の投稿                → src/data/tweets.json の本文から引用枠（src/lib/tweet.ts）
 //   画像のURL               → そのまま画像
 //   それ以外のページ        → src/data/link-cards.json の情報からリンクカード
-// カードの情報は `npm run links:update` で取得しておく。ビルド時は通信しない。
+// カードと投稿の情報は `npm run links:update` で取得しておく。ビルド時は通信しない。
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Image, Paragraph, Root, RootContent } from 'mdast';
+import { parseTweetId, type Tweet } from './tweet.ts';
 
 const LINK_CARDS_PATH = path.join(process.cwd(), 'src/data/link-cards.json');
+const TWEETS_PATH = path.join(process.cwd(), 'src/data/tweets.json');
 
 // Spotify の埋め込みの高さ（px）。曲・エピソードは1行の小さいプレイヤー、それ以外はリスト付き
 const SPOTIFY_HEIGHT_COMPACT = 152;
@@ -182,12 +185,32 @@ function linkCardNode(url: string, { title, description, image }: LinkCard, alt:
   );
 }
 
+const DATE_FORMAT = new Intl.DateTimeFormat('ja-JP', { dateStyle: 'long', timeZone: 'Asia/Tokyo' });
+
+// 保存した本文の引用枠。data-tweet-id を目印に、ページ側で X 公式の埋め込みに置き換える
+function tweetNode(id: string, { url, author, handle, text: body, date }: Tweet): Paragraph {
+  const meta = element('footer', { className: ['tweet-meta'] }, [
+    element('span', { className: ['tweet-author'] }, [text(author)]),
+    element('span', { className: ['tweet-handle'] }, [text(`@${handle}`)]),
+    element('a', { href: url }, [text(DATE_FORMAT.format(new Date(date)))]),
+  ]);
+  return htmlNode('blockquote', { className: ['tweet', 'not-prose'], dataTweetId: id, cite: url }, [
+    element('p', { className: ['tweet-text'] }, [text(body)]),
+    meta,
+  ]);
+}
+
+function plainLink(url: string, label: string): Paragraph {
+  return { type: 'paragraph', children: [{ type: 'link', url, children: [{ type: 'text', value: label }] }] };
+}
+
 export function remarkEmbed({ site }: { site: string }) {
   const twitchParents = [new URL(site).hostname, 'localhost'];
 
   return (tree: Root) => {
     // 値が null のURLは、拡張子が無いが中身は画像だったもの
     const cards: Record<string, LinkCard | null> = JSON.parse(readFileSync(LINK_CARDS_PATH, 'utf8'));
+    const tweets: Record<string, Tweet> = JSON.parse(readFileSync(TWEETS_PATH, 'utf8'));
 
     tree.children = tree.children.map((node) => {
       const image = standaloneImage(node);
@@ -197,6 +220,14 @@ export function remarkEmbed({ site }: { site: string }) {
       const alt = image.alt ?? '';
       const embed = parseEmbed(url, twitchParents);
       if (embed) return embedNode(embed, alt);
+
+      const tweetId = parseTweetId(url);
+      if (tweetId) {
+        if (tweets[tweetId]) return tweetNode(tweetId, tweets[tweetId]);
+        console.warn(`[tweet] 投稿の本文がありません: ${url}（npm run links:update で取得できます）`);
+        return plainLink(url, alt || url);
+      }
+
       if (hasImageExtension(url) || cards[url] === null) return node;
 
       const card = cards[url];
@@ -204,7 +235,7 @@ export function remarkEmbed({ site }: { site: string }) {
 
       // 壊れた画像にならないよう、カードの情報が無ければ普通のリンクにする
       console.warn(`[link-card] カード情報がありません: ${url}（npm run links:update で取得できます）`);
-      return { type: 'paragraph', children: [{ type: 'link', url, children: [{ type: 'text', value: alt || url }] }] };
+      return plainLink(url, alt || url);
     });
   };
 }

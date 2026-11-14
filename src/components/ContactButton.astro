@@ -1,0 +1,38 @@
+---
+// メールアドレスをHTMLソースにそのまま埋め込まない簡易bot対策のボタン。
+// data属性から組み立てて、クリック時のみ mailto を発行する。
+interface Props {
+  /** 文字色など、置く場所ごとの見た目 */
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<button
+  type="button"
+  class:list={['contact-btn flex items-center gap-1.5 hover:text-purple-500 transition-colors cursor-pointer', className]}
+  data-user="contact"
+  data-domain="nasu.uk"
+  title="クリックでメールを送る"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m2 7 10 6 10-6" />
+  </svg>
+  contact [at] nasu.uk
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.contact-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const { user, domain } = btn.dataset;
+      if (!user || !domain) return;
+      const address = `${user}@${domain}`;
+      const ok = window.confirm(`メールソフトを開いて ${address} 宛のメールを作成します。よろしいですか？`);
+      if (ok) {
+        window.location.href = `mailto:${address}`;
+      }
+    });
+  });
+</script>

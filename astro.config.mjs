@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
@@ -15,7 +16,9 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   markdown: {
-    remarkPlugins: [remarkMath, [remarkEmbed, { site }]],
-    rehypePlugins: [rehypeKatex, [rehypeExternalLinks, { site }], rehypeImageCaptions],
+    processor: unified({
+      remarkPlugins: [remarkMath, [remarkEmbed, { site }]],
+      rehypePlugins: [rehypeKatex, [rehypeExternalLinks, { site }], rehypeImageCaptions],
+    }),
   },
 });

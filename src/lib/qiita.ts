@@ -18,14 +18,12 @@ export type UnifiedPost = {
 
 type StoredPost = Omit<UnifiedPost, 'pubDate'> & { pubDate: string };
 
+// ファイルが無い・JSONが壊れている場合はそのまま例外を投げてビルドを止める。
+// 黙って空にすると、記事が消えたことに気付けないため
 async function readStore(): Promise<UnifiedPost[]> {
-  try {
-    const raw = await readFile(STORE_PATH, 'utf-8');
-    const posts = JSON.parse(raw) as StoredPost[];
-    return posts.map((p) => ({ ...p, pubDate: new Date(p.pubDate) }));
-  } catch {
-    return [];
-  }
+  const raw = await readFile(STORE_PATH, 'utf-8');
+  const posts = JSON.parse(raw) as StoredPost[];
+  return posts.map((p) => ({ ...p, pubDate: new Date(p.pubDate) }));
 }
 
 /** ストア済みのQiita記事のうち、minYear年以降のものをブログカード形式で返す。

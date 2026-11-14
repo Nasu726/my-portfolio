@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import ContactButton from '../components/ContactButton.astro';
 import { getCollection } from 'astro:content';
 import { isPublished } from '../lib/posts';
 import { fetchQiitaPosts } from '../lib/qiita';
@@ -159,20 +160,7 @@ const externalLinks = [
         <div class="pt-2 border-t border-purple-50">
           <p class="text-xs text-gray-400 mb-2">連絡先</p>
           <div class="flex flex-wrap gap-2">
-            <button
-              id="contact-btn"
-              type="button"
-              class="flex items-center gap-1.5 text-gray-600 hover:text-purple-500 transition-colors cursor-pointer"
-              data-user="contact"
-              data-domain="nasu.uk"
-              title="クリックでメールを送る"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                <rect x="2" y="4" width="20" height="16" rx="2" />
-                <path d="m2 7 10 6 10-6" />
-              </svg>
-              contact [at] nasu.uk
-            </button>
+            <ContactButton class="text-gray-600" />
           </div>
         </div>
       </div>

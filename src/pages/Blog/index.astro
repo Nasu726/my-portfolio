@@ -1,35 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
-import { getCollection } from 'astro:content';
-import { isPublished } from '../../lib/posts';
-import { fetchQiitaPosts } from '../../lib/qiita';
+import { getBlogCards } from '../../lib/content';
+import { BLOG_DESCRIPTION } from '../../lib/site';
 
-const blogPosts = (await getCollection('blog', ({ data }) => isPublished(data)))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const blogUnified = blogPosts.map((post) => ({
-  title: post.data.title,
-  description: post.data.description,
-  pubDate: post.data.pubDate,
-  tags: post.data.tags,
-  href: `/Blog/${post.id}`,
-  external: false,
-  badge: undefined as string | undefined,
-}));
-
-const qiitaUnified = await fetchQiitaPosts();
-
-const allPosts = [...blogUnified, ...qiitaUnified].sort(
-  (a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()
-);
-
+const allPosts = await getBlogCards();
 const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
 ---
 
 <BaseLayout
   title="Blog"
-  description="nasu726のブログ。アルゴリズム、プログラミング、日々の学びを書いています。"
+  description={`nasu726のブログ。${BLOG_DESCRIPTION}`}
   ogImage="/og/pages/blog.png"
 >
   <div class="flex items-baseline justify-between mb-6">

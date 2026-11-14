@@ -1,5 +1,6 @@
 ---
 import TagBadge from './TagBadge.astro';
+import { formatDate } from '../lib/format';
 
 interface Props {
   title: string;
@@ -12,11 +13,7 @@ interface Props {
 }
 
 const { title, description, pubDate, tags, href, external = false, badge } = Astro.props;
-const dateStr = pubDate.toLocaleDateString('ja-JP', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const dateStr = formatDate(pubDate);
 ---
 
 <!-- カード全体をクリック可能にしつつ、タグリンクも機能させる（stretched-link パターン） -->

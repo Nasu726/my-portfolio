@@ -1,17 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
-import { getCollection } from 'astro:content';
+import { getWorks } from '../../lib/content';
+import { WORKS_DESCRIPTION } from '../../lib/site';
 
-const allWorks = (await getCollection('works', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
+const allWorks = await getWorks();
 const allTags = [...new Set(allWorks.flatMap((w) => w.data.tags))].sort();
 ---
 
 <BaseLayout
   title="Works"
-  description="nasu726の作品一覧。個人開発・制作物を公開しています。"
+  description={`nasu726の作品一覧。${WORKS_DESCRIPTION}`}
   ogImage="/og/pages/works.png"
 >
   <div class="flex items-baseline justify-between mb-6">

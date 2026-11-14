@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SeasonalBackground from '../components/SeasonalBackground.astro';
 import TweetEmbed from '../components/TweetEmbed.astro';
+import { SITE_DESCRIPTION } from '../lib/site';
 import '../styles/global.css';
 
 interface Props {
@@ -20,7 +21,7 @@ interface Props {
 
 const {
   title,
-  description = 'nasuのポートフォリオサイト。アルゴリズムやプログラミングに関するブログと作品を公開しています。',
+  description = SITE_DESCRIPTION,
   ogImage = '/og/pages/home.png',
   ogType = 'website',
   useKatex = false,

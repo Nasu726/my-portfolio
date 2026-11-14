@@ -1,43 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TagBadge from '../../components/TagBadge.astro';
-import { getCollection, render } from 'astro:content';
-import { isPublished } from '../../lib/posts';
+import { render } from 'astro:content';
+import { getPosts } from '../../lib/content';
+import { formatDate, readingTime } from '../../lib/format';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => isPublished(data));
+  const posts = await getPosts();
   return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 
-// 読了時間（コードブロック・数式を除いて 500文字 = 1分）
-function readingTime(body: string): number {
-  const cleaned = body
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`\n]+`/g, '')
-    .replace(/\$\$[\s\S]*?\$\$/g, '')
-    .replace(/\$[^$\n]+\$/g, '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/^\s*\|.*\|\s*$/gm, ''); // Markdownテーブルを除外
-  const chars = cleaned.replace(/\s+/g, '').length;
-  return Math.max(1, Math.ceil(chars / 500));
-}
-
 const minutes = readingTime(post.body ?? '');
 const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 
-const dateStr = post.data.pubDate.toLocaleDateString('ja-JP', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
-const updatedStr = post.data.updatedDate?.toLocaleDateString('ja-JP', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const dateStr = formatDate(post.data.pubDate);
+const updatedStr = post.data.updatedDate && formatDate(post.data.updatedDate);
 
 const ogImage = `/og/blog/${post.id}.png`;
 ---

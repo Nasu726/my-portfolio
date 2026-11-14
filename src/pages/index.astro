@@ -2,29 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import ContactButton from '../components/ContactButton.astro';
-import { getCollection } from 'astro:content';
-import { isPublished } from '../lib/posts';
-import { fetchQiitaPosts } from '../lib/qiita';
+import { getBlogCards, getWorks } from '../lib/content';
 
-const blogPosts = (await getCollection('blog', ({ data }) => isPublished(data))).map((post) => ({
-  title: post.data.title,
-  description: post.data.description,
-  pubDate: post.data.pubDate,
-  tags: post.data.tags,
-  href: `/Blog/${post.id}`,
-  external: false,
-  badge: undefined as string | undefined,
-}));
+// トップに出す最新の件数
+const LATEST_COUNT = 4;
 
-const qiitaPosts = await fetchQiitaPosts();
-
-const posts = [...blogPosts, ...qiitaPosts]
-  .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
-  .slice(0, 4);
-
-const works = (await getCollection('works', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
+const posts = (await getBlogCards()).slice(0, LATEST_COUNT);
+const works = (await getWorks()).slice(0, LATEST_COUNT);
 
 const skills = [
   { category: '言語', tags: ['Python', 'C', 'MIPS'] },

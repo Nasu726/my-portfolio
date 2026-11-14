@@ -1,28 +1,13 @@
 import type { APIRoute } from 'astro';
 import { createOGImageResponse } from '../../../lib/ogImage';
+import { BLOG_DESCRIPTION, SITE_DESCRIPTION, WORKS_DESCRIPTION } from '../../../lib/site';
 
 // 記事以外の固定ページ用のOG画像。
 // BaseLayoutのogImageのデフォルトも /og/pages/home.png を指している。
 const STATIC_PAGES = [
-  {
-    slug: 'home',
-    title: 'nasu',
-    description:
-      'nasuのポートフォリオサイト。アルゴリズムやプログラミングに関するブログと作品を公開しています。',
-    label: 'Portfolio',
-  },
-  {
-    slug: 'blog',
-    title: 'Blog',
-    description: 'アルゴリズム、プログラミング、日々の学びを書いています。',
-    label: 'Blog',
-  },
-  {
-    slug: 'works',
-    title: 'Works',
-    description: '個人開発・制作物を公開しています。',
-    label: 'Works',
-  },
+  { slug: 'home', title: 'nasu', description: SITE_DESCRIPTION, label: 'Portfolio' },
+  { slug: 'blog', title: 'Blog', description: BLOG_DESCRIPTION, label: 'Blog' },
+  { slug: 'works', title: 'Works', description: WORKS_DESCRIPTION, label: 'Works' },
 ];
 
 export function getStaticPaths() {

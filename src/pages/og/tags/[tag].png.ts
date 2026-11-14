@@ -1,27 +1,14 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
-import { isPublished } from '../../../lib/posts';
+import { getTagIndex } from '../../../lib/content';
 import { createOGImageResponse } from '../../../lib/ogImage';
 import { tagToSlug } from '../../../lib/tags';
 
 export async function getStaticPaths() {
-  const [posts, works] = await Promise.all([
-    getCollection('blog', ({ data }) => isPublished(data)),
-    getCollection('works', ({ data }) => !data.draft),
-  ]);
-
-  // タグごとの件数を数える
-  const counts = new Map<string, number>();
-  for (const entry of [...posts, ...works]) {
-    for (const tag of entry.data.tags) {
-      counts.set(tag, (counts.get(tag) ?? 0) + 1);
-    }
-  }
-
-  return [...counts.entries()].map(([tag, count]) => ({
+  const index = await getTagIndex();
+  return [...index].map(([tag, { posts, works }]) => ({
     // リンク生成側（TagBadge等）と同じスラグにしないと404になる（"C++" などの記号対策）
     params: { tag: tagToSlug(tag) },
-    props: { tag, count },
+    props: { tag, count: posts.length + works.length },
   }));
 }
 

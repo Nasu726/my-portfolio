@@ -1,16 +1,14 @@
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
-import { isPublished } from '../lib/posts';
 import type { APIContext } from 'astro';
+import { getPosts } from '../lib/content';
+import { BLOG_DESCRIPTION } from '../lib/site';
 
 export async function GET(context: APIContext) {
-  const posts = (await getCollection('blog', ({ data }) => isPublished(data))).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-  );
+  const posts = await getPosts();
 
   return rss({
     title: 'nasuのブログ',
-    description: 'アルゴリズム、プログラミング、日々の学びを書いています。',
+    description: BLOG_DESCRIPTION,
     site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,

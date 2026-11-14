@@ -1,42 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TagBadge from '../../components/TagBadge.astro';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import { getWorks } from '../../lib/content';
+import { formatDate, readingTime } from '../../lib/format';
 
 export async function getStaticPaths() {
-  const works = await getCollection('works', ({ data }) => !data.draft);
+  const works = await getWorks();
   return works.map((work) => ({ params: { slug: work.id }, props: { work } }));
 }
 
 const { work } = Astro.props;
 const { Content, headings } = await render(work);
 
-// 読了時間（コードブロック・数式を除いて 500文字 = 1分）
-function readingTime(body: string): number {
-  const cleaned = body
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`\n]+`/g, '')
-    .replace(/\$\$[\s\S]*?\$\$/g, '')
-    .replace(/\$[^$\n]+\$/g, '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/^\s*\|.*\|\s*$/gm, ''); // Markdownテーブルを除外
-  const chars = cleaned.replace(/\s+/g, '').length;
-  return Math.max(1, Math.ceil(chars / 500));
-}
-
 const minutes = readingTime(work.body ?? '');
 const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 
-const dateStr = work.data.pubDate.toLocaleDateString('ja-JP', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
-const updatedStr = work.data.updatedDate?.toLocaleDateString('ja-JP', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const dateStr = formatDate(work.data.pubDate);
+const updatedStr = work.data.updatedDate && formatDate(work.data.updatedDate);
 
 const links = work.data.links;
 const ogImage = `/og/works/${work.id}.png`;

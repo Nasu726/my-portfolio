@@ -1,10 +1,9 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
-import { isPublished } from '../../../lib/posts';
+import { getPosts } from '../../../lib/content';
 import { createOGImageResponse } from '../../../lib/ogImage';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => isPublished(data));
+  const posts = await getPosts();
   return posts.map((post) => ({
     params: { slug: post.id },
     props: {

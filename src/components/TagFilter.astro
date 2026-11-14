@@ -1,0 +1,53 @@
+---
+// 一覧ページのタグの絞り込み。ボタンを押すと、同じページの
+// [data-tag-filter-list] の直下にある [data-tags] の要素のうち、そのタグを持つものだけを表示する。
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+const ALL = '__all__';
+---
+
+{tags.length > 0 && (
+  <div class="mb-6 flex flex-wrap gap-2 items-center">
+    <span class="text-sm text-gray-500">タグ:</span>
+    <button
+      class="tag-filter-btn px-3 py-1 rounded-full text-xs font-medium bg-purple-600 text-white transition-colors"
+      data-tag={ALL}
+    >
+      すべて
+    </button>
+    {tags.map((tag) => (
+      <button
+        class="tag-filter-btn px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+        data-tag={tag}
+      >
+        #{tag}
+      </button>
+    ))}
+  </div>
+)}
+
+<script>
+  const ALL = '__all__';
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-filter-btn');
+  const items = document.querySelectorAll<HTMLElement>('[data-tag-filter-list] > [data-tags]');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const selected = btn.dataset.tag;
+      buttons.forEach((b) => {
+        const isActive = b.dataset.tag === selected;
+        b.classList.toggle('bg-purple-600', isActive);
+        b.classList.toggle('text-white', isActive);
+        b.classList.toggle('bg-purple-100', !isActive);
+        b.classList.toggle('text-purple-700', !isActive);
+      });
+      items.forEach((item) => {
+        const tags = item.dataset.tags?.split(',') ?? [];
+        item.style.display = selected === ALL || (selected !== undefined && tags.includes(selected)) ? '' : 'none';
+      });
+    });
+  });
+</script>

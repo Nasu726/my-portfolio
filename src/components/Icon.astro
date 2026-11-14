@@ -1,0 +1,11 @@
+---
+// src/lib/icons.ts の path を、塗りつぶしの 24x24 アイコンとして描く
+interface Props {
+  path: string;
+  size: number;
+}
+
+const { path, size } = Astro.props;
+---
+
+<svg viewBox="0 0 24 24" fill="currentColor" width={size} height={size}><path d={path} /></svg>

@@ -21,18 +21,17 @@ export async function getWorks(): Promise<Work[]> {
   return (await getCollection('works', ({ data }) => !data.draft)).sort(newestFirst);
 }
 
+/** 記事・作品を、一覧のカード（PostCard）に渡す形にする */
+export function toCard(entry: Post | Work): UnifiedPost {
+  const { title, description, pubDate, tags } = entry.data;
+  const section = entry.collection === 'blog' ? 'Blog' : 'Works';
+  return { title, description, pubDate, tags, href: `/${section}/${entry.id}`, external: false };
+}
+
 /** 自分のブログ記事と Qiita の記事を合わせ、カード用の形にして新しい順に返す */
 export async function getBlogCards(): Promise<UnifiedPost[]> {
   const [posts, qiitaPosts] = await Promise.all([getPosts(), fetchQiitaPosts()]);
-  const ownPosts = posts.map((post) => ({
-    title: post.data.title,
-    description: post.data.description,
-    pubDate: post.data.pubDate,
-    tags: post.data.tags,
-    href: `/Blog/${post.id}`,
-    external: false,
-  }));
-  return [...ownPosts, ...qiitaPosts].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+  return [...posts.map(toCard), ...qiitaPosts].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
 }
 
 export type TagEntries = { posts: Post[]; works: Work[] };

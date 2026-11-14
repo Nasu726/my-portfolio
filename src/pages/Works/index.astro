@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
-import { getWorks } from '../../lib/content';
+import TagFilter from '../../components/TagFilter.astro';
+import { getWorks, toCard } from '../../lib/content';
 import { WORKS_DESCRIPTION } from '../../lib/site';
 
 const allWorks = await getWorks();
@@ -18,38 +19,12 @@ const allTags = [...new Set(allWorks.flatMap((w) => w.data.tags))].sort();
     <span class="text-sm text-gray-400">{allWorks.length} 件</span>
   </div>
 
-  <!-- タグフィルター -->
-  {allTags.length > 0 && (
-    <div class="mb-6 flex flex-wrap gap-2 items-center">
-      <span class="text-sm text-gray-500">タグ:</span>
-      <button
-        class="px-3 py-1 rounded-full text-xs font-medium bg-purple-600 text-white transition-colors tag-btn"
-        data-tag="__all__"
-      >
-        すべて
-      </button>
-      {allTags.map((tag) => (
-        <button
-          class="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors tag-btn"
-          data-tag={tag}
-        >
-          #{tag}
-        </button>
-      ))}
-    </div>
-  )}
+  <TagFilter tags={allTags} />
 
-  <!-- 作品一覧 -->
-  <div id="work-list" class="grid gap-4 sm:grid-cols-2">
+  <div data-tag-filter-list class="grid gap-4 sm:grid-cols-2">
     {allWorks.map((work) => (
       <div data-tags={work.data.tags.join(',')}>
-        <PostCard
-          title={work.data.title}
-          description={work.data.description}
-          pubDate={work.data.pubDate}
-          tags={work.data.tags}
-          href={`/Works/${work.id}`}
-        />
+        <PostCard {...toCard(work)} />
       </div>
     ))}
   </div>
@@ -58,25 +33,3 @@ const allTags = [...new Set(allWorks.flatMap((w) => w.data.tags))].sort();
     <p class="text-gray-400 text-center py-16">作品はまだありません。</p>
   )}
 </BaseLayout>
-
-<script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
-  const cards = document.querySelectorAll<HTMLDivElement>('#work-list > [data-tags]');
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const selected = btn.dataset.tag!;
-      buttons.forEach((b) => {
-        const isActive = b.dataset.tag === selected;
-        b.classList.toggle('bg-purple-600', isActive);
-        b.classList.toggle('text-white', isActive);
-        b.classList.toggle('bg-purple-100', !isActive);
-        b.classList.toggle('text-purple-700', !isActive);
-      });
-      cards.forEach((card) => {
-        const tags = card.dataset.tags?.split(',') ?? [];
-        card.style.display = selected === '__all__' || tags.includes(selected) ? '' : 'none';
-      });
-    });
-  });
-</script>

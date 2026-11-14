@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import TagFilter from '../../components/TagFilter.astro';
 import { getBlogCards } from '../../lib/content';
 import { BLOG_DESCRIPTION } from '../../lib/site';
 
@@ -18,41 +19,12 @@ const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
     <span class="text-sm text-gray-400">{allPosts.length} 記事</span>
   </div>
 
-  <!-- タグフィルター -->
-  {allTags.length > 0 && (
-    <div class="mb-6 flex flex-wrap gap-2 items-center">
-      <span class="text-sm text-gray-500">タグ:</span>
-      <button
-        id="tag-all"
-        class="px-3 py-1 rounded-full text-xs font-medium bg-purple-600 text-white transition-colors"
-        data-tag="__all__"
-      >
-        すべて
-      </button>
-      {allTags.map((tag) => (
-        <button
-          class="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors tag-btn"
-          data-tag={tag}
-        >
-          #{tag}
-        </button>
-      ))}
-    </div>
-  )}
+  <TagFilter tags={allTags} />
 
-  <!-- 記事一覧 -->
-  <div id="post-list" class="grid gap-4 sm:grid-cols-2">
+  <div data-tag-filter-list class="grid gap-4 sm:grid-cols-2">
     {allPosts.map((post) => (
       <div data-tags={post.tags.join(',')}>
-        <PostCard
-          title={post.title}
-          description={post.description}
-          pubDate={post.pubDate}
-          tags={post.tags}
-          href={post.href}
-          external={post.external}
-          badge={post.badge}
-        />
+        <PostCard {...post} />
       </div>
     ))}
   </div>
@@ -61,30 +33,3 @@ const allTags = [...new Set(allPosts.flatMap((p) => p.tags))].sort();
     <p class="text-gray-400 text-center py-16">記事はまだありません。</p>
   )}
 </BaseLayout>
-
-<script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-tag]');
-  const cards = document.querySelectorAll<HTMLDivElement>('#post-list > [data-tags]');
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const selected = btn.dataset.tag!;
-
-      // ボタンのスタイル切り替え
-      buttons.forEach((b) => {
-        const isActive = b.dataset.tag === selected;
-        b.classList.toggle('bg-purple-600', isActive);
-        b.classList.toggle('text-white', isActive);
-        b.classList.toggle('bg-purple-100', !isActive);
-        b.classList.toggle('text-purple-700', !isActive);
-      });
-
-      // カード表示切り替え
-      cards.forEach((card) => {
-        const tags = card.dataset.tags?.split(',') ?? [];
-        const show = selected === '__all__' || tags.includes(selected);
-        card.style.display = show ? '' : 'none';
-      });
-    });
-  });
-</script>
